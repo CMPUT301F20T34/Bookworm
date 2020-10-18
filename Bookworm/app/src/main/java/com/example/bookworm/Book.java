@@ -13,42 +13,69 @@ public class Book {
 //    private ArrayList<Request> requests;
     private Image photograph;
 
+    public Book(String title, String author, String description, String status) {
+        this.title = title;
+        this.author = author;
+        this.description = description;
+        this.status = status;
+//        Create ISBN
+    }
+
+    /* Create Book object with minimal parameters */
+
+
+    /**
+     * Gets the title of the book
+     * @return String
+     */
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
+    /**
+     * Gets the author of the book
+     * @return String
+     */
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
+    /**
+     * Gets the book's description
+     * @return String
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the description of the book
+     * @param description book's description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Gets the ISBN of the book
+     * @return String
+     */
     public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
+    /**
+     * Gets the status of the book
+     * @return String
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     * Sets the status of the book (borrowed, available, etc.)
+     * @param status status of the book
+     */
     public void setStatus(String status) {
         this.status = status;
     }
@@ -77,15 +104,26 @@ public class Book {
 //        this.requests = requests;
 //    }
 
+    /**
+     * Returns the photograph of the book
+     * @return Image
+     */
     public Image getPhotograph() {
         return photograph;
     }
 
+    /**
+     * Sets the photograph
+     * @param photograph
+     */
     public void setPhotograph(Image photograph) {
         this.photograph = photograph;
     }
 
-    public void deleteImage() {
-        this.photograph = null;
+    /**
+     * Deletes the image of the book without resetting it
+     */
+    public void deletePhotograph() {
+//        Delete photograph
     }
 }
