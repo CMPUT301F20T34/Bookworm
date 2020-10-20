@@ -1,6 +1,6 @@
 package com.example.bookworm;
 
-public class Owner {
+public class Owner{
     private Borrower borrower;
 
     public Owner(Borrower borrower) {
