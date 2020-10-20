@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseFirestore db;
 
-        
-
-
+        Intent intent = new Intent(this, OwnerBooklistActivity.class);
+        startActivity(intent);
     }
 }
