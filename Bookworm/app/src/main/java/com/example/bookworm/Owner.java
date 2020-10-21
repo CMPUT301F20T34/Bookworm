@@ -3,6 +3,8 @@ package com.example.bookworm;
 public class Owner {
     private Borrower borrower;
 
+    public Owner(){}
+
     public Owner(Borrower borrower) {
         this.borrower = borrower;
     }
@@ -14,4 +16,6 @@ public class Owner {
     public Borrower getBorrower() {
         return borrower;
     }
+
+    public void setBorrower(Borrower borrower){ this.borrower = borrower; }
 }
