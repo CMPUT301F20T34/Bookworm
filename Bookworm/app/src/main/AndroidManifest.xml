@@ -11,6 +11,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".AddBookActivity"></activity>
         <activity android:name=".OwnerBooklistActivity" />
+        <activity android:name=".Profile"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
