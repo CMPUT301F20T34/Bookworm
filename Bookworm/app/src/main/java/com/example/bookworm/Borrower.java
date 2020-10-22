@@ -10,10 +10,14 @@ public class Borrower {
     }
 
     /**
-     * Gets the owner related to this borrower object
+     * Adds the owner related to this borrower object
      * @param owner
      */
     public void setOwner(Owner owner) {
         this.owner = owner;
+    }
+
+    public Owner getOwner() {
+        return owner;
     }
 }

@@ -13,6 +13,8 @@ public class Book {
 //    private ArrayList<Request> requests;
     private Image photograph;
 
+    public Book(){ }
+
     public Book(String title, String author, String description, String status) {
         this.title = title;
         this.author = author;
@@ -130,5 +132,17 @@ public class Book {
      */
     public void deletePhotograph() {
 //        Delete photograph
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 }

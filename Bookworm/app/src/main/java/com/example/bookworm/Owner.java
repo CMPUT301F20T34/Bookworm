@@ -1,21 +1,13 @@
 package com.example.bookworm;
 
-public class Owner {
-    private Borrower borrower;
+public class Owner extends User {
 
-    public Owner(){}
+    public Owner(){ super(); }
 
-    public Owner(Borrower borrower) {
-        this.borrower = borrower;
+    public Owner(String username, String password, String email, String phone){
+        super(username, password, email, phone);
     }
 
-    /**
-     * Gets the owner related to this borrower object
-     * @return Borrower
-     */
-    public Borrower getBorrower() {
-        return borrower;
-    }
 
-    public void setBorrower(Borrower borrower){ this.borrower = borrower; }
+
 }

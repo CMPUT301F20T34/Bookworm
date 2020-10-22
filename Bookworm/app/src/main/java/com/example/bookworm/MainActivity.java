@@ -32,9 +32,8 @@ public class MainActivity extends AppCompatActivity {
         //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
 
         Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available");
-        Owner exampleOwner = new Owner();
+        Owner exampleOwner = new Owner("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
         Borrower exampleBorrower = new Borrower(exampleOwner);
-        exampleOwner.setBorrower(exampleBorrower);
         exampleLibrary = new Library();
         exampleLibrary.addOwner(exampleOwner);
         exampleLibrary.addBorrower(exampleBorrower);
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 for(QueryDocumentSnapshot doc: queryDocumentSnapshots)
                 {
                     Log.d(TAG, String.valueOf(doc.getData()));
-                    exampleLibrary = (Library) doc.getData();
+                    exampleLibrary = doc.toObject(Library.class);
                 }
             }
         });
