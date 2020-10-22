@@ -7,4 +7,12 @@
     <string name="notifications">NOTIFICATIONS</string>
     <string name="my_booklist">MY BOOKLIST</string>
     <string name="borrow_info">BORROW INFO</string>
+    <string name="username">username</string>
+    <string name="phone_profile">Phone:</string>
+    <string name="address_profile">Address:</string>
+    <string name="n_a">N/A</string>
+    <string name="n_a">N/A</string>
+    <string name="log_out">LOG OUT</string>
+    <string name="edit_profile">EDIT PROFILE</string>
+    <string name="profile_photo">profile_photo</string>
 </resources>
