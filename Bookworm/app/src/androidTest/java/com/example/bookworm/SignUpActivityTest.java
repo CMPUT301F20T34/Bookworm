@@ -45,11 +45,27 @@ public class SignUpActivityTest {
         Activity activity = rule.getActivity();
     }
 
-    /* HOW DO I ENTER A GOOD FORM WITHOUT CHANGING THE DB */
+    @Test
+    public void goodUser() {
+        // Somehow get to the correct activity
+        solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
+        String pass = Util.getRandomString(20);
+
+        // Enter random values
+        solo.enterText((EditText) solo.getView(R.id.username_signup), Util.getRandomString(50));
+        solo.enterText((EditText) solo.getView(R.id.password1_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.password2_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.email_address_signup), Util.getRandomEmail(30));
+        solo.enterText((EditText) solo.getView(R.id.phone_number_signup), Util.getRandomPhoneNumber());
+
+        // Confirm the login
+        solo.clickOnView(solo.getView(R.id.register_button));
+        /* HOW DO I ENTER A GOOD REGISTRATION FORM WITHOUT CHANGING THE DB */
+    }
 
     /**
-     * Ensures that a user that does exist along with the user's
-     * password is confirmed by the database
+     * Ensures a username that already exists is not
+     * accepted as a new registration.
      */
     @Test
     public void userExists() {
@@ -62,25 +78,50 @@ public class SignUpActivityTest {
         solo.enterText((EditText) solo.getView(R.id.password1_signup), pass);
         solo.enterText((EditText) solo.getView(R.id.password2_signup), pass);
         solo.enterText((EditText) solo.getView(R.id.email_address_signup), Util.getRandomEmail(30));
-        solo.enterText((EditText) solo.getView(R.id.password2_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.phone_number_signup), Util.getRandomPhoneNumber());
 
         // Confirm the login
         solo.clickOnView(solo.getView(R.id.register_button));
-        // Somehow get that the db has confirmed
+        // Somehow get that the db has rejected
     }
 
     /**
-     * Ensures that a user that does exist entered with a password
-     * that doesn't exist is rejected by the DB
+     * Ensures that a registration with non-matching passwords is
+     * rejected by the database.
      */
     @Test
-    public void wrongPassword() {
+    public void passwordsDontMatch() {
         // Somehow get to the correct activity
         solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
+        String pass = Util.getRandomString(20);
 
         // Enter random values
-        solo.enterText((EditText) solo.getView(R.id.username_login), "username");
-        solo.enterText((EditText) solo.getView(R.id.password_login), Util.getRandomString(100));
+        solo.enterText((EditText) solo.getView(R.id.username_signup), "user");
+        solo.enterText((EditText) solo.getView(R.id.password1_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.password2_signup), pass+"1"); // Ensure passwords don't match
+        solo.enterText((EditText) solo.getView(R.id.email_address_signup), Util.getRandomEmail(30));
+        solo.enterText((EditText) solo.getView(R.id.phone_number_signup), Util.getRandomPhoneNumber());
+
+        // Confirm the login
+        solo.clickOnView(solo.getView(R.id.register_button));
+        // Somehow get that the db has rejected
+    }
+
+    /**
+     * Ensures an incorrectly formatted email is not accepted.
+     */
+    @Test
+    public void badEmail() {
+        // Somehow get to the correct activity
+        solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
+        String pass = Util.getRandomString(20);
+
+        // Enter random values
+        solo.enterText((EditText) solo.getView(R.id.username_signup), Util.getRandomString(50));
+        solo.enterText((EditText) solo.getView(R.id.password1_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.password2_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.email_address_signup), Util.getRandomString(50));
+        solo.enterText((EditText) solo.getView(R.id.phone_number_signup), Util.getRandomPhoneNumber());
 
         // Confirm the login
         solo.clickOnView(solo.getView(R.id.register_button));
@@ -89,17 +130,21 @@ public class SignUpActivityTest {
     }
 
     /**
-     * Ensures that a user that doesn't exist entered with a password
-     * that doesn't exist is rejected by the DB
+     * Ensures a phone number that isn't correctly formatted isn't accepted.
+     * Note: I don't know how android handles phone numbers
      */
     @Test
-    public void wrongUsername() {
+    public void badPhoneNumber() {
         // Somehow get to the correct activity
         solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
+        String pass = Util.getRandomString(20);
 
         // Enter random values
-        solo.enterText((EditText) solo.getView(R.id.username_login), Util.getRandomString(100));
-        solo.enterText((EditText) solo.getView(R.id.password_login), "password");
+        solo.enterText((EditText) solo.getView(R.id.username_signup), Util.getRandomString(50));
+        solo.enterText((EditText) solo.getView(R.id.password1_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.password2_signup), pass);
+        solo.enterText((EditText) solo.getView(R.id.email_address_signup), Util.getRandomString(50));
+        solo.enterText((EditText) solo.getView(R.id.phone_number_signup), Util.getRandomPhoneNumber() + "d");
 
         // Confirm the login
         solo.clickOnView(solo.getView(R.id.register_button));
