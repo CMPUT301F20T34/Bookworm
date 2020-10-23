@@ -31,6 +31,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Redirects the user to the signup page.
+     *
+     * @param view the textview that was clicked on.
+     */
     public void loginRedirectSignup(View view) {
         Intent i = new Intent(this, SignUpActivity.class);
         startActivity(i);

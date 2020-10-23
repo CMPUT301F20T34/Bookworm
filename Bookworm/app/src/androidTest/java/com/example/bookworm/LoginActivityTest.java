@@ -27,6 +27,7 @@ public class LoginActivityTest {
 
     /**
      * Runs before all tests and creates solo instance
+     *
      * @throws Exception
      */
     @Before
@@ -36,6 +37,7 @@ public class LoginActivityTest {
 
     /**
      * Gets the activity
+     *
      * @throws Exception
      */
     @Test
@@ -116,12 +118,13 @@ public class LoginActivityTest {
 
         // Confirm the login
         solo.clickOnView(solo.getView(R.id.login_button));
-        
+
         // Somehow get that the db has rejected the values
     }
 
     /**
      * Closes the activity after each test.
+     *
      * @throws Exception
      */
     @After
