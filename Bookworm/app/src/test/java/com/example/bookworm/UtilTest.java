@@ -36,14 +36,13 @@ public class UtilTest {
     @Test
     public void randomPhoneNumber() {
         String num = Util.getRandomPhoneNumber();
-        System.out.println(num);
 
         // Searches for a match
         Pattern p = Pattern.compile("(\\d{3}-\\d{4}-\\d{4})");
         Matcher m = p.matcher(num);
         assertTrue(m.find());
 
-        // Entire string is a match
+        // Entire string is a match, the number isn't somewhere inside the string
         assertEquals(m.start(), 0);
         assertEquals(m.end(), num.length());
     }

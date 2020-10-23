@@ -30,12 +30,23 @@ public class Util {
         return sb.toString();
     }
 
+    /**
+     * Returns a random email of length 'length'
+     *
+     * @param length length of random email
+     * @return String
+     */
     static public String getRandomEmail(int length) {
         String[] sites = {"gmail", "hotmail", "mac", "yahoo"};
         String site = "@" + sites[new Random().nextInt(sites.length)] + ".com";
         return Util.getRandomString(length - site.length()) + site;
     }
 
+    /**
+     * Returns a random phone number
+     *
+     * @return String
+     */
     static public String getRandomPhoneNumber() {
         int randomInt = 0;
         int lengths[] = {3, 4, 4};
