@@ -8,8 +8,8 @@ public class Book {
     private String description;
     private String isbn;
     private String status;
-//    private Owner owner;
-//    private Borrower borrower;
+    private Owner owner;
+    private Borrower borrower;
 //    private ArrayList<Request> requests;
     private Image photograph;
 
@@ -80,21 +80,37 @@ public class Book {
         this.status = status;
     }
 
-//    public Owner getOwner() {
-//        return owner;
-//    }
-//
-//    public void setOwner(Owner owner) {
-//        this.owner = owner;
-//    }
-//
-//    public Borrower getBorrower() {
-//        return borrower;
-//    }
-//
-//    public void setBorrower(Borrower borrower) {
-//        this.borrower = borrower;
-//    }
+    /**
+     * Returns the owner for the book
+     * @return Owner
+     */
+    public Owner getOwner() {
+        return this.owner;
+    }
+
+    /**
+     * Sets the owner for the book
+     * @param owner owner of the book
+     */
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
+    /**
+     * Gets the current borrower of the book
+     * @return Borrower
+     */
+    public Borrower getBorrower() {
+        return borrower;
+    }
+
+    /**
+     * Sets a new borrower of the book.
+     * @param borrower new borrower of the book
+     */
+    public void setBorrower(Borrower borrower) {
+        this.borrower = borrower;
+    }
 //
 //    public ArrayList<Request> getRequests() {
 //        return requests;
