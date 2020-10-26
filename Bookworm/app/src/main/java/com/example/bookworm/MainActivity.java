@@ -48,14 +48,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // These are a method which gets executed when the task is succeeded
-                        Log.d(TAG, "Data has been added successfully!");
+                        //Log.d(TAG, "Data has been added successfully!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // These are a method which gets executed if there’s any problem
-                        Log.d(TAG, "Data could not be added!" + e.toString());
+                        //Log.d(TAG, "Data could not be added!" + e.toString());
                     }
                 });
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 // Clear the old list
                 for(QueryDocumentSnapshot doc: queryDocumentSnapshots)
                 {
-                    Log.d(TAG, String.valueOf(doc.getData()));
+                    //Log.d(TAG, String.valueOf(doc.getData()));
                     exampleLibrary = doc.toObject(Library.class);
                 }
             }

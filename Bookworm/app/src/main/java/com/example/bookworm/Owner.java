@@ -8,6 +8,4 @@ public class Owner extends User {
         super(username, password, email, phone);
     }
 
-
-
 }
