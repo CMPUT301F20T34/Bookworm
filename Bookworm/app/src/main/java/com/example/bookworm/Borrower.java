@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Borrower extends User implements BookUser {
     private Owner owner;
 
-    public Borrower(){}
+    public Borrower() { }
 
     public Borrower(String username, String password, String email, String phone) {
         super(username, password, email, phone);
