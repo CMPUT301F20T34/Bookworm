@@ -3,7 +3,6 @@ package com.example.bookworm;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -29,26 +28,26 @@ public class MainActivity extends AppCompatActivity {
 
         // If a user is not registered, redirect them
         // to the login screen.
-//        if (fAuth.getCurrentUser() == null) {
-//            startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
-//        }
+        if (fAuth.getCurrentUser() == null) {
+            startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
+        }
 
         Database.createListener();
 
 //        Firebase Firestore db = Firebase Firestore.getInstance();
 //        //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
 
-        User exampleUser = new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
-        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available", exampleUser);
-        Request exampleReq = new Request(exampleBook, exampleUser, "Status");
-        exampleLibrary = new Library();
-        exampleLibrary.addUser(exampleUser);
-        exampleLibrary.addBook(exampleBook);
-        exampleLibrary.addRequest(exampleReq);
+//        User exampleUser = new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+//        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available", exampleUser);
+//        Request exampleReq = new Request(exampleBook, exampleUser, "Status");
+//        exampleLibrary = new Library();
+//        exampleLibrary.addUser(exampleUser);
+//        exampleLibrary.addBook(exampleBook);
+//        exampleLibrary.addRequest(exampleReq);
+//
+//        Database.writeLibrary(exampleLibrary);
 
-        Database.writeLibrary(exampleLibrary);
-
-        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
+//        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
 
         myBooklistButton = findViewById(R.id.button6);
         myBooklistButton.setOnClickListener(new View.OnClickListener() {
