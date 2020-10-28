@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -39,6 +40,8 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
             this.status = status;
             this.currentBurrower = currentBurrower;
         }
+
+
     }
 
     public BooklistAdapter(ArrayList<Book> booklist) {

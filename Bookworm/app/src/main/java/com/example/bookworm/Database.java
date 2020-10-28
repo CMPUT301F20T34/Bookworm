@@ -48,6 +48,7 @@ public class Database {
         CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
         CollectionReference requestCollection = libraryCollection.document(libraryName).collection("requests");
 
+
         for (Book book : books) {
             tmpDoc = bookCollection.document();
             batch.set(tmpDoc, book);
