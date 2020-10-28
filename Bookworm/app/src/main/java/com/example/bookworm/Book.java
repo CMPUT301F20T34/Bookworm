@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 
 public class Book {
@@ -11,7 +12,9 @@ public class Book {
     private Owner owner;
     private Borrower borrower;
 //    private ArrayList<Request> requests;
-    private Image photograph;
+    private Drawable photograph;
+
+    public Book(){ }
 
     public Book(String title, String author, String description, String status) {
         this.title = title;
@@ -22,6 +25,11 @@ public class Book {
     }
 
     /* Create Book object with minimal parameters */
+    public Book (String title, String author, String isbn){
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }
 
 
     /**
@@ -124,7 +132,7 @@ public class Book {
      * Returns the photograph of the book
      * @return Image
      */
-    public Image getPhotograph() {
+    public Drawable getPhotograph() {
         return photograph;
     }
 
@@ -132,7 +140,7 @@ public class Book {
      * Sets the photograph
      * @param photograph
      */
-    public void setPhotograph(Image photograph) {
+    public void setPhotograph(Drawable photograph) {
         this.photograph = photograph;
     }
 
@@ -141,5 +149,17 @@ public class Book {
      */
     public void deletePhotograph() {
 //        Delete photograph
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 }
