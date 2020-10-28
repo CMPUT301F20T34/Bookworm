@@ -30,7 +30,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         booklist = new ArrayList<Book>();
         booklist.add(new Book("1", "2", "3"));
-        bookListAdapter = new BooklistAdapter(booklist);
+        bookListAdapter = new BooklistAdapter(Database.getLibrary().getBooks());
         recyclerView.setAdapter(bookListAdapter);
 
         addBookButton = findViewById(R.id.button2);

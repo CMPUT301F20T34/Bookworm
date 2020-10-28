@@ -13,14 +13,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Contains all methods related to reading and writing from the database.
  */
 public class Database {
 
+    private static Library library = new Library();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference libraryCollection = db.collection("Libraries");
+
+    static Library getLibrary() {
+        return library;
+    }
 
     /**
      * Writes a library to the Main_Library database
@@ -48,9 +55,9 @@ public class Database {
 
     /**
      * Creates a snapshot listener for the given library so it is updated whenever a change is made to the database
-     * @param lib the library to be updated
+     *
      */
-    static void createListener(final Library lib){
+    static void createListener(){
         libraryCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
@@ -60,11 +67,7 @@ public class Database {
                 {
                     //Log.d(TAG, String.valueOf(doc.getData()));
                     //Updates the array lists in the library object
-                    Library tempLibrary = doc.toObject(Library.class);
-                    lib.setBooks(tempLibrary.getBooks());
-                    lib.setBorrowers(tempLibrary.getBorrowers());
-                    lib.setOwners(tempLibrary.getOwners());
-                    lib.setRequests(tempLibrary.getRequests());
+                    library = doc.toObject(Library.class) ;
                 }
             }
         });
