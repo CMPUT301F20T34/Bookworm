@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".OwnerBooklistActivity"></activity>
-        <activity android:name=".SignUpActivity"></activity>
+        <activity android:name=".AddBookActivity" />
+        <activity android:name=".OwnerBooklistActivity" />
+        <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".Profile" />
         <activity android:name=".MainActivity">
@@ -21,5 +22,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

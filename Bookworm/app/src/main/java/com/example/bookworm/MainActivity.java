@@ -48,8 +48,5 @@ public class MainActivity extends AppCompatActivity {
         Database.writeLibrary(exampleLibrary);
 
         Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
-
-        Intent intent = new Intent(this, OwnerBooklistActivity.class);
-        startActivity(intent);
     }
 }
