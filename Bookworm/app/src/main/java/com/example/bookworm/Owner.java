@@ -1,6 +1,8 @@
 package com.example.bookworm;
 
-public class Owner {
+import java.util.ArrayList;
+
+public class Owner extends User implements BookUser {
     private Borrower borrower;
 
     public Owner(Borrower borrower) {
@@ -13,5 +15,15 @@ public class Owner {
      */
     public Borrower getBorrower() {
         return borrower;
+    }
+
+    public void addBook(Book book) {
+        this.books.add(book);
+    }
+    public ArrayList<Book> getBooks() {
+        return this.books;
+    }
+    public void deleteBook(Book book) {
+        this.books.remove(book);
     }
 }

@@ -1,24 +1,13 @@
 package com.example.bookworm;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.style.LineBackgroundSpan;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
         //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
 
         Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available");
-        Owner exampleOwner = new Owner("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
-        Borrower exampleBorrower = new Borrower(exampleOwner);
+        Borrower exampleBorrower = new Borrower("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+        Owner exampleOwner = exampleBorrower.getOwner();
         Request exampleReq = new Request(exampleBook, exampleBorrower, "Status");
         exampleLibrary = new Library();
         exampleLibrary.addOwner(exampleOwner);
