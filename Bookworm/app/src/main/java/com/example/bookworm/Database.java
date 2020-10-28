@@ -32,8 +32,6 @@ public class Database {
      * @param lib the library to be written
      */
     static void writeLibrary(Library lib){
-        HashMap<String, Library> data = new HashMap<>();
-        data.put("library", lib);
         libraryCollection
                 .document("Main_Library")
                 .set(lib)
@@ -68,11 +66,6 @@ public class Database {
                     //Log.d(TAG, String.valueOf(doc.getData()));
                     //Updates the array lists in the library object
                     library = doc.toObject(Library.class) ;
-//                    Library tempLibrary = doc.toObject(Library.class) ;
-//                    library.setBooks(tempLibrary.getBooks());
-//                    library.setBorrowers(tempLibrary.getBorrowers());
-//                    library.setOwners(tempLibrary.getOwners());
-//                    library.setRequests(tempLibrary.getRequests());
                 }
             }
         });
