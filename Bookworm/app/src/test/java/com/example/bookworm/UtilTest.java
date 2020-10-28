@@ -11,7 +11,13 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Test class for Util.java
+ */
 public class UtilTest {
+    /**
+     * Tests for the correctness of getRandomEmail
+     */
     @Test
     public void randomString() {
         int l = new Random().nextInt(500);
@@ -19,6 +25,9 @@ public class UtilTest {
         assertEquals(s.length(), l);
     }
 
+    /**
+     * Tests for the correctness of getRandomEmail
+     */
     @Test
     public void randomEmail() {
         int l = new Random().nextInt(500);
@@ -33,6 +42,9 @@ public class UtilTest {
         assertTrue(m.find());
     }
 
+    /**
+     * Tests for the correctness of getRandomEmail
+     */
     @Test
     public void randomPhoneNumber() {
         String num = Util.getRandomPhoneNumber();

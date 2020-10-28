@@ -1,7 +1,6 @@
 package com.example.bookworm;
 
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 
 public class Book {
     private String title;
@@ -9,8 +8,8 @@ public class Book {
     private String description;
     private String isbn;
     private String status;
-    private Owner owner;
-    private Borrower borrower;
+    private User owner;
+    private User borrower;
 //    private ArrayList<Request> requests;
     private Drawable photograph;
 
@@ -21,11 +20,19 @@ public class Book {
         this.author = author;
         this.description = description;
         this.status = status;
+        this.owner = owner;
 //        Create ISBN
     }
 
+    public Book (String title, String author, String isbn, User owner){
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.owner = owner;
+    }
+
     /* Create Book object with minimal parameters */
-    public Book (String title, String author, String isbn){
+    public Book (String title, String author, String isbn) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
@@ -92,7 +99,7 @@ public class Book {
      * Returns the owner for the book
      * @return Owner
      */
-    public Owner getOwner() {
+    public User getOwner() {
         return this.owner;
     }
 
@@ -100,7 +107,7 @@ public class Book {
      * Sets the owner for the book
      * @param owner owner of the book
      */
-    public void setOwner(Owner owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 
@@ -108,7 +115,7 @@ public class Book {
      * Gets the current borrower of the book
      * @return Borrower
      */
-    public Borrower getBorrower() {
+    public User getBorrower() {
         return borrower;
     }
 
@@ -116,7 +123,7 @@ public class Book {
      * Sets a new borrower of the book.
      * @param borrower new borrower of the book
      */
-    public void setBorrower(Borrower borrower) {
+    public void setBorrower(User borrower) {
         this.borrower = borrower;
     }
 //

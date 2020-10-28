@@ -3,30 +3,21 @@ package com.example.bookworm;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.style.LineBackgroundSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
     Library exampleLibrary;
     String TAG = "Sample";
     private Button myBooklistButton;
+    private Button myProfileButton;
+    FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -34,32 +25,48 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        fAuth = FirebaseAuth.getInstance();
+
+        // Allow realtime updates for database
         Database.createListener();
 
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // If a user is not registered, redirect them
+        // to the login screen.
+        if (fAuth.getCurrentUser() == null) {
+            startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
+        }
+
+        // Create listeners for the buttons
+        myBooklistButton = findViewById(R.id.booklist_button);
+        myBooklistButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(myBooklistButton.getContext(), OwnerBooklistActivity.class));
+            }
+        });
+
+        myProfileButton = findViewById(R.id.profile_button);
+        myProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), Profile.class));
+            }
+        });
+    }
+}
+
+
+//        Firebase Firestore db = Firebase Firestore.getInstance();
 //        //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
-//
-//        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available");
-//        Owner exampleOwner = new Owner(new Borrower());
-//        Borrower exampleBorrower = new Borrower(exampleOwner);
-//        Request exampleReq = new Request(exampleBook, exampleBorrower, "Status");
+
+//        User exampleUser = new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+//        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available", exampleUser);
+//        Request exampleReq = new Request(exampleBook, exampleUser, "Status");
 //        exampleLibrary = new Library();
-//        exampleLibrary.addOwner(exampleOwner);
-//        exampleLibrary.addBorrower(exampleBorrower);
+//        exampleLibrary.addUser(exampleUser);
 //        exampleLibrary.addBook(exampleBook);
 //        exampleLibrary.addRequest(exampleReq);
 //
 //        Database.writeLibrary(exampleLibrary);
 
 //        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
-
-        myBooklistButton = findViewById(R.id.button6);
-        myBooklistButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(myBooklistButton.getContext(), OwnerBooklistActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-}
