@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     Library exampleLibrary;
     String TAG = "Sample";
     private Button myBooklistButton;
+    private Button myProfileButton;
     FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -49,11 +50,19 @@ public class MainActivity extends AppCompatActivity {
 
 //        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
 
-        myBooklistButton = findViewById(R.id.button6);
+        myBooklistButton = findViewById(R.id.booklist_button);
         myBooklistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(myBooklistButton.getContext(), OwnerBooklistActivity.class));
+            }
+        });
+
+        myProfileButton = findViewById(R.id.profile_button);
+        myProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), Profile.class));
             }
         });
     }
