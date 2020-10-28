@@ -2,18 +2,20 @@ package com.example.bookworm;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class AddBookActivity extends AppCompatActivity {
 
     private EditText titleEditText;
     private EditText authorEditText;
-    private EditText bookNameEditText;
     private EditText isbnEditText;
     private EditText descriptionEditText;
+    private TextView ownerNameText;
     private Button viewPhotoButton;
     private Button addPhotoButton;
     private Button deletePhotoButton;
@@ -26,9 +28,9 @@ public class AddBookActivity extends AppCompatActivity {
 
         titleEditText = findViewById(R.id.editTextTextPersonName);
         authorEditText = findViewById(R.id.editTextTextPersonName2);
-        bookNameEditText = findViewById(R.id.editTextTextPersonName3);
         isbnEditText = findViewById(R.id.editTextNumber);
         descriptionEditText = findViewById(R.id.editTextTextPersonName4);
+        ownerNameText = findViewById(R.id.textView8);
         viewPhotoButton = findViewById(R.id.button3);
         addPhotoButton = findViewById(R.id.button4);
         deletePhotoButton = findViewById(R.id.button5);
@@ -58,7 +60,16 @@ public class AddBookActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String title = titleEditText.getText().toString();
+                String author = authorEditText.getText().toString();
+                String isbn = isbnEditText.getText().toString();
+                String description = descriptionEditText.getText().toString();
+                Book book = new Book(title, author, isbn);
+                Library library = Database.getLibrary();
+                library.addBook(book);
+                Database.writeLibrary(library);
+                Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
+                startActivity(intent);
             }
         });
     }

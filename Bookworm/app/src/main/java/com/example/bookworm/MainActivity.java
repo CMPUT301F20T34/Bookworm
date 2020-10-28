@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.style.LineBackgroundSpan;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     Library exampleLibrary;
     String TAG = "Sample";
+    private Button myBooklistButton;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -31,22 +34,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
+        Database.createListener();
 
-        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available");
-        Owner exampleOwner = new Owner("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
-        Borrower exampleBorrower = new Borrower(exampleOwner);
-        Request exampleReq = new Request(exampleBook, exampleBorrower, "Status");
-        exampleLibrary = new Library();
-        exampleLibrary.addOwner(exampleOwner);
-        exampleLibrary.addBorrower(exampleBorrower);
-        exampleLibrary.addBook(exampleBook);
-        exampleLibrary.addRequest(exampleReq);
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
+//
+//        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available");
+//        Owner exampleOwner = new Owner(new Borrower());
+//        Borrower exampleBorrower = new Borrower(exampleOwner);
+//        Request exampleReq = new Request(exampleBook, exampleBorrower, "Status");
+//        exampleLibrary = new Library();
+//        exampleLibrary.addOwner(exampleOwner);
+//        exampleLibrary.addBorrower(exampleBorrower);
+//        exampleLibrary.addBook(exampleBook);
+//        exampleLibrary.addRequest(exampleReq);
+//
+//        Database.writeLibrary(exampleLibrary);
 
-        Database.createListener(exampleLibrary);
-        Database.writeLibrary(exampleLibrary);
+//        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
 
-        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
+        myBooklistButton = findViewById(R.id.button6);
+        myBooklistButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(myBooklistButton.getContext(), OwnerBooklistActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
