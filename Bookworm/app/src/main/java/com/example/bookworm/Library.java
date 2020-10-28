@@ -9,9 +9,9 @@ public class Library {
     private ArrayList<Request> requests;
 
     public Library(){
-        users = new ArrayList<User>();
-        books = new ArrayList<Book>();
-        requests = new ArrayList<Request>();
+        users = new ArrayList<>();
+        books = new ArrayList<>();
+        requests = new ArrayList<>();
     }
 
     /**
