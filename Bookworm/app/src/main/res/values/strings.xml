@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Bookworm</string>
+    <string name="scan_barcodes">Scan Barcodes</string>
+    <string name="enter_book_to_search_for">Enter book to search for</string>
+    <string name="search">Search</string>
+    <string name="my_profile">MY PROFILE</string>
+    <string name="notifications">NOTIFICATIONS</string>
+    <string name="my_booklist">MY BOOKLIST</string>
+    <string name="borrow_info">BORROW INFO</string>
+    <string name="username">username</string>
+    <string name="phone_profile">Phone:</string>
+    <string name="address_profile">Address:</string>
+    <string name="n_a">N/A</string>
+    <string name="log_out">LOG OUT</string>
+    <string name="edit_profile">EDIT PROFILE</string>
+    <string name="profile_photo">profile_photo</string>
+    <string name="bookworm">BookWorm</string>
+    <string name="sign_up_today">Sign up today!</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="retype_password">retype password</string>
+    <string name="phone_number">phone number</string>
+    <string name="login">LOGIN</string>
+    <string name="register">REGISTER</string>
+    <string name="already_signed_up_login_here">Already signed up? Login here!</string>
+    <string name="need_an_account_sign_up_for_one_here">Need an account? Sign up for one here!</string>
+</resources>
