@@ -45,6 +45,10 @@ public class SignUpActivityTest {
         Activity activity = rule.getActivity();
     }
 
+    /**
+     * Tests for a successful user registration
+     * (all parameters satisfied)
+     */
     @Test
     public void goodUser() {
         // Somehow get to the correct activity
