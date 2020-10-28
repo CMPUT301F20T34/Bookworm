@@ -2,34 +2,22 @@ package com.example.bookworm;
 
 import java.util.ArrayList;
 
-public class Borrower extends User implements BookUser {
-    private Owner owner;
+public class Borrower implements BookUser {
+    private ArrayList<Book> books;
+    private ArrayList<Request> requests;
 
     public Borrower() { }
 
-    public Borrower(String username, String password, String email, String phone) {
-        super(username, password, email, phone);
-        this.owner = new Owner(username, password, email, phone);
-    }
-
-    /**
-     * Adds the owner related to this borrower object
-     * @param owner
-     */
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
-
-    public Owner getOwner() {
-        return owner;
+    public Borrower(ArrayList<Book> books, ArrayList<Request> requests) {
+        this.books = books;
+        this.requests = requests;
     }
 
     public void addBook(Book book) {
         this.books.add(book);
     }
-    public ArrayList<Book> getBooks() {
-        return this.books;
-    }
+    public ArrayList<Book> getBooks() { return this.books; }
+    public ArrayList<Request> getRequests() { return this.requests; }
     public void deleteBook(Book book) {
         this.books.remove(book);
     }

@@ -9,13 +9,13 @@ import java.util.Date;
 public class Request {
     private Book book;
     private Date timestamp;
-    private Borrower creator;
+    private User creator;
     private String status;
 
     public Request(){ }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Request(Book book, Borrower creator, String status){
+    public Request(Book book, User creator, String status){
         this.book = book;
         this.timestamp = new Date();
         this.creator = creator;
@@ -30,7 +30,7 @@ public class Request {
         return timestamp;
     }
 
-    public Borrower getCreator() {
+    public User getCreator() {
         return creator;
     }
 
@@ -50,7 +50,7 @@ public class Request {
         this.timestamp = timestamp;
     }
 
-    public void setCreator(Borrower creator) {
+    public void setCreator(User creator) {
         this.creator = creator;
     }
 }

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 
 public class Library {
 
-    private ArrayList<Owner> owners;
-    private ArrayList<Borrower> borrowers;
+    private ArrayList<User> users;
     private ArrayList<Book> books;
     private ArrayList<Request> requests;
 
     public Library(){
-        owners = new ArrayList<Owner>();
-        borrowers = new ArrayList<Borrower>();
+        users = new ArrayList<User>();
         books = new ArrayList<Book>();
         requests = new ArrayList<Request>();
     }
@@ -38,13 +36,7 @@ public class Library {
     }
      */
 
-    public ArrayList<Owner> getOwners() {
-        return owners;
-    }
-
-    public ArrayList<Borrower> getBorrowers() {
-        return borrowers;
-    }
+    public ArrayList<User> getUsers() { return this.users; };
 
     public ArrayList<Book> getBooks() {
         return books;
@@ -52,12 +44,8 @@ public class Library {
 
     public ArrayList<Request> getRequests() { return requests; }
 
-    public void addOwner(Owner owner){
-        owners.add(owner);
-    }
-
-    public void addBorrower(Borrower borrower){
-        borrowers.add(borrower);
+    public void addUser(User user){
+        users.add(user);
     }
 
     public void addBook(Book book){
@@ -68,12 +56,8 @@ public class Library {
         requests.add(request);
     }
 
-    public void setOwners(ArrayList<Owner> owners) {
-        this.owners = owners;
-    }
-
-    public void setBorrowers(ArrayList<Borrower> borrowers) {
-        this.borrowers = borrowers;
+    public void setUsers(ArrayList<User> users) {
+        this.users = users;
     }
 
     public void setBooks(ArrayList<Book> books) {

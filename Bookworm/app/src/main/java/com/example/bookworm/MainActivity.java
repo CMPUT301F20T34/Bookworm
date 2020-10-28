@@ -35,16 +35,14 @@ public class MainActivity extends AppCompatActivity {
 
         Database.createListener();
 
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        Firebase Firestore db = Firebase Firestore.getInstance();
 //        //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
 
-        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available");
-        Borrower exampleBorrower = new Borrower("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
-        Owner exampleOwner = exampleBorrower.getOwner();
-        Request exampleReq = new Request(exampleBook, exampleBorrower, "Status");
+        User exampleUser = new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available", exampleUser);
+        Request exampleReq = new Request(exampleBook, exampleUser, "Status");
         exampleLibrary = new Library();
-        exampleLibrary.addOwner(exampleOwner);
-        exampleLibrary.addBorrower(exampleBorrower);
+        exampleLibrary.addUser(exampleUser);
         exampleLibrary.addBook(exampleBook);
         exampleLibrary.addRequest(exampleReq);
 
