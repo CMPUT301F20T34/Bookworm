@@ -27,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        fAuth = FirebaseAuth.getInstance();
+
         emailField = findViewById(R.id.username_login);
         passwordField = findViewById(R.id.password_login);
         login = findViewById(R.id.login_button);
@@ -54,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
                 /* (query email from provided username) */
 
                 // Authenticate user's information
+                System.out.println(email);
+                System.out.println(password);
                 fAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override

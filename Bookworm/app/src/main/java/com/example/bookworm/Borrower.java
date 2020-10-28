@@ -9,7 +9,7 @@ public class Borrower extends User implements BookUser {
 
     public Borrower(String username, String password, String email, String phone) {
         super(username, password, email, phone);
-        this.owner = owner;
+        this.owner = new Owner(username, password, email, phone);
     }
 
     /**

@@ -7,8 +7,8 @@ public class Owner extends User implements BookUser {
 
     public Owner() { }
 
-    public Owner(Borrower borrower) {
-        this.borrower = borrower;
+    public Owner(String username, String password, String email, String phone) {
+        super(username, password, email, phone);
     }
 
     /**

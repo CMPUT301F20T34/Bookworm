@@ -3,6 +3,7 @@ package com.example.bookworm;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,11 +13,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
+    public static final String TAG = "TAG";
     EditText usernameField;
     EditText password1Field;
     EditText password2Field;
@@ -24,6 +32,8 @@ public class SignUpActivity extends AppCompatActivity {
     EditText phoneNumberField;
     FirebaseAuth fAuth;
     Button register;
+    String uid;
+    FirebaseFirestore fStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
         register = findViewById(R.id.register_button);
 
         fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
 
         if (fAuth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -47,9 +58,11 @@ public class SignUpActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = emailField.getText().toString().trim();
+                final String username = usernameField.getText().toString().trim();
                 String password1 = password1Field.getText().toString().trim();
                 String password2 = password2Field.getText().toString().trim();
+                final String email = emailField.getText().toString().trim();
+                final String phoneNumber = phoneNumberField.getText().toString().trim();
 
                 // CHANGE THIS TO USE EMAILS
 
@@ -83,6 +96,21 @@ public class SignUpActivity extends AppCompatActivity {
                                             "User has been created",
                                             Toast.LENGTH_SHORT)
                                             .show();
+
+                                    // Store user information
+                                    uid = fAuth.getCurrentUser().getUid();
+                                    DocumentReference documentReference = fStore.collection("users").document(uid);
+                                    Map<String, Object> userInfo = new HashMap<String, Object>();
+                                    userInfo.put("username", username);
+                                    userInfo.put("phoneNumber", phoneNumber);
+                                    userInfo.put("email", email);
+                                    documentReference.set(userInfo)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "User profile is created for " + username);
+                                                }
+                                            });
                                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 } else {
                                     Toast.makeText(SignUpActivity.this,
@@ -97,7 +125,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void signupRedirectLogin(View view) {
-        Intent i = new Intent(this, SignUpActivity.class);
+        Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
     }
 }
