@@ -65,7 +65,7 @@ public class AddBookActivity extends AppCompatActivity {
                 String isbn = isbnEditText.getText().toString();
                 String description = descriptionEditText.getText().toString();
                 Book book = new Book(title, author, isbn);
-                Library library = new Library();
+                Library library = Database.getLibrary();
                 library.addBook(book);
                 Database.writeLibrary(library);
                 Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
