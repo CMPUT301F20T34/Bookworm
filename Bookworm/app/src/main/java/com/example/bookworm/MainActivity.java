@@ -27,29 +27,16 @@ public class MainActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
+        // Allow realtime updates for database
+        Database.createListener();
+
         // If a user is not registered, redirect them
         // to the login screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
         }
 
-        Database.createListener();
-
-//        Firebase Firestore db = Firebase Firestore.getInstance();
-//        //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
-
-//        User exampleUser = new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
-//        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available", exampleUser);
-//        Request exampleReq = new Request(exampleBook, exampleUser, "Status");
-//        exampleLibrary = new Library();
-//        exampleLibrary.addUser(exampleUser);
-//        exampleLibrary.addBook(exampleBook);
-//        exampleLibrary.addRequest(exampleReq);
-//
-//        Database.writeLibrary(exampleLibrary);
-
-//        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));
-
+        // Create listeners for the buttons
         myBooklistButton = findViewById(R.id.booklist_button);
         myBooklistButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,3 +54,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+
+
+//        Firebase Firestore db = Firebase Firestore.getInstance();
+//        //Refer to https://cloud.google.com/firestore/docs/manage-data/add-data#javaandroid_3 for adding objects to database
+
+//        User exampleUser = new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+//        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available", exampleUser);
+//        Request exampleReq = new Request(exampleBook, exampleUser, "Status");
+//        exampleLibrary = new Library();
+//        exampleLibrary.addUser(exampleUser);
+//        exampleLibrary.addBook(exampleBook);
+//        exampleLibrary.addRequest(exampleReq);
+//
+//        Database.writeLibrary(exampleLibrary);
+
+//        Log.d(TAG, String.valueOf(exampleLibrary.getBooks()));

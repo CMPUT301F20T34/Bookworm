@@ -7,9 +7,11 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -80,13 +82,11 @@ public class Database {
     }
 
     static void createUser(final String username, String phoneNumber, String email) {
-        String uid = fAuth.getCurrentUser().getUid();
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
                 .collection("users")
-                .document(uid);
+                .document(username);
         Map<String, Object> userInfo = new HashMap<String, Object>();
-        userInfo.put("username", username);
         userInfo.put("phoneNumber", phoneNumber);
         userInfo.put("email", email);
         documentReference.set(userInfo)
@@ -96,6 +96,12 @@ public class Database {
                         Log.d(TAG, "User profile is created for " + username);
                     }
                 });
+    }
+
+    static Task<DocumentSnapshot> userExists(final String username) {
+        return libraryCollection.document(libraryName)
+                .collection("users").document(username)
+                .get();
     }
 
     /**
