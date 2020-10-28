@@ -1,16 +1,14 @@
 package com.example.bookworm;
 
-import android.app.DownloadManager;
-
 import java.util.ArrayList;
 
 public class User {
-    String username;
-    String password;
-    String email;
-    String phone;
-    ArrayList<Book> books;
-    ArrayList<Request> requests;
+    private String username;
+    private String password;
+    private String email;
+    private String phone;
+    private Owner owner;
+    private Borrower borrower;
 
     public User(){ }
 
@@ -19,8 +17,8 @@ public class User {
         this.password = password;
         this.email = email;
         this.phone = phone;
-        books = new ArrayList<Book>();
-        requests = new ArrayList<Request>();
+        this.borrower = new Borrower(new ArrayList<Book>(), new ArrayList<Request>());
+        this.owner = new Owner(new ArrayList<Book>(), new ArrayList<Request>());
     }
 
     public void editContact(String email, String phone){
@@ -44,12 +42,6 @@ public class User {
         return phone;
     }
 
-    public ArrayList<Book> getBooks() { return books; };
-
-    public ArrayList<Request> getRequests(){
-        return requests;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -66,11 +58,7 @@ public class User {
         this.phone = phone;
     }
 
-    public void setBooks(ArrayList<Book> books) {
-        this.books = books;
-    }
+    public Owner getOwner() { return this.owner; }
 
-    public void setRequests(ArrayList<Request> requests) {
-        this.requests = requests;
-    }
+    public Borrower getBorrower() { return this.borrower; }
 }

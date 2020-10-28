@@ -1,19 +1,27 @@
 package com.example.bookworm;
 
-public class Owner {
-    private Borrower borrower;
+import java.util.ArrayList;
 
-    public Owner() {};
+public class Owner implements BookUser {
+    private ArrayList<Book> books;
+    private ArrayList<Request> requests;
 
-    public Owner(Borrower borrower) {
-        this.borrower = borrower;
+    public Owner() { }
+
+    public Owner(ArrayList<Book> books, ArrayList<Request> requests) {
+        this.books = books;
+        this.requests = requests;
     }
 
-    /**
-     * Gets the owner related to this borrower object
-     * @return Borrower
-     */
-    public Borrower getBorrower() {
-        return borrower;
+
+    public void addBook(Book book) {
+        this.books.add(book);
+    }
+    public ArrayList<Book> getBooks() {
+        return this.books;
+    }
+    public ArrayList<Request> getRequests() { return this.requests; }
+    public void deleteBook(Book book) {
+        this.books.remove(book);
     }
 }
