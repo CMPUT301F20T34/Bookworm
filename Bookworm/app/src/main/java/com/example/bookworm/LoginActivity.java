@@ -38,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordField.getText().toString().trim();
 
                 // CHANGE THIS TO USE EMAILS
-                /* (query email from provided username) */
 
                 // Ensure email is non-empty
                 if (TextUtils.isEmpty(email)) {
@@ -51,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
                     passwordField.setError("Password is a required value.");
                     return;
                 }
+
+                /* (query email from provided username) */
 
                 // Authenticate user's information
                 fAuth.signInWithEmailAndPassword(email, password)

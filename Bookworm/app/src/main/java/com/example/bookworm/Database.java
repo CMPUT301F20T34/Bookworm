@@ -14,6 +14,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * Contains all methods related to reading and writing from the database.
+ */
 public class Database {
 
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
