@@ -90,6 +90,79 @@ public class Database {
     }
 
     /**
+     * Updates a book in the database or writes a new one if it does not exist yet
+     * @param book the book to be written
+     */
+    static void writeBook(final Book book){
+        final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
+        Task bookTask = bookCollection.whereEqualTo("isbn", book.getIsbn()).get();
+        bookTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                //If the book does not exist yet then a new one gets added
+                if (querySnapshot.getDocuments().size() == 0) {
+                    Map<String, Object> bookInfo = new HashMap<>();
+                    bookInfo.put("author", book.getAuthor());
+                    bookInfo.put("borrower", book.getBorrower());
+                    bookInfo.put("description", book.getDescription());
+                    bookInfo.put("isbn", book.getIsbn());
+                    bookInfo.put("owner", book.getOwner());
+                    bookInfo.put("photograph", book.getPhotograph());
+                    bookInfo.put("status", book.getStatus());
+                    bookInfo.put("title", book.getTitle());
+                    bookCollection.add(bookInfo)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error adding document", e);
+                                }
+                            });
+                }
+                //If the book already exist it is updated by its id
+                else{
+                    String bookId = querySnapshot.getDocuments().get(0).getId();
+                    bookCollection.document(bookId)
+                        .update(
+                                "author", book.getAuthor(),
+                                "borrower", book.getBorrower(),
+                                "description", book.getDescription(),
+                                "isbn", book.getIsbn(),
+                                "owner", book.getOwner(),
+                                "photograph", book.getPhotograph(),
+                                "status", book.getStatus(),
+                                "title", book.getTitle()
+                        )
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                            }
+                        });
+                }
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error querying collection");
+            }
+        });
+    }
+
+    /**
      * Creates a user in the database with their username,
      * email, and phone number
      * @param username the username of the user
@@ -129,19 +202,19 @@ public class Database {
      * @param collection the collection to be queried
      * @param fields a list of fields to be looked at
      * @param values a list of values to be checked for
-     * @return a Task for a QuerySnapshot that contains zero or more DocumentReferences
+     * @return a Task for a QuerySnapshot that contains zero or more DocumentReferences that can be retrieved by QuerySnapshot.getDocuments()
      */
-    static Task<QuerySnapshot> queryCollection(String collection, ArrayList<String> fields, ArrayList<String> values){
-        if (fields.size() != values.size()){
+    static Task<QuerySnapshot> queryCollection(String collection, String[] fields, String[] values){
+        if (fields.length != values.length){
             throw new IllegalArgumentException("Size of fields must match size of values");
         }
-        if (fields.size() == 0){
+        if (fields.length == 0){
             throw new IllegalArgumentException("ArrayList cannot be empty");
         }
         CollectionReference queryCollection = libraryCollection.document(libraryName).collection(collection);
         Query query = (Query) queryCollection;
-        for (int i = 0; i < fields.size(); i++){
-            query = query.whereEqualTo(fields.get(i), values.get(i));
+        for (int i = 0; i < fields.length; i++){
+            query = query.whereEqualTo(fields[i], values[i]);
         }
         return query.get();
     }
