@@ -70,11 +70,6 @@ public class OwnerBooklistActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                return true;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (view != null){
                     String isbn = ((TextView) view.findViewById(R.id.textView4)).getText().toString();
@@ -82,6 +77,12 @@ public class OwnerBooklistActivity extends AppCompatActivity {
                     intent.putExtra("isbn", isbn);
                     startActivity(intent);
                 }
+                return true;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
             }
 
             @Override

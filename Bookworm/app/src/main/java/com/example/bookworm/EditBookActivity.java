@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -135,8 +136,13 @@ public class EditBookActivity extends AppCompatActivity {
                     selectedBook.setIsbn(isbn);
                     selectedBook.setDescription(description);
                     Database.writeBook(selectedBook);
-                    Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
-                    startActivity(intent);
+                    final Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            startActivity(intent);
+                        }
+                    }, 500);
                 }
             }
         });

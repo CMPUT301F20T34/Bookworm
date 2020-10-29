@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -106,10 +107,17 @@ public class AddBookActivity extends AppCompatActivity {
                     book.setIsbn(isbn);
                     book.setDescription(description);
                     Database.writeBook(book);
-                    Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
-                    startActivity(intent);
+                    final Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            startActivity(intent);
+                        }
+                    }, 500);
                 }
             }
         });
     }
+
+
 }
