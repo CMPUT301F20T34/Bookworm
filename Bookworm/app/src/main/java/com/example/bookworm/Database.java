@@ -7,16 +7,23 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Contains all methods related to reading and writing from the database.
@@ -27,6 +34,9 @@ public class Database {
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference libraryCollection = db.collection("Libraries");
     private static final String libraryName = "Main_Library";
+    private static final String bookName = "books";
+    private static final String requestName = "requests";
+    private static final String userName = "users";
     private static final String TAG = "Sample";
 
     static Library getLibrary() {
@@ -94,7 +104,10 @@ public class Database {
                 {
                     //Log.d(TAG, String.valueOf(doc.getData()));
                     //Updates the array lists in the library object
-                    library = doc.toObject(Library.class);
+                    Library newLibrary = doc.toObject(Library.class);
+                    library.setBooks(newLibrary.getBooks());
+                    library.setRequests(newLibrary.getRequests());
+                    library.setUsers(newLibrary.getUsers());
                 }
             }
         });
