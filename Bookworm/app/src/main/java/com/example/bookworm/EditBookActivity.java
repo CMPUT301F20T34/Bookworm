@@ -94,8 +94,7 @@ public class EditBookActivity extends AppCompatActivity {
         deletePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Library library = Database.getLibrary();
-                ArrayList<Book> books = library.getBooks();
+
             }
         });
 
@@ -116,7 +115,23 @@ public class EditBookActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                final ArrayList<Integer> returnValue = new ArrayList<Integer>();
+                returnValue.add(0);
+                Database.deleteBook(selectedBook, returnValue);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        if (returnValue.get(0) == 1) {
+                            Toast.makeText(EditBookActivity.this, "Your book is successfully deleted", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
+                            startActivity(intent);
+                        } else if (returnValue.get(0) == -1){
+                            Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book, please try again", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, 1000);
             }
         });
 
@@ -125,15 +140,12 @@ public class EditBookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String title = titleEditText.getText().toString();
                 String author = authorEditText.getText().toString();
-                String isbn = isbnText.getText().toString();
                 String description = descriptionEditText.getText().toString();
-                String owner = ownerNameText.getText().toString();
                 if (title.equals("") || author.equals("")) {
                     Toast.makeText(EditBookActivity.this, "Title and author are required", Toast.LENGTH_SHORT).show();
                 } else {
                     selectedBook.setTitle(title);
                     selectedBook.setAuthor(author);
-                    selectedBook.setIsbn(isbn);
                     selectedBook.setDescription(description);
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);
