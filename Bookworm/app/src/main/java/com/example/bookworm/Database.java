@@ -131,7 +131,7 @@ public class Database {
      * @param values a list of values to be checked for
      * @return a Task for a QuerySnapshot that contains zero or more DocumentReferences
      */
-    static Task<QuerySnapshot> getBook(String collection, ArrayList<String> fields, ArrayList<String> values){
+    static Task<QuerySnapshot> queryCollection(String collection, ArrayList<String> fields, ArrayList<String> values){
         if (fields.size() != values.size()){
             throw new IllegalArgumentException("Size of fields must match size of values");
         }
