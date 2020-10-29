@@ -125,6 +125,28 @@ public class Database {
     }
 
     /**
+     * Queries a collection for a field matching a value
+     * @param collection the collection to be queried
+     * @param fields a list of fields to be looked at
+     * @param values a list of values to be checked for
+     * @return a Task for a QuerySnapshot that contains zero or more DocumentReferences
+     */
+    static Task<QuerySnapshot> getBook(String collection, ArrayList<String> fields, ArrayList<String> values){
+        if (fields.size() != values.size()){
+            throw new IllegalArgumentException("Size of fields must match size of values");
+        }
+        if (fields.size() == 0){
+            throw new IllegalArgumentException("ArrayList cannot be empty");
+        }
+        CollectionReference queryCollection = libraryCollection.document(libraryName).collection(collection);
+        Query query = (Query) queryCollection;
+        for (int i = 0; i < fields.size(); i++){
+            query = query.whereEqualTo(fields.get(i), values.get(i));
+        }
+        return query.get();
+    }
+
+    /**
      * Creates a snapshot listener for the given library so it is updated whenever a change is made to the database
      *
      */
