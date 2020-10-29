@@ -55,14 +55,17 @@ public class SignUpActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String username = usernameField.getText().toString().trim();
-                final String password1 = password1Field.getText().toString().trim();
-                final String password2 = password2Field.getText().toString().trim();
-                final String email = emailField.getText().toString().trim();
+                final String username   = usernameField.getText().toString().trim();
+                final String password1  = password1Field.getText().toString().trim();
+                final String password2  = password2Field.getText().toString().trim();
+                final String email  = emailField.getText().toString().trim();
                 final String phoneNumber = phoneNumberField.getText().toString().trim();
-                Task userExists;
 
-                // CHANGE THIS TO USE EMAILS
+                // Ensure username is non-empty
+                if (TextUtils.isEmpty(username)) {
+                    usernameField.setError("Email is a required value.");
+                    return;
+                }
 
                 // Ensure email is non-empty
                 if (TextUtils.isEmpty(email)) {
@@ -82,56 +85,65 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
+                // Phone number is allowed to be empty
+
+                /* Check if the username is already taken */
                 Database.userExists(username)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                if (!documentSnapshot.exists()) {
-                                    fAuth.createUserWithEmailAndPassword(email, password1)
-                                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Toast.makeText(SignUpActivity.this,
-                                                                "User has been created",
-                                                                Toast.LENGTH_SHORT)
-                                                                .show();
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                                        // Store user information
-                                                        Database.createUser(username, phoneNumber, email);
-                                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                                    } else {
-                                                        Toast.makeText(SignUpActivity.this,
-                                                                "Error: " + task.getException().getMessage(),
-                                                                Toast.LENGTH_LONG)
-                                                                .show();
-                                                    }
-                                                }
-                                            });
-                                } else {
-                                    Toast.makeText(SignUpActivity.this,
-                                            "Error: Username already exists",
-                                            Toast.LENGTH_LONG)
-                                            .show();
-                                }
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
+                            /* If the username is not yet taken */
+                            if (!documentSnapshot.exists()) {
+                                fAuth.createUserWithEmailAndPassword(email, password1)
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                            // Successfully created user, redirect to main activity
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(SignUpActivity.this,
+                                                    "User has been created",
+                                                    Toast.LENGTH_SHORT)
+                                                    .show();
+                                                Database.createUser(username, phoneNumber, email);
+                                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            } else {
+
+                                                // Notify of failed user creation
+                                                Toast.makeText(SignUpActivity.this,
+                                                    "Error: " + task.getException().getMessage(),
+                                                    Toast.LENGTH_LONG)
+                                                    .show();
+                                            }
+                                        }
+                                    });
+                            } else {
+                                /* Username is taken */
                                 Toast.makeText(SignUpActivity.this,
-                                        "Unable to access database. Please try again later.",
-                                        Toast.LENGTH_LONG)
-                                        .show();
+                                    "Error: Username already exists",
+                                    Toast.LENGTH_LONG)
+                                    .show();
                             }
-                        });
-
-                // write to DB
-
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(SignUpActivity.this,
+                                "Unable to access database. Please try again later.",
+                                Toast.LENGTH_LONG)
+                                .show();
+                            }
+                    });
             }
         });
     }
 
+    /**
+     * Redirects the user to the login screen
+     * @param view the clicked text
+     */
     public void signupRedirectLogin(View view) {
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
