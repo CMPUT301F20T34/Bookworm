@@ -81,6 +81,13 @@ public class Database {
                 });
     }
 
+    /**
+     * Creates a user in the database with their username,
+     * email, and phone number
+     * @param username the username of the user
+     * @param phoneNumber email of the user
+     * @param email phone number of the user
+     */
     static void createUser(final String username, String phoneNumber, String email) {
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
@@ -98,6 +105,11 @@ public class Database {
                 });
     }
 
+    /**
+     * Checks if a user exists in the database with the given username
+     * @param username the username to be checked
+     * @return Task<DocumentSnapshot>
+     */
     static Task<DocumentSnapshot> userExists(final String username) {
         return libraryCollection.document(libraryName)
                 .collection("users").document(username)
