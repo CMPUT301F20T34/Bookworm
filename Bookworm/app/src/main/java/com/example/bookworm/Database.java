@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,12 +25,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Contains all methods related to reading and writing from the database.
  */
 public class Database {
-
+    private static final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private static Library library = new Library();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference libraryCollection = db.collection("Libraries");
@@ -48,29 +51,25 @@ public class Database {
      * @param lib the library to be written
      */
     static void writeLibrary(Library lib){
-        WriteBatch batch = db.batch();
+        final WriteBatch batch = db.batch();
         ArrayList<Book> books = lib.getBooks();
         ArrayList<User> users = lib.getUsers();
         ArrayList<Request> requests = lib.getRequests();
-        DocumentReference tmpDoc;
 
         CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
         CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
         CollectionReference requestCollection = libraryCollection.document(libraryName).collection("requests");
 
         for (Book book : books) {
-            tmpDoc = bookCollection.document();
-            batch.set(tmpDoc, book);
+            batch.set(bookCollection.document(), book);
         }
 
         for (User user : users) {
-            tmpDoc = userCollection.document();
-            batch.set(tmpDoc, user);
+            batch.set(userCollection.document(), user);
         }
 
         for (Request request : requests) {
-            tmpDoc = requestCollection.document();
-            batch.set(tmpDoc, request);
+            batch.set(requestCollection.document(), request);
         }
 
         batch.commit()
@@ -88,6 +87,41 @@ public class Database {
                         Log.d(TAG, "Data could not be added!" + e.toString());
                     }
                 });
+    }
+
+    /**
+     * Creates a user in the database with their username,
+     * email, and phone number
+     * @param username the username of the user
+     * @param phoneNumber email of the user
+     * @param email phone number of the user
+     */
+    static void createUser(final String username, String phoneNumber, String email) {
+        DocumentReference documentReference = libraryCollection
+                .document(libraryName)
+                .collection("users")
+                .document(username);
+        Map<String, Object> userInfo = new HashMap<String, Object>();
+        userInfo.put("phoneNumber", phoneNumber);
+        userInfo.put("email", email);
+        documentReference.set(userInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "User profile is created for " + username);
+                    }
+                });
+    }
+
+    /**
+     * Checks if a user exists in the database with the given username
+     * @param username the username to be checked
+     * @return Task<DocumentSnapshot>
+     */
+    static Task<DocumentSnapshot> userExists(final String username) {
+        return libraryCollection.document(libraryName)
+                .collection("users").document(username)
+                .get();
     }
 
     /**
