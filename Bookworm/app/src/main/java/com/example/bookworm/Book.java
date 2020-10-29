@@ -8,35 +8,24 @@ public class Book {
     private String description;
     private String isbn;
     private String status;
-    private User owner;
-    private User borrower;
+    private String owner;
+    private String ownerId;
+    private String borrower;
 //    private ArrayList<Request> requests;
     private Drawable photograph;
 
-    public Book(){ }
-
-    public Book(String title, String author, String description, String status) {
-        this.title = title;
-        this.author = author;
-        this.description = description;
-        this.status = status;
+    public Book(String owner, String ownerId) {
         this.owner = owner;
-//        Create ISBN
+        this.ownerId = ownerId;
     }
 
-    public Book (String title, String author, String isbn, User owner){
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-        this.owner = owner;
-    }
-
-    /* Create Book object with minimal parameters */
-    public Book (String title, String author, String isbn) {
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-    }
+//    /* Create Book object with minimal parameters */
+//    public Book (String title, String author, String isbn, String owner) {
+//        this.title = title;
+//        this.author = author;
+//        this.isbn = isbn;
+//        this.owner = owner;
+//    }
 
 
     /**
@@ -97,9 +86,9 @@ public class Book {
 
     /**
      * Returns the owner for the book
-     * @return Owner
+     * @return String
      */
-    public User getOwner() {
+    public String getOwner() {
         return this.owner;
     }
 
@@ -107,15 +96,31 @@ public class Book {
      * Sets the owner for the book
      * @param owner owner of the book
      */
-    public void setOwner(User owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    /**
+     * Returns the ownerId for the book
+     * @return String
+     */
+    public String getOwnerId() {
+        return this.ownerId;
+    }
+
+    /**
+     * Sets the ownerId for the book
+     * @param ownerId ownerId of the book
+     */
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     /**
      * Gets the current borrower of the book
      * @return Borrower
      */
-    public User getBorrower() {
+    public String getBorrower() {
         return borrower;
     }
 
@@ -123,7 +128,7 @@ public class Book {
      * Sets a new borrower of the book.
      * @param borrower new borrower of the book
      */
-    public void setBorrower(User borrower) {
+    public void setBorrower(String borrower) {
         this.borrower = borrower;
     }
 //

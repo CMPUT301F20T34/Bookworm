@@ -9,10 +9,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 public class EditBookActivity extends AppCompatActivity {
 
+    private FirebaseAuth fAuth;
+    private Book selectedBook;
     private EditText titleEditText;
     private EditText authorEditText;
     private EditText isbnEditText;
@@ -45,9 +49,24 @@ public class EditBookActivity extends AppCompatActivity {
         saveChangesButton = findViewById(R.id.button12);
 
         Intent intent = getIntent();
-        titleEditText.setText(intent.getStringExtra("title"));
-        authorEditText.setText(intent.getStringExtra("author"));
-        isbnEditText.setText(intent.getStringExtra("isbn"));
+        String title = intent.getStringExtra("title");
+        String author = intent.getStringExtra("author");
+        String isbn = intent.getStringExtra("isbn");
+        fAuth = FirebaseAuth.getInstance();
+        String uid = fAuth.getCurrentUser().getUid();
+        ArrayList<Book> booklist = Database.getLibrary().getBooks();
+        for (Book book : booklist) {
+            if (book.getTitle().equals(title) && book.getAuthor().equals(author)
+                    && book.getIsbn().equals(isbn) && book.getOwnerId().equals(uid)) {
+                selectedBook = book;
+            }
+        }
+
+        titleEditText.setText(selectedBook.getTitle());
+        authorEditText.setText(selectedBook.getAuthor());
+        isbnEditText.setText(selectedBook.getIsbn());
+        descriptionEditText.setText(selectedBook.getDescription());
+        ownerNameText.setText(selectedBook.getOwner());
 
         viewPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +87,6 @@ public class EditBookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Library library = Database.getLibrary();
                 ArrayList<Book> books = library.getBooks();
-                for (library)
             }
         });
 
