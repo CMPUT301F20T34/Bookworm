@@ -13,7 +13,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -37,15 +41,22 @@ public class OwnerBooklistActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        ArrayList<Book> temp = Database.getLibrary().getBooks();
-        booklist = new ArrayList<Book>();
-        for (Book book : temp) {
-            if (book.getOwnerId().equals(fAuth.getCurrentUser().getUid())) {
-                booklist.add(book);
+
+        String[] fields = {"ownerId"};
+        String[] values = {fAuth.getCurrentUser().getUid()};
+        Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if (task.isSuccessful()) {
+                booklist = new ArrayList<Book>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    booklist.add(document.toObject(Book.class));
+                }
+                bookListAdapter = new BooklistAdapter(booklist);
+                recyclerView.setAdapter(bookListAdapter);
             }
-        }
-        bookListAdapter = new BooklistAdapter(booklist);
-        recyclerView.setAdapter(bookListAdapter);
+            }
+        });
 
         addBookButton = findViewById(R.id.button2);
         addBookButton.setOnClickListener(new View.OnClickListener() {
@@ -66,22 +77,10 @@ public class OwnerBooklistActivity extends AppCompatActivity {
             public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (view != null){
-                    String title = ((TextView) view.findViewById(R.id.textView2)).getText().toString();
-                    String author = ((TextView) view.findViewById(R.id.textView3)).getText().toString();
                     String isbn = ((TextView) view.findViewById(R.id.textView4)).getText().toString();
-                    Book selectedBook = null;
-                    for (Book book : booklist) {
-                        if (book.getTitle().equals(title) && book.getAuthor().equals(author) && book.getIsbn().equals(isbn)) {
-                            selectedBook = book;
-                        }
-                    }
-                    if (selectedBook != null) {
-                        Intent intent = new Intent(recyclerView.getContext(), EditBookActivity.class);
-                        intent.putExtra("title", title);
-                        intent.putExtra("author", author);
-                        intent.putExtra("isbn", isbn);
-                        startActivity(intent);
-                    }
+                    Intent intent = new Intent(recyclerView.getContext(), EditBookActivity.class);
+                    intent.putExtra("isbn", isbn);
+                    startActivity(intent);
                 }
             }
 

@@ -14,6 +14,10 @@ public class Book {
 //    private ArrayList<Request> requests;
     private Drawable photograph;
 
+    public Book() {
+
+    }
+
     public Book(String owner, String ownerId) {
         this.owner = owner;
         this.ownerId = ownerId;

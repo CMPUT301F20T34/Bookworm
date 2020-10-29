@@ -109,6 +109,7 @@ public class Database {
                     bookInfo.put("description", book.getDescription());
                     bookInfo.put("isbn", book.getIsbn());
                     bookInfo.put("owner", book.getOwner());
+                    bookInfo.put("ownerId", book.getOwnerId());
                     bookInfo.put("photograph", book.getPhotograph());
                     bookInfo.put("status", book.getStatus());
                     bookInfo.put("title", book.getTitle());
@@ -136,6 +137,7 @@ public class Database {
                                 "description", book.getDescription(),
                                 "isbn", book.getIsbn(),
                                 "owner", book.getOwner(),
+                                "ownerID", book.getOwnerId(),
                                 "photograph", book.getPhotograph(),
                                 "status", book.getStatus(),
                                 "title", book.getTitle()

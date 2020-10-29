@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,8 +9,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -19,7 +25,7 @@ public class EditBookActivity extends AppCompatActivity {
     private Book selectedBook;
     private EditText titleEditText;
     private EditText authorEditText;
-    private EditText isbnEditText;
+    private TextView isbnText;
     private EditText descriptionEditText;
     private TextView ownerNameText;
     private Button viewPhotoButton;
@@ -37,7 +43,7 @@ public class EditBookActivity extends AppCompatActivity {
 
         titleEditText = findViewById(R.id.editTextTextPersonName);
         authorEditText = findViewById(R.id.editTextTextPersonName2);
-        isbnEditText = findViewById(R.id.editTextNumber);
+        isbnText = findViewById(R.id.textView9);
         descriptionEditText = findViewById(R.id.editTextTextPersonName4);
         ownerNameText = findViewById(R.id.textView8);
         viewPhotoButton = findViewById(R.id.button3);
@@ -48,25 +54,27 @@ public class EditBookActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.button11);
         saveChangesButton = findViewById(R.id.button12);
 
+        String[] fields = {"ownerId", "isbn"};
         Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
-        String author = intent.getStringExtra("author");
         String isbn = intent.getStringExtra("isbn");
         fAuth = FirebaseAuth.getInstance();
         String uid = fAuth.getCurrentUser().getUid();
-        ArrayList<Book> booklist = Database.getLibrary().getBooks();
-        for (Book book : booklist) {
-            if (book.getTitle().equals(title) && book.getAuthor().equals(author)
-                    && book.getIsbn().equals(isbn) && book.getOwnerId().equals(uid)) {
-                selectedBook = book;
+        String[] values = {uid, isbn};
+        Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    selectedBook = document.toObject(Book.class);
+                }
+                titleEditText.setText(selectedBook.getTitle());
+                authorEditText.setText(selectedBook.getAuthor());
+                isbnText.setText(selectedBook.getIsbn());
+                descriptionEditText.setText(selectedBook.getDescription());
+                ownerNameText.setText(selectedBook.getOwner());
             }
-        }
-
-        titleEditText.setText(selectedBook.getTitle());
-        authorEditText.setText(selectedBook.getAuthor());
-        isbnEditText.setText(selectedBook.getIsbn());
-        descriptionEditText.setText(selectedBook.getDescription());
-        ownerNameText.setText(selectedBook.getOwner());
+            }
+        });
 
         viewPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +122,22 @@ public class EditBookActivity extends AppCompatActivity {
         saveChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String title = titleEditText.getText().toString();
+                String author = authorEditText.getText().toString();
+                String isbn = isbnText.getText().toString();
+                String description = descriptionEditText.getText().toString();
+                String owner = ownerNameText.getText().toString();
+                if (title.equals("") || author.equals("")) {
+                    Toast.makeText(EditBookActivity.this, "Title and author are required", Toast.LENGTH_SHORT).show();
+                } else {
+                    selectedBook.setTitle(title);
+                    selectedBook.setAuthor(author);
+                    selectedBook.setIsbn(isbn);
+                    selectedBook.setDescription(description);
+                    Database.writeBook(selectedBook);
+                    Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }

@@ -63,10 +63,7 @@ public class AddBookActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         ownerNameText.setText(document.getId());
                         book = new Book(document.getId(), uid);
-//                        Log.d(TAG, document.getId() + " => " + document.getData());
                     }
-                } else {
-//                    Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
         });
@@ -108,9 +105,7 @@ public class AddBookActivity extends AppCompatActivity {
                     book.setAuthor(author);
                     book.setIsbn(isbn);
                     book.setDescription(description);
-                    Library library = Database.getLibrary();
-                    library.addBook(book);
-                    Database.writeLibrary(library);
+                    Database.writeBook(book);
                     Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
                     startActivity(intent);
                 }
