@@ -1,6 +1,8 @@
 package com.example.bookworm.util;
 
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
 
@@ -65,5 +67,31 @@ public class Util {
         }
 
         return num.substring(0, num.length() - 1);
+    }
+
+    /**
+     * Validates that a given email is formatted correctly
+     * https://www.tutorialspoint.com/validate-email-address-in-java
+     * Accessed July 28th, 2020
+     * @param email the email to test
+     * @return boolean
+     */
+    static public boolean validateEmail(String email) {
+        Pattern p = Pattern.compile("(^[\\w-_\\.+]*[\\w-_\\.]\\@(?:[\\w]+\\.)+[\\w]+[\\w]$)");
+        Matcher m = p.matcher(email);
+        return (m.find() && m.start() == 0 && m.end() == email.length());
+    }
+
+    /**
+     * Validates that a given phone number is formatted correctly
+     * https://www.baeldung.com/java-regex-validate-phone-numbers
+     * Accessed October 28th, 2020
+     * @param num the phone number to test
+     * @return boolean
+     */
+    static public boolean validatePhoneNumber(String num) {
+        Pattern p = Pattern.compile("(^(?:\\+\\d{1,3}(?: )?)?(?:(?:\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$)");
+        Matcher m = p.matcher(num);
+        return (m.find() && m.start() == 0 && m.end() == num.length());
     }
 }
