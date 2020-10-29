@@ -94,7 +94,7 @@ public class Database {
      * Updates a book in the database or writes a new one if it does not exist yet
      * @param book the book to be written
      */
-    static void writeBook(final Book book){
+    static void writeBook(final Book book, final ArrayList<Integer> value){
         final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
         Task bookTask = bookCollection.whereEqualTo("isbn", book.getIsbn()).get();
         bookTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -118,12 +118,14 @@ public class Database {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
                                     Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                                    value.set(0, 1);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Log.w(TAG, "Error adding document", e);
+                                    value.set(0, -1);
                                 }
                             });
                 }
@@ -146,12 +148,14 @@ public class Database {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                value.set(0, 1);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w(TAG, "Error updating document", e);
+                                value.set(0, -1);
                             }
                         });
                 }

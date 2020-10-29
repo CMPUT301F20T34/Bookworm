@@ -23,6 +23,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+
 public class AddBookActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -106,14 +108,23 @@ public class AddBookActivity extends AppCompatActivity {
                     book.setAuthor(author);
                     book.setIsbn(isbn);
                     book.setDescription(description);
-                    Database.writeBook(book);
-                    final Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
+                    final ArrayList<Integer> returnValue = new ArrayList<Integer>();
+                    returnValue.add(0);
+                    Database.writeBook(book, returnValue);
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            startActivity(intent);
+                            if (returnValue.get(0) == 1) {
+                                Toast.makeText(AddBookActivity.this, "Your book is successfully added", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
+                                startActivity(intent);
+                            } else if (returnValue.get(0) == -1){
+                                Toast.makeText(AddBookActivity.this, "Something went wrong while adding your book", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(AddBookActivity.this, "Something went wrong while adding your book, please try again", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }, 500);
+                    }, 1000);
                 }
             }
         });

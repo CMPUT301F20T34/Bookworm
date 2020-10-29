@@ -135,14 +135,23 @@ public class EditBookActivity extends AppCompatActivity {
                     selectedBook.setAuthor(author);
                     selectedBook.setIsbn(isbn);
                     selectedBook.setDescription(description);
-                    Database.writeBook(selectedBook);
-                    final Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
+                    final ArrayList<Integer> returnValue = new ArrayList<Integer>();
+                    returnValue.add(0);
+                    Database.writeBook(selectedBook, returnValue);
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            startActivity(intent);
+                            if (returnValue.get(0) == 1) {
+                                Toast.makeText(EditBookActivity.this, "Your book is successfully updated", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
+                                startActivity(intent);
+                            } else if (returnValue.get(0) == -1){
+                                Toast.makeText(EditBookActivity.this, "Something went wrong while updating your book", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(EditBookActivity.this, "Something went wrong while updating your book, please try again", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }, 500);
+                    }, 1000);
                 }
             }
         });
