@@ -137,7 +137,7 @@ public class Database {
                                 "description", book.getDescription(),
                                 "isbn", book.getIsbn(),
                                 "owner", book.getOwner(),
-                                "ownerID", book.getOwnerId(),
+                                "ownerId", book.getOwnerId(),
                                 "photograph", book.getPhotograph(),
                                 "status", book.getStatus(),
                                 "title", book.getTitle()
