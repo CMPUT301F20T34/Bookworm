@@ -2,7 +2,11 @@ package com.example.bookworm;
 
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Book {
+    private static ArrayList<String> validStatuses = new ArrayList<String>(Arrays.asList("available", "requested", "accepted", "borrowed"));
     private String title;
     private String author;
     private String description;
@@ -77,6 +81,9 @@ public class Book {
      * @param status status of the book
      */
     public void setStatus(String status) {
+        if (!this.validStatuses.contains(status)){
+            throw new IllegalArgumentException("Status must be one of available, requested, accepted, borrowed");
+        }
         this.status = status;
     }
 

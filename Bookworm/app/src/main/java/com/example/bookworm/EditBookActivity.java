@@ -64,7 +64,7 @@ public class EditBookActivity extends AppCompatActivity {
         Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
+            if (task.isSuccessful() && task.getResult().size() > 0) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     selectedBook = document.toObject(Book.class);
                 }

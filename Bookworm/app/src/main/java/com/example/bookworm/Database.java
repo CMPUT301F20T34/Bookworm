@@ -21,6 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -221,6 +222,25 @@ public class Database {
     }
 
     /**
+     * Finds all the books in which the status matches one of the provided and
+     * the keyword given
+     * @param statuses An array of statues that the book can match
+     * @param keyword The keyword to be searched for
+     * @return A task containing a querysnapshot that returns all documents matching the parameters
+     */
+    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
+        if (statuses.length == 0){
+            throw new IllegalArgumentException("statuses cannot be empty");
+        }
+
+        Query query = libraryCollection.document(libraryName).collection("books")
+                .whereIn("status", Arrays.asList(statuses))
+                .whereArrayContains("description", keyword);
+
+        return query.get();
+    }
+
+    /**
      * Creates a user in the database with their username,
      * email, and phone number
      * @param username the username of the user
@@ -240,6 +260,71 @@ public class Database {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "User profile is created for " + username);
+                    }
+                });
+    }
+
+    /**
+     * Updates the user in the database
+     * @param user The user to update with
+     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
+     */
+    static void updateUser(final User user, final ArrayList<Integer> returnValue){
+        final CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
+        Task userTask = userCollection.document(user.getUsername()).get();
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
+        DocumentReference documentReference = libraryCollection
+                .document(libraryName)
+                .collection("users")
+                .document(user.getUsername());
+        Map<String, Object> userInfo = new HashMap<String, Object>();
+        userInfo.put("phoneNumber", user.getPhone());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("borrower", user.getBorrower());
+        userInfo.put("owner", user.getOwner());
+        documentReference.set(userInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "User profile updated");
+                        returnValue.set(0,1);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Failed to update user profile");
+                        returnValue.set(0,-1);
+                    }
+                });
+    }
+
+    /**
+     * Deletes a user from the database
+     * @param user The user to be deleted
+     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
+     */
+    static void deleteUser(final User user, final ArrayList<Integer> returnValue){
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
+        libraryCollection.document(libraryName).collection("users")
+                .document(user.getUsername())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Book does not exist in database");
+                        returnValue.set(0, 1);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                        returnValue.set(0, -1);
                     }
                 });
     }
