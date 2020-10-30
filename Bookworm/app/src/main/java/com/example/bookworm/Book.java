@@ -21,16 +21,8 @@ public class Book {
     public Book(String owner, String ownerId) {
         this.owner = owner;
         this.ownerId = ownerId;
+        this.status = "available";
     }
-
-//    /* Create Book object with minimal parameters */
-//    public Book (String title, String author, String isbn, String owner) {
-//        this.title = title;
-//        this.author = author;
-//        this.isbn = isbn;
-//        this.owner = owner;
-//    }
-
 
     /**
      * Gets the title of the book
