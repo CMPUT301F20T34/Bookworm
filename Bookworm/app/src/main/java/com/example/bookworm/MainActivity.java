@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     String TAG = "Sample";
     private Button myBooklistButton;
     private Button myProfileButton;
+    private Button mySearchButton;
     FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fAuth = FirebaseAuth.getInstance();
+        final EditText mySearchTerm = findViewById(R.id.keywordSearchBar);
 
         // Allow realtime updates for database
         Database.createListener();
@@ -50,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), Profile.class));
+            }
+        });
+
+        mySearchButton = findViewById(R.id.search_button);
+        mySearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
             }
         });
     }

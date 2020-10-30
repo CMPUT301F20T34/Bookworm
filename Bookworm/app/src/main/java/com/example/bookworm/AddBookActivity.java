@@ -26,7 +26,7 @@ public class AddBookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_book);
 
-        titleEditText = findViewById(R.id.editTextTextPersonName);
+        titleEditText = findViewById(R.id.keywordSearchBar);
         authorEditText = findViewById(R.id.editTextTextPersonName2);
         isbnEditText = findViewById(R.id.editTextNumber);
         descriptionEditText = findViewById(R.id.editTextTextPersonName4);

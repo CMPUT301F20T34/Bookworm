@@ -219,6 +219,19 @@ public class Database {
     }
 
     /**
+     * Returns all books that contain the searchTerm as their exact title.
+     * Will rework in the future to return books that contain the searchTerm.
+     * @param searchTerm The keyword that is being searched
+     * @return Task<QuerySnapshot> The result of the query.
+     */
+    public Task<QuerySnapshot> searchBooks(final String searchTerm) {
+        CollectionReference books = libraryCollection.document(libraryName)
+            .collection(bookName);
+
+        return books.whereEqualTo("title", searchTerm).get();
+    }
+
+    /**
      * Creates a user in the database with their username,
      * email, and phone number
      * @param username the username of the user
@@ -249,6 +262,16 @@ public class Database {
      */
     static Task<DocumentSnapshot> getUser(final String username){
         return libraryCollection.document(libraryName).collection("users").document(username).get();
+    }
+
+    /**
+     * Returns the user from a given email.
+     * Used to retrieve the user info from the signed in user
+     * @param email the email of the user
+     * @return Task<QuerySnapshot>
+     */
+    static Task<QuerySnapshot> getUserFromEmail(final String email) {
+        return libraryCollection.document(libraryName).collection(userName).whereEqualTo("email", email).get();
     }
 
     /**

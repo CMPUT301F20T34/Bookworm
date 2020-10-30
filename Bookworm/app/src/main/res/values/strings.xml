@@ -8,7 +8,7 @@
     <string name="my_booklist">MY BOOKLIST</string>
     <string name="borrow_info">BORROW INFO</string>
     <string name="username">username</string>
-    <string name="phone_profile">Phone:</string>
+    <string name="phone_profile">Phone: </string>
     <string name="address_profile">Address:</string>
     <string name="n_a">N/A</string>
     <string name="log_out">LOG OUT</string>
@@ -24,4 +24,5 @@
     <string name="register">REGISTER</string>
     <string name="already_signed_up_login_here">Already signed up? Login here!</string>
     <string name="need_an_account_sign_up_for_one_here">Need an account? Sign up for one here!</string>
+    <string name="email_profile">Email: </string>
 </resources>
