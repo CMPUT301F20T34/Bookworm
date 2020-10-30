@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,7 +61,10 @@ public class MainActivity extends AppCompatActivity {
         mySearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                TextView keywordView = findViewById(R.id.keywordSearchBar);
+                Intent intent = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                intent.putExtra("searchTerm", keywordView.getText().toString());
+                startActivity(intent);
             }
         });
     }

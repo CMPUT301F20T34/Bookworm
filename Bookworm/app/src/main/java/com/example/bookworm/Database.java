@@ -224,7 +224,7 @@ public class Database {
      * @param searchTerm The keyword that is being searched
      * @return Task<QuerySnapshot> The result of the query.
      */
-    public Task<QuerySnapshot> searchBooks(final String searchTerm) {
+    public static Task<QuerySnapshot> searchBooks(final String searchTerm) {
         CollectionReference books = libraryCollection.document(libraryName)
             .collection(bookName);
 

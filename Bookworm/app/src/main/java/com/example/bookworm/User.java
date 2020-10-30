@@ -21,6 +21,15 @@ public class User {
         this.owner = new Owner(new ArrayList<Book>(), new ArrayList<Request>());
     }
 
+    /**
+     * Used for showing books alongside their owners
+     * Only uses the minimum info to identify a user;
+     * @param username username of the user;
+     */
+    public User(String username) {
+        this.username = username;
+    }
+
     public void editContact(String email, String phone){
         this.email = email;
         this.phone = phone;

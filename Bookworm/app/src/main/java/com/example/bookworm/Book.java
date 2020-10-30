@@ -15,13 +15,19 @@ public class Book {
 
     public Book(){ }
 
-    public Book(String title, String author, String description, String status) {
+    public Book(String title, String author, String description, String isbn, String status) {
         this.title = title;
         this.author = author;
         this.description = description;
+        this.isbn = isbn;
         this.status = status;
-        this.owner = owner;
-//        Create ISBN
+    }
+
+    public Book(String title, String author, String username, String status) {
+        this.title = title;
+        this.author = author;
+        this.owner = new User(username);
+        this.status = status;
     }
 
     public Book (String title, String author, String isbn, User owner){
@@ -32,7 +38,7 @@ public class Book {
     }
 
     /* Create Book object with minimal parameters */
-    public Book (String title, String author, String isbn) {
+    public Book(String title, String author, String isbn) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
