@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -21,10 +20,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -244,6 +240,15 @@ public class Database {
                         Log.d(TAG, "User profile is created for " + username);
                     }
                 });
+    }
+
+    /**
+     * Returns the contact info associated with a given username
+     * @param username the username of the user
+     * @return Task<DocumentSnapshot> A Task containing a DocumentSnapshot with the contact info
+     */
+    static Task<DocumentSnapshot> getUser(final String username){
+        return libraryCollection.document(libraryName).collection("users").document(username).get();
     }
 
     /**
