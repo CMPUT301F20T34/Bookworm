@@ -18,7 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Map;
 
-public class Profile extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity {
     FirebaseUser fUser;
     String authEmail;
 
@@ -56,7 +56,7 @@ public class Profile extends AppCompatActivity {
             }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Profile.this,
+                Toast.makeText(ProfileActivity.this,
                     "Can't retrieve user information from database",
                     Toast.LENGTH_LONG).show();
             }

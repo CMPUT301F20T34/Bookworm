@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         myProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Profile.class));
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
         });
 
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         mySearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
             }
         });
     }
