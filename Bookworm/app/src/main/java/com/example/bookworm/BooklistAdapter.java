@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -39,6 +40,8 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
             this.status = status;
             this.currentBurrower = currentBurrower;
         }
+
+
     }
 
     public BooklistAdapter(ArrayList<Book> booklist) {
@@ -71,12 +74,13 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 //        holder.ownerPhoto.setImageResource(R.drawable.ic_launcher_foreground);
-//        holder.ownerName.setText(null);
-        holder.title.setText(booklist.get(position).getTitle());
-        holder.author.setText(booklist.get(position).getAuthor());
-        holder.isbn.setText(booklist.get(position).getIsbn());
-        holder.status.setText(booklist.get(position).getStatus());
-//        holder.currentBurrower.setText(null);
+        Book book = booklist.get(position);
+        holder.ownerName.setText(book.getOwner());
+        holder.title.setText(book.getTitle());
+        holder.author.setText(book.getAuthor());
+        holder.isbn.setText(book.getIsbn());
+        holder.status.setText(book.getStatus());
+        holder.currentBurrower.setText(book.getBorrower());
     }
 
     // Return the size of your dataset (invoked by the layout manager)
