@@ -56,6 +56,7 @@ public class Database {
         CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
         CollectionReference requestCollection = libraryCollection.document(libraryName).collection("requests");
 
+
         for (Book book : books) {
             batch.set(bookCollection.document(), book);
         }
@@ -90,14 +91,13 @@ public class Database {
      * @param book the book to be written
      * @param returnValue an array containing a single value changed to 1 for success and -1 for failure
      */
-    static void writeBook(final Book book, final int[] returnValue){
-        if (returnValue.length == 0){
-            throw new IllegalArgumentException("returnValue must have a value in it.");
-        }
+    static void writeBook(final Book book, final ArrayList<Integer> returnValue){
         final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
         Task bookTask = bookCollection.whereEqualTo("isbn", book.getIsbn()).get();
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
         bookTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-
             @Override
             public void onSuccess(QuerySnapshot querySnapshot) {
                 //If the book does not exist yet then a new one gets added
@@ -108,6 +108,7 @@ public class Database {
                     bookInfo.put("description", book.getDescription());
                     bookInfo.put("isbn", book.getIsbn());
                     bookInfo.put("owner", book.getOwner());
+                    bookInfo.put("ownerId", book.getOwnerId());
                     bookInfo.put("photograph", book.getPhotograph());
                     bookInfo.put("status", book.getStatus());
                     bookInfo.put("title", book.getTitle());
@@ -115,15 +116,15 @@ public class Database {
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
-                                    returnValue[0] = 1;
                                     Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                                    returnValue.set(0, 1);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    returnValue[0] = -1;
                                     Log.w(TAG, "Error adding document", e);
+                                    returnValue.set(0, -1);
                                 }
                             });
                 }
@@ -137,6 +138,7 @@ public class Database {
                                 "description", book.getDescription(),
                                 "isbn", book.getIsbn(),
                                 "owner", book.getOwner(),
+                                "ownerId", book.getOwnerId(),
                                 "photograph", book.getPhotograph(),
                                 "status", book.getStatus(),
                                 "title", book.getTitle()
@@ -145,14 +147,14 @@ public class Database {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                returnValue[0] = 1;
+                                returnValue.set(0, 1);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w(TAG, "Error updating document", e);
-                                returnValue[0] = -1;
+                                returnValue.set(0, -1);
                             }
                         });
                 }
@@ -162,7 +164,7 @@ public class Database {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error querying collection");
-                returnValue[0] = -1;
+                returnValue.set(0, -1);
             }
         });
     }
@@ -172,8 +174,8 @@ public class Database {
      * @param book the book to be deleted
      * @param returnValue an array containing a single value changed to 1 for success and -1 for failure
      */
-    static void deleteBook(final Book book, final int[] returnValue){
-        if (returnValue.length == 0){
+    static void deleteBook(final Book book, final ArrayList<Integer> returnValue){
+        if (returnValue.size() == 0){
             throw new IllegalArgumentException("returnValue must have a value in it.");
         }
         final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
@@ -185,7 +187,7 @@ public class Database {
                 //If the book does not exist yet then a new one gets added
                 if (querySnapshot.getDocuments().size() == 0) {
                     Log.d(TAG, "Book does not exist in database");
-                    returnValue[0] = 1;
+                    returnValue.set(0, 1);
                 }
                 //If the book already exist it is updated by its id
                 else{
@@ -196,14 +198,14 @@ public class Database {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                    returnValue[0] = 1;
+                                    returnValue.set(0, 1);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Log.w(TAG, "Error updating document", e);
-                                    returnValue[0] = -1;
+                                    returnValue.set(0, -1);
                                 }
                             });
                 }
@@ -213,7 +215,7 @@ public class Database {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error querying collection");
-                returnValue[0] = -1;
+                returnValue.set(0, -1);
             }
         });
     }
