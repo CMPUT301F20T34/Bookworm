@@ -16,6 +16,10 @@
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".Profile" />
+        <activity android:name=".BorrowerMainActivity" />
+        <activity android:name=".ListBorrowing" />
+        <activity android:name=".ListAccepted" />
+        <activity android:name=".ListRequested" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
