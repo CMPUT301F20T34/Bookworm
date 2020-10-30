@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Database.createListener();
 
         // If a user is not registered, redirect them
-        // to the login screen.
+        // to the signup screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
         }
