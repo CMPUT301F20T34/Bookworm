@@ -110,6 +110,7 @@ public class Database {
                     Map<String, Object> bookInfo = new HashMap<>();
                     bookInfo.put("author", book.getAuthor());
                     bookInfo.put("borrower", book.getBorrower());
+                    bookInfo.put( "borrowerId", book.getBorrowerId());
                     bookInfo.put("description", book.getDescription());
                     bookInfo.put("isbn", book.getIsbn());
                     bookInfo.put("owner", book.getOwner());
@@ -140,6 +141,7 @@ public class Database {
                         .update(
                                 "author", book.getAuthor(),
                                 "borrower", book.getBorrower(),
+                                "borrowerId", book.getBorrowerId(),
                                 "description", book.getDescription(),
                                 "isbn", book.getIsbn(),
                                 "owner", book.getOwner(),
