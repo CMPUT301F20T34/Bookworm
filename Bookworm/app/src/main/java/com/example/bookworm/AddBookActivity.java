@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class AddBookActivity extends AppCompatActivity {
 
@@ -99,7 +100,14 @@ public class AddBookActivity extends AppCompatActivity {
                 String title = titleEditText.getText().toString();
                 String author = authorEditText.getText().toString();
                 String isbn = isbnEditText.getText().toString();
-                String description = descriptionEditText.getText().toString();
+                ArrayList<String> descriptions = new ArrayList<String>();
+                String[] ss = descriptionEditText.getText().toString().split(" ");
+                for (String s : ss) {
+                    if (!s.equals("")){
+                        descriptions.add(s);
+                    }
+                }
+
                 String owner = ownerNameText.getText().toString();
                 if (title.equals("") || author.equals("") || isbn.equals("")) {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
@@ -107,7 +115,7 @@ public class AddBookActivity extends AppCompatActivity {
                     book.setTitle(title);
                     book.setAuthor(author);
                     book.setIsbn(isbn);
-                    book.setDescription(description);
+                    book.setDescription(descriptions);
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);
                     Database.writeBook(book, returnValue);

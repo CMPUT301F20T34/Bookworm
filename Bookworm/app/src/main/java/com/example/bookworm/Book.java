@@ -2,15 +2,18 @@ package com.example.bookworm;
 
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+
 public class Book {
     private String title;
     private String author;
-    private String description;
+    private ArrayList<String> description;
     private String isbn;
     private String status;
     private String owner;
     private String ownerId;
     private String borrower;
+    private String borrowerId;
 //    private ArrayList<Request> requests;
     private Drawable photograph;
 
@@ -44,7 +47,7 @@ public class Book {
      * Gets the book's description
      * @return String
      */
-    public String getDescription() {
+    public ArrayList<String> getDescription() {
         return description;
     }
 
@@ -52,7 +55,7 @@ public class Book {
      * Sets the description of the book
      * @param description book's description
      */
-    public void setDescription(String description) {
+    public void setDescription(ArrayList<String> description) {
         this.description = description;
     }
 
@@ -127,7 +130,24 @@ public class Book {
     public void setBorrower(String borrower) {
         this.borrower = borrower;
     }
-//
+
+    /**
+     * Gets the current borrower's user ID on the book
+     * @return
+     */
+    public String getBorrowerId() {
+        return borrowerId;
+    }
+
+    /**
+     * sets the current borrower's user ID on the book
+     * @param borrowerId
+     */
+    public void setBorrowerId(String borrowerId) {
+        this.borrowerId = borrowerId;
+    }
+
+    //
 //    public ArrayList<Request> getRequests() {
 //        return requests;
 //    }
