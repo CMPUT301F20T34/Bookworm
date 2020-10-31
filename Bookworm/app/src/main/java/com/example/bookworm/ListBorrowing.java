@@ -18,8 +18,8 @@ public class ListBorrowing extends AppCompatActivity {
         setContentView(R.layout.activity_borrower_lists);
         booklist = new ArrayList<Book>();
 
-        booklist.add(new Book("1", "2", "3"));
-        booklist.add(new Book("4", "5", "6"));
+//        booklist.add(new Book("1", "2", "3"));
+//        booklist.add(new Book("4", "5", "6"));
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

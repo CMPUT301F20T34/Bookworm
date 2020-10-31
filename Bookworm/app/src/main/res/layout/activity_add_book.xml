@@ -12,10 +12,10 @@
         android:layout_height="150dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
+        android:src="@drawable/ic_book"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/avatar_1"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@drawable/ic_book" />
 
     <TextView
         android:id="@+id/textView7"

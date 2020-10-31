@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 public class Book {
@@ -12,7 +13,7 @@ public class Book {
     private String ownerId;
     private String borrower;
 //    private ArrayList<Request> requests;
-    private Drawable photograph;
+    private String photograph;
 
     public Book() {
 
@@ -140,7 +141,7 @@ public class Book {
      * Returns the photograph of the book
      * @return Image
      */
-    public Drawable getPhotograph() {
+    public String getPhotograph() {
         return photograph;
     }
 
@@ -148,7 +149,7 @@ public class Book {
      * Sets the photograph
      * @param photograph
      */
-    public void setPhotograph(Drawable photograph) {
+    public void setPhotograph(String photograph) {
         this.photograph = photograph;
     }
 
