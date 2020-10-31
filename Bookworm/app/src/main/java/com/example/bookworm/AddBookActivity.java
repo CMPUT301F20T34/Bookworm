@@ -119,6 +119,10 @@ public class AddBookActivity extends AppCompatActivity {
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);
                     Database.writeBook(book, returnValue);
+                    int waitTime = 2000;
+                    if (book.getPhotograph() == null) {
+                        waitTime = 1000;
+                    }
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
@@ -132,7 +136,7 @@ public class AddBookActivity extends AppCompatActivity {
                                 Toast.makeText(AddBookActivity.this, "Something went wrong while adding your book, please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }, 1000);
+                    }, waitTime);
                 }
             }
         });

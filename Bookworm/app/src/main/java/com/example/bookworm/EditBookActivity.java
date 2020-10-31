@@ -162,6 +162,10 @@ public class EditBookActivity extends AppCompatActivity {
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);
                     Database.writeBook(selectedBook, returnValue);
+                    int waitTime = 2000;
+                    if (selectedBook.getPhotograph() == null) {
+                        waitTime = 1000;
+                    }
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
@@ -175,7 +179,7 @@ public class EditBookActivity extends AppCompatActivity {
                                 Toast.makeText(EditBookActivity.this, "Something went wrong while updating your book, please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }, 1000);
+                    }, waitTime);
                 }
             }
         });
