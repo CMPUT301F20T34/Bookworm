@@ -17,7 +17,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class SearchResultsActivity extends AppCompatActivity {
+public class SearchResultsActivity extends AppCompatActivity implements SearchResultsAdapter.OnBookListener {
+    final ArrayList<Book> books = new ArrayList<>();
+    final Context context = this;
+    final SearchResultsAdapter.OnBookListener onBookListener = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,12 +29,11 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String searchTerm = intent.getStringExtra("searchTerm");
+        final RecyclerView searchResults = findViewById(R.id.search_results_recyclerview);
         TextView displayTerm = findViewById(R.id.search_results_display);
         displayTerm.setText(searchTerm);
-        final ArrayList<Book> books = new ArrayList<>();
-        final RecyclerView searchResults = findViewById(R.id.search_results_recyclerview);
-        final Context context = this;
 
+        // Get the results for each book, display in the user
         Database.searchBooks(searchTerm)
             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
@@ -43,7 +46,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                             (String) doc.get("status")
                         ));
                     }
-                    SearchResultsAdapter adapter = new SearchResultsAdapter(context, books);
+                    SearchResultsAdapter adapter = new SearchResultsAdapter(context, books, onBookListener);
                     searchResults.setAdapter(adapter);
                     searchResults.setLayoutManager(new LinearLayoutManager(context));
                 }
@@ -54,5 +57,16 @@ public class SearchResultsActivity extends AppCompatActivity {
 
                 }
             });
+    }
+
+    @Override
+    public void onBookClick(int position) {
+        Book selectedBook = this.books.get(position);
+        Intent intent = new Intent(this, ViewBookActivity.class);
+        intent.putExtra("title", selectedBook.getTitle());
+        intent.putExtra("author", selectedBook.getAuthor());
+        intent.putExtra("owner", selectedBook.getOwnerId());
+        intent.putExtra("status", selectedBook.getStatus());
+        startActivity(intent);
     }
 }

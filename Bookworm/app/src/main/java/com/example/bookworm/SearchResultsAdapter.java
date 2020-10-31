@@ -15,10 +15,12 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     private ArrayList<Book> books;
     private Context context;
+    private OnBookListener onBookListener;
 
-    public SearchResultsAdapter(Context context, ArrayList<Book> books) {
+    public SearchResultsAdapter(Context context, ArrayList<Book> books, OnBookListener onBookListener) {
            this.context = context;
            this.books = books;
+           this.onBookListener = onBookListener;
     }
 
     @NonNull
@@ -26,7 +28,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public SRViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view =  inflater.inflate(R.layout.search_result_content, parent, false);
-        return new SRViewHolder(view);
+        return new SRViewHolder(view, this.onBookListener);
     }
 
     @Override
@@ -42,18 +44,22 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         return books.size();
     }
 
-    public class SRViewHolder extends RecyclerView.ViewHolder{
+    public class SRViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView title;
         private final TextView author;
         private final TextView username;
         private final TextView status;
+        OnBookListener onBookListener;
 
-        public SRViewHolder(@NonNull View itemView) {
+        public SRViewHolder(@NonNull View itemView, OnBookListener onBookListener) {
             super(itemView);
             title = itemView.findViewById(R.id.search_result_title);
             author = itemView.findViewById(R.id.search_result_author);
             username = itemView.findViewById(R.id.search_result_owner);
             status = itemView.findViewById(R.id.search_result_status);
+            this.onBookListener = onBookListener;
+
+            itemView.setOnClickListener(this);
         }
 
         public TextView getTitle() {
@@ -71,5 +77,15 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         public TextView getStatus() {
             return status;
         }
+
+        @Override
+        public void onClick(View v) {
+            this.onBookListener.onBookClick(getAdapterPosition());
+        }
     }
+
+    public interface OnBookListener {
+        void onBookClick(int position);
+    }
+
 }
