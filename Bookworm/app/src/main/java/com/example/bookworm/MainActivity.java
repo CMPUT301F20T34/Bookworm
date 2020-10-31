@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         myProfileButton = findViewById(R.id.profile_button);
         myProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
         });
+
+
 
         mySearchButton = findViewById(R.id.search_button);
         mySearchButton.setOnClickListener(new View.OnClickListener() {

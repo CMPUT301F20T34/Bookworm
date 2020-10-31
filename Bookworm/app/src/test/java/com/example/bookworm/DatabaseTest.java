@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DatabaseTest {
 
+    // Mock classes for testing purposes.
     private User mockUser() {
         return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
     }
@@ -18,8 +19,12 @@ public class DatabaseTest {
         return new Request(mockBook(), mockUser(), "Status");
     }
 
+    /**
+     * Tests the functionality for writing to and retrieving
+     * a library from the database.
+     */
     @Test
-    public void testLibrary(){
+    public void testWriteLibrary(){
         User exampleUser = mockUser();
         Book exampleBook = mockBook();
         Request exampleReq = mockRequest();
@@ -44,4 +49,6 @@ public class DatabaseTest {
         assertEquals("LOTR", testLibrary.getBooks().get(1).getTitle());
     }
 
+//    @Test
+//    public void test
 }

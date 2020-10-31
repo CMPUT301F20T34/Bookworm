@@ -15,10 +15,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -30,6 +29,19 @@ import static org.junit.Assert.assertEquals;
  */
 public class DataBaseTest {
     private Solo solo; // Main test class of robotium
+
+    // Mock classes for testing purposes.
+    private User mockUser() {
+        return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+    }
+
+    private Book mockBook() {
+        return new Book("1984", "George Orwell", "Available", mockUser().getUsername());
+    }
+
+    private Request mockRequest() {
+        return new Request(mockBook(), mockUser(), "Status");
+    }
 
     @Rule
     public ActivityTestRule<EditBookActivity> rule =
@@ -61,9 +73,7 @@ public class DataBaseTest {
     @Test
     public void databaseTest() throws InterruptedException {
         //Writes a new book to the database
-        Book testBook = new Book();
-        testBook.setTitle("1984");
-        testBook.setAuthor("George Orwell");
+        Book testBook = mockBook();
         testBook.setIsbn("1621325");
         ArrayList<Integer> callback = new ArrayList<Integer>(Arrays.asList(1));
         Database.writeBook(testBook, callback);
@@ -126,8 +136,17 @@ public class DataBaseTest {
             Thread.sleep(100);
         }
         assertEquals(callback.get(0), (Integer) 1);
+    }
 
+    /**
+     * Tests the writing, editing, and deletion of users
+     * @throws InterruptedException Thrown when the thread is interrupted
+     * while waiting for a callback to complete
+     */
+    @Test
+    public void testUserMethods() throws InterruptedException {
         //Tests the writing/updating of users
+        ArrayList<Integer> callback = new ArrayList<Integer>(Collections.singletonList(1));
         callback.set(0,0);
         User testUser = new User();
         testUser.setUsername("DatabaseTest");
@@ -145,7 +164,6 @@ public class DataBaseTest {
             Thread.sleep(100);
         }
         assertEquals(callback.get(0), (Integer) 1);
-
     }
 
     /**

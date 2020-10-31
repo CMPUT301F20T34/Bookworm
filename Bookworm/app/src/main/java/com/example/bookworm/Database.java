@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class Database {
     private static final FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    private static Library library = new Library();
+    private static final Library library = new Library();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference libraryCollection = db.collection("Libraries");
     private static final String libraryName = "Main_Library";
@@ -234,24 +234,25 @@ public class Database {
             .collection(bookName);
 
         return books.whereEqualTo("title", searchTerm).get();
-//=======
-//     * Finds all the books in which the status matches one of the provided and
-//     * the keyword given
-//     * @param statuses An array of statues that the book can match
-//     * @param keyword The keyword to be searched for
-//     * @return A task containing a querysnapshot that returns all documents matching the parameters
-//     */
-//    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
-//        if (statuses.length == 0){
-//            throw new IllegalArgumentException("statuses cannot be empty");
-//        }
-//
-//        Query query = libraryCollection.document(libraryName).collection("books")
-//                .whereIn("status", Arrays.asList(statuses))
-//                .whereArrayContains("description", keyword);
-//
-//        return query.get();
-//>>>>>>> 9cbd38104359023695992098f31bc6460bc8019c
+    }
+
+    /**
+     * Finds all the books in which the status matches one of the provided and
+     * the keyword given
+     * @param statuses An array of statues that the book can match
+     * @param keyword The keyword to be searched for
+     * @return A task containing a querysnapshot that returns all documents matching the parameters
+     */
+    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
+        if (statuses.length == 0){
+            throw new IllegalArgumentException("statuses cannot be empty");
+        }
+
+        Query query = libraryCollection.document(libraryName).collection("books")
+                .whereIn("status", Arrays.asList(statuses))
+                .whereArrayContains("description", keyword);
+
+        return query.get();
     }
 
     /**
@@ -260,8 +261,9 @@ public class Database {
      * @param username the username of the user
      * @param phoneNumber email of the user
      * @param email phone number of the user
+     * @return Task containing the result of the creation
      */
-    static void createUser(final String username, String phoneNumber, String email) {
+    static Task<Void> createUser(final String username, String phoneNumber, String email) {
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
                 .collection("users")
@@ -269,13 +271,8 @@ public class Database {
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", phoneNumber);
         userInfo.put("email", email);
-        documentReference.set(userInfo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "User profile is created for " + username);
-                    }
-                });
+        return documentReference.set(userInfo);
+
     }
 
     /**
