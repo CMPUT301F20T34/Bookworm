@@ -13,16 +13,36 @@ public class BorrowerMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_borrower);
     }
+
+    /**
+     * List all currently borrowed books
+     * @param view the button that was clicked on
+     */
     public void listBorrowing(View view) {
-        Intent intent = new Intent(this, ListBorrowing.class);
-        startActivity(intent);
+        startActivity(new Intent(this, ListBorrowing.class));
     }
+
+    /**
+     * List all requested books
+     * @param view the button that was clicked on
+     */
     public void listRequested(View view){
-        Intent intent = new Intent(this, ListRequested.class);
-        startActivity(intent);
+        startActivity(new Intent(this, ListRequested.class));
     }
+
+    /**
+     * List all accepted books
+     * @param view the button that was clicked on
+     */
     public void listAccepted(View view){
-        Intent intent = new Intent(this, ListRequested.class);
-        startActivity(intent);
+        startActivity(new Intent(this, ListAccepted.class));
+    }
+
+    /**
+     * Add a new book to the database
+     * @param view the button that was clicked on
+     */
+    public void addBook(View view) {
+        startActivity(new Intent(this, AddBookActivity.class));
     }
 }
