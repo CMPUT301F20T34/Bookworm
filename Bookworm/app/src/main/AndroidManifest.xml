@@ -11,12 +11,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<<<<<<< HEAD
         <activity android:name=".SearchResultsActivity"></activity>
+=======
+        <activity android:name=".EditBookActivity"></activity>
+>>>>>>> 9cbd38104359023695992098f31bc6460bc8019c
         <activity android:name=".AddBookActivity" />
         <activity android:name=".OwnerBooklistActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity" />
+<<<<<<< HEAD
         <activity android:name=".ProfileActivity" />
+=======
+        <activity android:name=".Profile" />
+        <activity android:name=".BorrowerMainActivity" />
+        <activity android:name=".ListBorrowing" />
+        <activity android:name=".ListAccepted" />
+        <activity android:name=".ListRequested" />
+>>>>>>> 9cbd38104359023695992098f31bc6460bc8019c
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

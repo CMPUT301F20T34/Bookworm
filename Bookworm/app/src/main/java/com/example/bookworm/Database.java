@@ -21,6 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +57,7 @@ public class Database {
         CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
         CollectionReference requestCollection = libraryCollection.document(libraryName).collection("requests");
 
+
         for (Book book : books) {
             batch.set(bookCollection.document(), book);
         }
@@ -90,14 +92,13 @@ public class Database {
      * @param book the book to be written
      * @param returnValue an array containing a single value changed to 1 for success and -1 for failure
      */
-    static void writeBook(final Book book, final int[] returnValue){
-        if (returnValue.length == 0){
-            throw new IllegalArgumentException("returnValue must have a value in it.");
-        }
+    static void writeBook(final Book book, final ArrayList<Integer> returnValue){
         final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
         Task bookTask = bookCollection.whereEqualTo("isbn", book.getIsbn()).get();
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
         bookTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-
             @Override
             public void onSuccess(QuerySnapshot querySnapshot) {
                 //If the book does not exist yet then a new one gets added
@@ -105,9 +106,11 @@ public class Database {
                     Map<String, Object> bookInfo = new HashMap<>();
                     bookInfo.put("author", book.getAuthor());
                     bookInfo.put("borrower", book.getBorrower());
+                    bookInfo.put( "borrowerId", book.getBorrowerId());
                     bookInfo.put("description", book.getDescription());
                     bookInfo.put("isbn", book.getIsbn());
                     bookInfo.put("owner", book.getOwner());
+                    bookInfo.put("ownerId", book.getOwnerId());
                     bookInfo.put("photograph", book.getPhotograph());
                     bookInfo.put("status", book.getStatus());
                     bookInfo.put("title", book.getTitle());
@@ -115,15 +118,15 @@ public class Database {
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
-                                    returnValue[0] = 1;
                                     Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                                    returnValue.set(0, 1);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    returnValue[0] = -1;
                                     Log.w(TAG, "Error adding document", e);
+                                    returnValue.set(0, -1);
                                 }
                             });
                 }
@@ -134,9 +137,11 @@ public class Database {
                         .update(
                                 "author", book.getAuthor(),
                                 "borrower", book.getBorrower(),
+                                "borrowerId", book.getBorrowerId(),
                                 "description", book.getDescription(),
                                 "isbn", book.getIsbn(),
                                 "owner", book.getOwner(),
+                                "ownerId", book.getOwnerId(),
                                 "photograph", book.getPhotograph(),
                                 "status", book.getStatus(),
                                 "title", book.getTitle()
@@ -145,14 +150,14 @@ public class Database {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                returnValue[0] = 1;
+                                returnValue.set(0, 1);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w(TAG, "Error updating document", e);
-                                returnValue[0] = -1;
+                                returnValue.set(0, -1);
                             }
                         });
                 }
@@ -162,7 +167,7 @@ public class Database {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error querying collection");
-                returnValue[0] = -1;
+                returnValue.set(0, -1);
             }
         });
     }
@@ -172,8 +177,8 @@ public class Database {
      * @param book the book to be deleted
      * @param returnValue an array containing a single value changed to 1 for success and -1 for failure
      */
-    static void deleteBook(final Book book, final int[] returnValue){
-        if (returnValue.length == 0){
+    static void deleteBook(final Book book, final ArrayList<Integer> returnValue){
+        if (returnValue.size() == 0){
             throw new IllegalArgumentException("returnValue must have a value in it.");
         }
         final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
@@ -185,7 +190,7 @@ public class Database {
                 //If the book does not exist yet then a new one gets added
                 if (querySnapshot.getDocuments().size() == 0) {
                     Log.d(TAG, "Book does not exist in database");
-                    returnValue[0] = 1;
+                    returnValue.set(0, 1);
                 }
                 //If the book already exist it is updated by its id
                 else{
@@ -196,14 +201,14 @@ public class Database {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                    returnValue[0] = 1;
+                                    returnValue.set(0, 1);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Log.w(TAG, "Error updating document", e);
-                                    returnValue[0] = -1;
+                                    returnValue.set(0, -1);
                                 }
                             });
                 }
@@ -213,22 +218,28 @@ public class Database {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error querying collection");
-                returnValue[0] = -1;
+                returnValue.set(0, -1);
             }
         });
     }
 
     /**
-     * Returns all books that contain the searchTerm as their exact title.
-     * Will rework in the future to return books that contain the searchTerm.
-     * @param searchTerm The keyword that is being searched
-     * @return Task<QuerySnapshot> The result of the query.
+     * Finds all the books in which the status matches one of the provided and
+     * the keyword given
+     * @param statuses An array of statues that the book can match
+     * @param keyword The keyword to be searched for
+     * @return A task containing a querysnapshot that returns all documents matching the parameters
      */
-    public static Task<QuerySnapshot> searchBooks(final String searchTerm) {
-        CollectionReference books = libraryCollection.document(libraryName)
-            .collection(bookName);
+    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
+        if (statuses.length == 0){
+            throw new IllegalArgumentException("statuses cannot be empty");
+        }
 
-        return books.whereEqualTo("title", searchTerm).get();
+        Query query = libraryCollection.document(libraryName).collection("books")
+                .whereIn("status", Arrays.asList(statuses))
+                .whereArrayContains("description", keyword);
+
+        return query.get();
     }
 
     /**
@@ -251,6 +262,71 @@ public class Database {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "User profile is created for " + username);
+                    }
+                });
+    }
+
+    /**
+     * Updates the user in the database
+     * @param user The user to update with
+     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
+     */
+    static void updateUser(final User user, final ArrayList<Integer> returnValue){
+        final CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
+        Task userTask = userCollection.document(user.getUsername()).get();
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
+        DocumentReference documentReference = libraryCollection
+                .document(libraryName)
+                .collection("users")
+                .document(user.getUsername());
+        Map<String, Object> userInfo = new HashMap<String, Object>();
+        userInfo.put("phoneNumber", user.getPhone());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("borrower", user.getBorrower());
+        userInfo.put("owner", user.getOwner());
+        documentReference.set(userInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "User profile updated");
+                        returnValue.set(0,1);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Failed to update user profile");
+                        returnValue.set(0,-1);
+                    }
+                });
+    }
+
+    /**
+     * Deletes a user from the database
+     * @param user The user to be deleted
+     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
+     */
+    static void deleteUser(final User user, final ArrayList<Integer> returnValue){
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
+        libraryCollection.document(libraryName).collection("users")
+                .document(user.getUsername())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Book does not exist in database");
+                        returnValue.set(0, 1);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                        returnValue.set(0, -1);
                     }
                 });
     }

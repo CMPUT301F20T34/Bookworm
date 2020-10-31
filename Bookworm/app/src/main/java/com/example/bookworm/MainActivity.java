@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Button myBooklistButton;
     private Button myProfileButton;
     private Button mySearchButton;
+    private Button myBorrowerInfoButton;
     FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -65,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), SearchResultsActivity.class);
                 intent.putExtra("searchTerm", keywordView.getText().toString());
                 startActivity(intent);
+            }
+        });
+        myBorrowerInfoButton = findViewById(R.id.borrow_info_button);
+        myBorrowerInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), BorrowerMainActivity.class));
             }
         });
     }
