@@ -9,11 +9,11 @@
         android:id="@+id/button_borrowing"
         android:layout_width="318dp"
         android:layout_height="63dp"
-        android:layout_marginTop="212dp"
         android:onClick="listBorrowing"
         android:text="List of borrowing books"
+        app:layout_constraintBottom_toTopOf="@+id/button_requested"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +25,7 @@
         android:text="List of requested books"
         app:layout_constraintBottom_toTopOf="@+id/button_accepted"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_borrowing"
         app:layout_constraintVertical_bias="0.477" />
@@ -34,12 +34,12 @@
         android:id="@+id/button_accepted"
         android:layout_width="318dp"
         android:layout_height="63dp"
-        android:layout_marginBottom="264dp"
         android:onClick="listAccepted"
         android:text="list of accepted books"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_requested" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

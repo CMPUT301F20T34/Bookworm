@@ -6,11 +6,23 @@ import static org.junit.Assert.assertEquals;
 
 public class DatabaseTest {
 
+    private User mockUser() {
+        return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+    }
+
+    private Book mockBook() {
+        return new Book("Harry Potter", "J.K Rowling", "Available", mockUser().getUsername());
+    }
+
+    private Request mockRequest() {
+        return new Request(mockBook(), mockUser(), "Status");
+    }
+
     @Test
     public void testLibrary(){
-        User exampleUser = new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
-        Book exampleBook = new Book("Harry Potter", "J.K Rowling", "Available", exampleUser);
-        Request exampleReq = new Request(exampleBook, exampleUser, "Status");
+        User exampleUser = mockUser();
+        Book exampleBook = mockBook();
+        Request exampleReq = mockRequest();
         Library exampleLibrary = new Library();
         exampleLibrary.addUser(exampleUser);
         exampleLibrary.addBook(exampleBook);

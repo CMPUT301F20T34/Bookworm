@@ -33,7 +33,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public void onBindViewHolder(@NonNull SRViewHolder holder, int position) {
         holder.getTitle().setText(books.get(position).getTitle());
         holder.getAuthor().setText(books.get(position).getAuthor());
-        holder.getUsername().setText(books.get(position).getOwner().getUsername());
+        holder.getUsername().setText(books.get(position).getOwner());
         holder.getStatus().setText(books.get(position).getStatus());
     }
 

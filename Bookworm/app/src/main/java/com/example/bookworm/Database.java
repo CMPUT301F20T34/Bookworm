@@ -224,22 +224,34 @@ public class Database {
     }
 
     /**
-     * Finds all the books in which the status matches one of the provided and
-     * the keyword given
-     * @param statuses An array of statues that the book can match
-     * @param keyword The keyword to be searched for
-     * @return A task containing a querysnapshot that returns all documents matching the parameters
+     * Returns all books that contain the searchTerm as their exact title.
+     * Will rework in the future to return books that contain the searchTerm.
+     * @param searchTerm The keyword that is being searched
+     * @return Task<QuerySnapshot> The result of the query.
      */
-    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
-        if (statuses.length == 0){
-            throw new IllegalArgumentException("statuses cannot be empty");
-        }
+    public static Task<QuerySnapshot> searchBooks(final String searchTerm) {
+        CollectionReference books = libraryCollection.document(libraryName)
+            .collection(bookName);
 
-        Query query = libraryCollection.document(libraryName).collection("books")
-                .whereIn("status", Arrays.asList(statuses))
-                .whereArrayContains("description", keyword);
-
-        return query.get();
+        return books.whereEqualTo("title", searchTerm).get();
+//=======
+//     * Finds all the books in which the status matches one of the provided and
+//     * the keyword given
+//     * @param statuses An array of statues that the book can match
+//     * @param keyword The keyword to be searched for
+//     * @return A task containing a querysnapshot that returns all documents matching the parameters
+//     */
+//    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
+//        if (statuses.length == 0){
+//            throw new IllegalArgumentException("statuses cannot be empty");
+//        }
+//
+//        Query query = libraryCollection.document(libraryName).collection("books")
+//                .whereIn("status", Arrays.asList(statuses))
+//                .whereArrayContains("description", keyword);
+//
+//        return query.get();
+//>>>>>>> 9cbd38104359023695992098f31bc6460bc8019c
     }
 
     /**
