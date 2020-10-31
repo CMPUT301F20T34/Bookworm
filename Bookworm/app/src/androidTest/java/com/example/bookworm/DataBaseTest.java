@@ -75,21 +75,19 @@ public class DataBaseTest {
         //Writes a new book to the database
         Book testBook = mockBook();
         testBook.setIsbn("1621325");
-        ArrayList<Integer> callback = new ArrayList<Integer>(Arrays.asList(1));
-        Database.writeBook(testBook, callback);
-        while (callback.get(0) == 0){
+        Database.writeBook(testBook);
+        while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback.get(0),(Integer) 1);
+        assertEquals(Database.getListenerSignal(),1);
 
         //Updates a book in the database
         testBook.setTitle("Animal Farm");
-        callback.set(0,0);
-        Database.writeBook(testBook, callback);
-        while (callback.get(0) == 0){
+        Database.writeBook(testBook);
+        while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback.get(0), (Integer) 1);
+        assertEquals(Database.getListenerSignal(), 1);
 
         //Tests for a correct response with a single field
         Database.queryCollection("books", new String[]{"title"}, new String[]{"Animal Farm"})
@@ -130,12 +128,11 @@ public class DataBaseTest {
                 });
 
         //Tests the deletion of books
-        callback.set(0,0);
-        Database.deleteBook(testBook, callback);
-        while (callback.get(0) == 0){
+        Database.deleteBook(testBook);
+        while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback.get(0), (Integer) 1);
+        assertEquals(Database.getListenerSignal(), 1);
     }
 
     /**
@@ -147,23 +144,48 @@ public class DataBaseTest {
     public void testUserMethods() throws InterruptedException {
         //Tests the writing/updating of users
         ArrayList<Integer> callback = new ArrayList<Integer>(Collections.singletonList(1));
-        callback.set(0,0);
         User testUser = new User();
         testUser.setUsername("DatabaseTest");
         testUser.setEmail("test@database.com");
-        Database.updateUser(testUser, callback);
-        while (callback.get(0) == 0){
+        Database.updateUser(testUser);
+        while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback.get(0), (Integer) 1);
+        assertEquals(Database.getListenerSignal(), 1);
 
         //Tests the deletion of a user
-        callback.set(0,0);
-        Database.deleteUser(testUser, callback);
-        while (callback.get(0) == 0){
+        Database.deleteUser(testUser);
+        while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback.get(0), (Integer) 1);
+        assertEquals(Database.getListenerSignal(), 1);
+    }
+
+    @Test
+    public void testRequestMethods() throws InterruptedException {
+        //Writes a new request
+        Request testRequest = mockRequest();
+        Database.writeRequest(testRequest);
+        while (Database.getListenerSignal() == 0){
+            Thread.sleep(100);
+        }
+        assertEquals(Database.getListenerSignal(), 1);
+
+        //Updates a request
+        testRequest.setStatus("Accepted");
+        Database.writeRequest(testRequest);
+        while (Database.getListenerSignal() == 0){
+            Thread.sleep(100);
+        }
+        assertEquals(Database.getListenerSignal(), 1);
+
+        //Deletes a request
+        Database.deleteRequest(testRequest);
+        while (Database.getListenerSignal() == 0){
+            Thread.sleep(100);
+        }
+        assertEquals(Database.getListenerSignal(), 1);
+
     }
 
     /**
