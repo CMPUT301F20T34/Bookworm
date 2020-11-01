@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,19 +100,6 @@ public class Util {
     }
 
     /**
-     * Used to convert a bitmap into a string (used for images)
-     * @param bitmap the bitmap to convert
-     * @return The bitmap converted into a string
-     */
-    static public String bitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
-    /**
      * Used to convert a string into a bitmap
      * @param encodedString the string to convert
      * @return The string converted into a bitmap
@@ -136,6 +122,8 @@ public class Util {
 
     /**
      * Resizes a bitmap to a set width, keeping the aspect ratio
+     * https://stackoverflow.com/questions/23005948/convert-string-to-bitmap
+     * Accessed October 31st, 2020
      * @param b the bitmap to resize
      * @param width the target width of the resulting bitmap
      * @return the new, resized bitmap
