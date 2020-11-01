@@ -4,14 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
@@ -35,12 +33,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         //bind texview with data received
         //        holder.ownerPhoto.setImageResource(R.drawable.ic_launcher_foreground);
 //        holder.ownerName.setText(null);
-        holder.title.setText(booklist.get(position).getTitle());
-        holder.author.setText(booklist.get(position).getAuthor());
-        holder.isbn.setText(booklist.get(position).getIsbn());
-        holder.status.setText(booklist.get(position).getStatus());
-
-        }
+        Book book = booklist.get(position);
+        holder.title.setText(book.getTitle());
+        holder.author.setText(book.getAuthor());
+        holder.isbn.setText(book.getIsbn());
+        holder.status.setText(book.getStatus());
+        holder.ownerName.setText("Owner: " + book.getOwner());
+    }
 
     @Override
     public int getItemCount() {
@@ -50,7 +49,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         //TextView bookTitle,bookName;
-        ImageView ownerPhoto;
         TextView ownerName;
         TextView title;
         TextView author;
@@ -59,7 +57,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ownerPhoto = itemView.findViewById(R.id.book_image);
             ownerName = itemView.findViewById(R.id.book_owner);
             title = itemView.findViewById(R.id.book_title);
             author = itemView.findViewById(R.id.book_author);
