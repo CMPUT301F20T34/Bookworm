@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,9 +132,8 @@ public class Database {
                                     returnValue.set(0, -1);
                                 }
                             });
-                }
-                //If the book already exist it is updated by its id
-                else{
+                } else {
+                    // If the book already exist it is updated by its id
                     String bookId = querySnapshot.getDocuments().get(0).getId();
                     bookCollection.document(bookId)
                         .update(
@@ -338,6 +340,18 @@ public class Database {
                         returnValue.set(0, -1);
                     }
                 });
+    }
+
+    /**
+     * Uploads an image on the user's phone to be the
+     * profile image of that user's account
+     * @param targetLoc the db storage location of the image
+     * @param userID the id of the logged-in user
+     * @param photoUri the Uri representing the image file
+     * @return An asynchronous task that finishes when the upload finishes.
+     */
+    static UploadTask writeProfilePhoto(StorageReference targetLoc, String userID, Uri photoUri) {
+        return targetLoc.putFile(photoUri);
     }
 
     /**

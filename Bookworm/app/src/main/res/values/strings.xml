@@ -25,4 +25,8 @@
     <string name="already_signed_up_login_here">Already signed up? Login here!</string>
     <string name="need_an_account_sign_up_for_one_here">Need an account? Sign up for one here!</string>
     <string name="email_profile">Email: </string>
+    <string name="list_of_borrowing_books">List of borrowing books</string>
+    <string name="list_of_requested_books">List of requested books</string>
+    <string name="list_of_accepted_books">list of accepted books</string>
+    <string name="add_new_book">Add new book</string>
 </resources>
