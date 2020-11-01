@@ -1,34 +1,42 @@
 package com.example.bookworm;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class AddBookActivity extends AppCompatActivity {
-
-    private FirebaseAuth fAuth;
     private Book book;
+    private FirebaseAuth fAuth;
     private EditText titleEditText;
     private EditText authorEditText;
     private EditText isbnEditText;
@@ -38,13 +46,18 @@ public class AddBookActivity extends AppCompatActivity {
     private Button addPhotoButton;
     private Button deletePhotoButton;
     private Button addButton;
+    private ImageView profilePhoto;
+    private Uri photoUri;
+    private StorageReference storageReference;
+    private final int RESULT_LOAD_IMAGE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_book);
 
-        titleEditText = findViewById(R.id.editTextTextPersonName);
+        // Define views
+        titleEditText = findViewById(R.id.keywordSearchBar);
         authorEditText = findViewById(R.id.editTextTextPersonName2);
         isbnEditText = findViewById(R.id.editTextNumber);
         descriptionEditText = findViewById(R.id.editTextTextPersonName4);
@@ -53,10 +66,16 @@ public class AddBookActivity extends AppCompatActivity {
         addPhotoButton = findViewById(R.id.button4);
         deletePhotoButton = findViewById(R.id.button5);
         addButton = findViewById(R.id.button6);
+        profilePhoto = findViewById(R.id.profile_photo);
 
+        // Define authentication and storage references
         fAuth = FirebaseAuth.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
         final String email = fAuth.getCurrentUser().getEmail();
         final String uid = fAuth.getCurrentUser().getUid();
+
+//        checkFilePermissions();
+
         CollectionReference users = FirebaseFirestore.getInstance().collection("Libraries").document("Main_Library").collection("users");
         Query query = users.whereEqualTo("email", email);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -82,7 +101,9 @@ public class AddBookActivity extends AppCompatActivity {
         addPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
             }
         });
 
@@ -96,39 +117,113 @@ public class AddBookActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Get the fields from the UI
                 String title = titleEditText.getText().toString();
                 String author = authorEditText.getText().toString();
                 String isbn = isbnEditText.getText().toString();
-                String description = descriptionEditText.getText().toString();
+                ArrayList<String> descriptions = new ArrayList<String>();
+                String[] ss = descriptionEditText.getText().toString().split(" ");
+                for (String s : ss) {
+                    if (!TextUtils.isEmpty(s)){
+                        descriptions.add(s);
+                    }
+                }
+
+                // Define needed information
+                String userID = FirebaseAuth.getInstance().getUid();
+                String path = "images/users/" + userID + "/books/" + isbn + ".jpg";
                 String owner = ownerNameText.getText().toString();
-                if (title.equals("") || author.equals("") || isbn.equals("")) {
+
+                // If the form is missing information
+                if (TextUtils.isEmpty(title) || TextUtils.isEmpty(author) || TextUtils.isEmpty(isbn)) {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
                 } else {
-                    book.setTitle(title);
-                    book.setAuthor(author);
-                    book.setIsbn(isbn);
-                    book.setDescription(description);
-                    final ArrayList<Integer> returnValue = new ArrayList<Integer>();
-                    returnValue.add(0);
-                    Database.writeBook(book, returnValue);
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            if (returnValue.get(0) == 1) {
-                                Toast.makeText(AddBookActivity.this, "Your book is successfully added", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
-                                startActivity(intent);
-                            } else if (returnValue.get(0) == -1){
-                                Toast.makeText(AddBookActivity.this, "Something went wrong while adding your book", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(AddBookActivity.this, "Something went wrong while adding your book, please try again", Toast.LENGTH_SHORT).show();
+                    // Attempt to upload the image.
+                    Database.writeProfilePhoto(storageReference.child(path), userID, photoUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // The form does not have missing information
+                                book.setTitle(title);
+                                book.setAuthor(author);
+                                book.setIsbn(isbn);
+                                book.setDescription(descriptions);
+
+                                // Write the book to the database
+                                final ArrayList<Integer> returnValue = new ArrayList<Integer>();
+                                returnValue.add(0);
+                                Database.writeBook(book, returnValue);
+                                Handler handler = new Handler();
+                                handler.postDelayed(() -> {
+                                    if (returnValue.get(0) == 1) {
+                                        Toast.makeText(AddBookActivity.this,
+                                            "Your book is successfully saved",
+                                            Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    } else if (returnValue.get(0) == -1){
+                                        Toast.makeText(AddBookActivity.this,
+                                            "Something went wrong while adding your book",
+                                            Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(AddBookActivity.this,
+                                            "Something went wrong while adding your book, please try again",
+                                            Toast.LENGTH_SHORT).show();
+                                    }
+                                }, 1000);
                             }
-                        }
-                    }, 1000);
+                        })
+                        .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
+                            "Image could not be written to database",
+                            Toast.LENGTH_SHORT)
+                            .show()
+                        );
                 }
             }
         });
     }
 
+    /**
+     * Get images from user's phone
+     * https://stackoverflow.com/questions/38352148/get-image-from-the-gallery-and-show-in-imageview#38352844
+     * User: Atul Mavani
+     * Accessed Oct. 31, 2020
+     * @param reqCode the request from the activity
+     * @param resultCode the result of the activity (OK / failure)
+     * @param data any data that was returned
+     */
+    @Override
+    protected void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            try {
+                this.photoUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(this.photoUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                profilePhoto.setImageBitmap(selectedImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(AddBookActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+            }
 
+        }else {
+            Toast.makeText(AddBookActivity.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
+        }
+    }
 }
+
+//    /**
+//     * Runs when the application first begins, ensures that we have permission to access the user's data.
+//     * https://github.com/mitchtabian/Firebase-Save-Images/blob/master/FirebaseUploadImage/app/src/main/java/com/tabian/firebaseuploadimage/AddBookActivity.java
+//     * Accessed October 31, 2020
+//     */
+//    private void checkFilePermissions() {
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+//            int permissionCheck = AddBookActivity.this.checkSelfPermission("Manifest.permission.READ_EXTERNAL_STORAGE");
+//            permissionCheck += AddBookActivity.this.checkSelfPermission("Manifest.permission.WRITE_EXTERNAL_STORAGE");
+//            if (permissionCheck != 0) {
+//                this.requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1001); //Any number
+//            }
+//        } else {
+//            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+//        }
+//    }

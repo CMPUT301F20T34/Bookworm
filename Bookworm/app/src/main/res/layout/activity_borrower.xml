@@ -9,11 +9,11 @@
         android:id="@+id/button_borrowing"
         android:layout_width="318dp"
         android:layout_height="63dp"
-        android:layout_marginTop="212dp"
         android:onClick="listBorrowing"
-        android:text="List of borrowing books"
+        android:text="@string/list_of_borrowing_books"
+        app:layout_constraintBottom_toTopOf="@+id/button_requested"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,24 +22,37 @@
         android:layout_width="318dp"
         android:layout_height="63dp"
         android:onClick="listRequested"
-        android:text="List of requested books"
+        android:text="@string/list_of_requested_books"
         app:layout_constraintBottom_toTopOf="@+id/button_accepted"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_borrowing"
-        app:layout_constraintVertical_bias="0.477" />
+        app:layout_constraintTop_toBottomOf="@+id/button_borrowing" />
 
     <Button
         android:id="@+id/button_accepted"
         android:layout_width="318dp"
         android:layout_height="63dp"
-        android:layout_marginBottom="264dp"
         android:onClick="listAccepted"
-        android:text="list of accepted books"
+        android:text="@string/list_of_accepted_books"
+        app:layout_constraintBottom_toTopOf="@+id/add_book_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_requested" />
+
+    <Button
+        android:id="@+id/add_book_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="addBook"
+        android:width="318dp"
+        android:height="63dp"
+        android:text="@string/add_new_book"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_accepted" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

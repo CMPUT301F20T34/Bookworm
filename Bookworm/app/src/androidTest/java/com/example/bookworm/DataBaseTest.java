@@ -1,13 +1,10 @@
 package com.example.bookworm;
 
 import android.app.Activity;
-import android.provider.ContactsContract;
-import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.bookworm.util.Util;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -15,14 +12,17 @@ import com.robotium.solo.Solo;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+//import static org.junit.Assert.assertThrows;
 
 /**
  * Test class for MainActivity. All the UI tests are written here.
@@ -31,9 +31,22 @@ import static org.junit.Assert.assertEquals;
 public class DataBaseTest {
     private Solo solo; // Main test class of robotium
 
+    // Mock classes for testing purposes.
+    private User mockUser() {
+        return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+    }
+
+    private Book mockBook() {
+        return new Book("1984", "George Orwell", "Available", mockUser().getUsername());
+    }
+
+    private Request mockRequest() {
+        return new Request(mockBook(), mockUser(), "Status");
+    }
+
     @Rule
-    public ActivityTestRule<MainActivity> rule =
-            new ActivityTestRule<>(MainActivity.class, true, true);
+    public ActivityTestRule<EditBookActivity> rule =
+            new ActivityTestRule<>(EditBookActivity.class, true, true);
 
     /**
      * Runs before all tests and creates solo instance
@@ -61,25 +74,24 @@ public class DataBaseTest {
     @Test
     public void databaseTest() throws InterruptedException {
         //Writes a new book to the database
-        Book testBook = new Book("1984", "George Orwell", "1621325");
-        int[] callback = new int[]{0};
+        Book testBook = mockBook();
+        testBook.setIsbn("1621325");
+        ArrayList<Integer> callback = new ArrayList<Integer>(Arrays.asList(1));
         Database.writeBook(testBook, callback);
-        while (callback[0] == 0){
+        while (callback.get(0) == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback[0],1);
+        assertEquals(callback.get(0),(Integer) 1);
 
-        Thread.sleep(5000);
         //Updates a book in the database
         testBook.setTitle("Animal Farm");
-        callback[0] = 0;
+        callback.set(0,0);
         Database.writeBook(testBook, callback);
-        while (callback[0] == 0){
+        while (callback.get(0) == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback[0],1);
+        assertEquals(callback.get(0), (Integer) 1);
 
-        Thread.sleep(5000);
         //Tests for a correct response with a single field
         Database.queryCollection("books", new String[]{"title"}, new String[]{"Animal Farm"})
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -95,6 +107,7 @@ public class DataBaseTest {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                        assertNotEquals(docs.size(), 0);
                         assertEquals(docs.get(0).get("title"), "Animal Farm");
                     }
                 });
@@ -108,15 +121,51 @@ public class DataBaseTest {
                     }
                 });
 
+        //Tests for keyword search
+        Database.bookKeywordSearch(new String[]{"available"}, "fantasy")
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                        assertEquals(docs.size(), 0);
+                    }
+                });
+
         //Tests the deletion of books
-        Thread.sleep(5000);
-        callback[0] = 0;
+        callback.set(0,0);
         Database.deleteBook(testBook, callback);
-        while (callback[0] == 0){
+        while (callback.get(0) == 0){
             Thread.sleep(100);
         }
-        assertEquals(callback[0],1);
+        assertEquals(callback.get(0), (Integer) 1);
+    }
 
+    /**
+     * Tests the writing, editing, and deletion of users
+     * @throws InterruptedException Thrown when the thread is interrupted
+     * while waiting for a callback to complete
+     */
+    @Test
+    public void testUserMethods() throws InterruptedException {
+        //Tests the writing/updating of users
+        ArrayList<Integer> callback = new ArrayList<Integer>(Collections.singletonList(1));
+        callback.set(0,0);
+        User testUser = new User();
+        testUser.setUsername("DatabaseTest");
+        testUser.setEmail("test@database.com");
+        Database.updateUser(testUser, callback);
+        while (callback.get(0) == 0){
+            Thread.sleep(100);
+        }
+        assertEquals(callback.get(0), (Integer) 1);
+
+        //Tests the deletion of a user
+        callback.set(0,0);
+        Database.deleteUser(testUser, callback);
+        while (callback.get(0) == 0){
+            Thread.sleep(100);
+        }
+        assertEquals(callback.get(0), (Integer) 1);
     }
 
     /**

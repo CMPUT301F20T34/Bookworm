@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.bookworm.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -73,6 +74,11 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (!Util.validateEmail(email)) {
+                    emailField.setError("Email is incorrectly formatted");
+                    return;
+                }
+
                 // Ensure password is non-empty
                 if (TextUtils.isEmpty(password1)) {
                     password1Field.setError("Password is a required value.");
@@ -82,6 +88,12 @@ public class SignUpActivity extends AppCompatActivity {
                 // Ensure passwords match
                 if (!TextUtils.equals(password1, password2)) {
                     password1Field.setError("Passwords must match.");
+                    return;
+                }
+
+                // Validate phone number is correct
+                if (!Util.validatePhoneNumber(phoneNumber)) {
+                    phoneNumberField.setError("Phone number is incorrectly formatted");
                     return;
                 }
 

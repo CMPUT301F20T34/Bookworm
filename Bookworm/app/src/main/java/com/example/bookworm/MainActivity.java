@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     String TAG = "Sample";
     private Button myBooklistButton;
     private Button myProfileButton;
+    private Button mySearchButton;
     private Button myBorrowerInfoButton;
     FirebaseAuth fAuth;
 
@@ -27,12 +30,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fAuth = FirebaseAuth.getInstance();
+        final EditText mySearchTerm = findViewById(R.id.keywordSearchBar);
 
         // Allow realtime updates for database
         Database.createListener();
 
         // If a user is not registered, redirect them
-        // to the login screen.
+        // to the signup screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
         }
@@ -46,11 +50,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         myProfileButton = findViewById(R.id.profile_button);
         myProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Profile.class));
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            }
+        });
+
+
+
+        mySearchButton = findViewById(R.id.search_button);
+        mySearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView keywordView = findViewById(R.id.keywordSearchBar);
+                Intent intent = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                intent.putExtra("searchTerm", keywordView.getText().toString());
+                startActivity(intent);
             }
         });
         myBorrowerInfoButton = findViewById(R.id.borrow_info_button);

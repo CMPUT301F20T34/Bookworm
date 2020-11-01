@@ -1,20 +1,45 @@
 package com.example.bookworm;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.os.Build;
 
-public class Book {
+import androidx.annotation.RequiresApi;
+
+import com.example.bookworm.util.Util;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Book implements Serializable {
+    private static ArrayList<String> validStatuses = new ArrayList<String>(Arrays.asList("available", "requested", "accepted", "borrowed"));
     private String title;
     private String author;
-    private String description;
+    private ArrayList<String> description;
     private String isbn;
     private String status;
     private String owner;
     private String ownerId;
     private String borrower;
+    private String borrowerId;
 //    private ArrayList<Request> requests;
-    private Drawable photograph;
+    private String photograph;
 
-    public Book() {
+    public Book() { }
+
+    public Book(String title, String author, String description, String isbn, String status) {
+        this.title = title;
+        this.author = author;
+//        this.description = description;
+        this.isbn = isbn;
+        this.status = status;
+    }
+
+    public Book(String title, String author, String username, String status) {
+        this.title = title;
+        this.author = author;
+        this.owner = username;
+        this.status = status;
 
     }
 
@@ -22,6 +47,18 @@ public class Book {
         this.owner = owner;
         this.ownerId = ownerId;
         this.status = "available";
+    }
+
+    /* Create Book object with minimal parameters */
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String descriptionAsString() {
+        return String.join(" ", description);
     }
 
     /**
@@ -44,7 +81,7 @@ public class Book {
      * Gets the book's description
      * @return String
      */
-    public String getDescription() {
+    public ArrayList<String> getDescription() {
         return description;
     }
 
@@ -52,7 +89,7 @@ public class Book {
      * Sets the description of the book
      * @param description book's description
      */
-    public void setDescription(String description) {
+    public void setDescription(ArrayList<String> description) {
         this.description = description;
     }
 
@@ -77,6 +114,9 @@ public class Book {
      * @param status status of the book
      */
     public void setStatus(String status) {
+        if (!this.validStatuses.contains(status)){
+            throw new IllegalArgumentException("Status must be one of available, requested, accepted, borrowed");
+        }
         this.status = status;
     }
 
@@ -127,7 +167,24 @@ public class Book {
     public void setBorrower(String borrower) {
         this.borrower = borrower;
     }
-//
+
+    /**
+     * Gets the current borrower's user ID on the book
+     * @return
+     */
+    public String getBorrowerId() {
+        return borrowerId;
+    }
+
+    /**
+     * sets the current borrower's user ID on the book
+     * @param borrowerId
+     */
+    public void setBorrowerId(String borrowerId) {
+        this.borrowerId = borrowerId;
+    }
+
+    //
 //    public ArrayList<Request> getRequests() {
 //        return requests;
 //    }
@@ -140,7 +197,7 @@ public class Book {
      * Returns the photograph of the book
      * @return Image
      */
-    public Drawable getPhotograph() {
+    public String getPhotograph() {
         return photograph;
     }
 
@@ -148,8 +205,12 @@ public class Book {
      * Sets the photograph
      * @param photograph
      */
-    public void setPhotograph(Drawable photograph) {
+    public void setPhotograph(String photograph) {
         this.photograph = photograph;
+    }
+
+    public Bitmap getDrawablePhotograph() {
+        return Util.stringToBitMap(photograph);
     }
 
     /**

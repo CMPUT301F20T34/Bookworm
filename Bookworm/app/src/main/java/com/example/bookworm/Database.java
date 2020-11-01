@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,7 +9,6 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -20,11 +20,11 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class Database {
     private static final FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    private static Library library = new Library();
+    private static final Library library = new Library();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference libraryCollection = db.collection("Libraries");
     private static final String libraryName = "Main_Library";
@@ -109,6 +109,7 @@ public class Database {
                     Map<String, Object> bookInfo = new HashMap<>();
                     bookInfo.put("author", book.getAuthor());
                     bookInfo.put("borrower", book.getBorrower());
+                    bookInfo.put( "borrowerId", book.getBorrowerId());
                     bookInfo.put("description", book.getDescription());
                     bookInfo.put("isbn", book.getIsbn());
                     bookInfo.put("owner", book.getOwner());
@@ -131,14 +132,14 @@ public class Database {
                                     returnValue.set(0, -1);
                                 }
                             });
-                }
-                //If the book already exist it is updated by its id
-                else{
+                } else {
+                    // If the book already exist it is updated by its id
                     String bookId = querySnapshot.getDocuments().get(0).getId();
                     bookCollection.document(bookId)
                         .update(
                                 "author", book.getAuthor(),
                                 "borrower", book.getBorrower(),
+                                "borrowerId", book.getBorrowerId(),
                                 "description", book.getDescription(),
                                 "isbn", book.getIsbn(),
                                 "owner", book.getOwner(),
@@ -225,13 +226,46 @@ public class Database {
     }
 
     /**
+     * Returns all books that contain the searchTerm as their exact title.
+     * Will rework in the future to return books that contain the searchTerm.
+     * @param searchTerm The keyword that is being searched
+     * @return Task<QuerySnapshot> The result of the query.
+     */
+    public static Task<QuerySnapshot> searchBooks(final String searchTerm) {
+        CollectionReference books = libraryCollection.document(libraryName)
+            .collection(bookName);
+
+        return books.whereEqualTo("title", searchTerm).get();
+    }
+
+    /**
+     * Finds all the books in which the status matches one of the provided and
+     * the keyword given
+     * @param statuses An array of statues that the book can match
+     * @param keyword The keyword to be searched for
+     * @return A task containing a querysnapshot that returns all documents matching the parameters
+     */
+    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
+        if (statuses.length == 0){
+            throw new IllegalArgumentException("statuses cannot be empty");
+        }
+
+        Query query = libraryCollection.document(libraryName).collection("books")
+                .whereIn("status", Arrays.asList(statuses))
+                .whereArrayContains("description", keyword);
+
+        return query.get();
+    }
+
+    /**
      * Creates a user in the database with their username,
      * email, and phone number
      * @param username the username of the user
      * @param phoneNumber email of the user
      * @param email phone number of the user
+     * @return Task containing the result of the creation
      */
-    static void createUser(final String username, String phoneNumber, String email) {
+    static Task<Void> createUser(final String username, String phoneNumber, String email) {
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
                 .collection("users")
@@ -239,13 +273,104 @@ public class Database {
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", phoneNumber);
         userInfo.put("email", email);
+        return documentReference.set(userInfo);
+
+    }
+
+    /**
+     * Updates the user in the database
+     * @param user The user to update with
+     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
+     */
+    static void updateUser(final User user, final ArrayList<Integer> returnValue){
+        final CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
+        Task userTask = userCollection.document(user.getUsername()).get();
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
+        DocumentReference documentReference = libraryCollection
+                .document(libraryName)
+                .collection("users")
+                .document(user.getUsername());
+        Map<String, Object> userInfo = new HashMap<String, Object>();
+        userInfo.put("phoneNumber", user.getPhone());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("borrower", user.getBorrower());
+        userInfo.put("owner", user.getOwner());
         documentReference.set(userInfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "User profile is created for " + username);
+                        Log.d(TAG, "User profile updated");
+                        returnValue.set(0,1);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Failed to update user profile");
+                        returnValue.set(0,-1);
                     }
                 });
+    }
+
+    /**
+     * Deletes a user from the database
+     * @param user The user to be deleted
+     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
+     */
+    static void deleteUser(final User user, final ArrayList<Integer> returnValue){
+        if (returnValue.size() == 0){
+            throw new IllegalArgumentException("returnValue must have a value in it.");
+        }
+        libraryCollection.document(libraryName).collection("users")
+                .document(user.getUsername())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Book does not exist in database");
+                        returnValue.set(0, 1);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                        returnValue.set(0, -1);
+                    }
+                });
+    }
+
+    /**
+     * Uploads an image on the user's phone to be the
+     * profile image of that user's account
+     * @param targetLoc the db storage location of the image
+     * @param userID the id of the logged-in user
+     * @param photoUri the Uri representing the image file
+     * @return An asynchronous task that finishes when the upload finishes.
+     */
+    static UploadTask writeProfilePhoto(StorageReference targetLoc, String userID, Uri photoUri) {
+        return targetLoc.putFile(photoUri);
+    }
+
+    /**
+     * Returns the contact info associated with a given username
+     * @param username the username of the user
+     * @return Task<DocumentSnapshot> A Task containing a DocumentSnapshot with the contact info
+     */
+    static Task<DocumentSnapshot> getUser(final String username){
+        return libraryCollection.document(libraryName).collection("users").document(username).get();
+    }
+
+    /**
+     * Returns the user from a given email.
+     * Used to retrieve the user info from the signed in user
+     * @param email the email of the user
+     * @return Task<QuerySnapshot>
+     */
+    static Task<QuerySnapshot> getUserFromEmail(final String email) {
+        return libraryCollection.document(libraryName).collection(userName).whereEqualTo("email", email).get();
     }
 
     /**
@@ -257,6 +382,29 @@ public class Database {
         return libraryCollection.document(libraryName)
                 .collection("users").document(username)
                 .get();
+    }
+
+    /**
+     * Creates a request in the database for a given request object
+     * @param req the request that must be stored in the database
+     * @param username the username of the signed-in user (for document ID)
+     * @return a task representing the eventual completion of the database access
+     */
+    static Task<Void> createRequest(final Request req, String username) {
+        return libraryCollection.document(libraryName)
+            .collection(requestName).document(req.getBook().getIsbn() + "-" + username)
+            .set(req);
+    }
+
+    /**
+     * Get all books that are requested by the currently signed-in user
+     *
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getRequestedBooks() {
+        return libraryCollection.document(libraryName)
+            .collection(requestName).whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
+            .get();
     }
 
     /**

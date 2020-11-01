@@ -7,7 +7,7 @@
     tools:context=".AddBookActivity">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/profile_photo"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginStart="10dp"
@@ -23,11 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:text="Description"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2" />
+        app:layout_constraintStart_toEndOf="@+id/profile_photo"
+        app:layout_constraintTop_toTopOf="@+id/profile_photo" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/keywordSearchBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -35,7 +35,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="Title"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/profile_photo"
         app:layout_constraintTop_toBottomOf="@id/textView7" />
 
     <EditText
@@ -47,8 +47,8 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="Author"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@id/editTextTextPersonName" />
+        app:layout_constraintStart_toEndOf="@+id/profile_photo"
+        app:layout_constraintTop_toBottomOf="@id/keywordSearchBar" />
 
     <TextView
         android:id="@+id/textView8"
@@ -56,9 +56,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="OWNER NAME"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@id/imageView2" />
+        app:layout_constraintStart_toStartOf="@+id/profile_photo"
+        app:layout_constraintEnd_toEndOf="@+id/profile_photo"
+        app:layout_constraintTop_toBottomOf="@id/profile_photo" />
 
     <EditText
         android:id="@+id/editTextNumber"
@@ -69,7 +69,7 @@
         android:ems="10"
         android:inputType="number"
         android:hint="ISBN"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/profile_photo"
         app:layout_constraintTop_toBottomOf="@id/editTextTextPersonName2" />
 
     <EditText
@@ -81,7 +81,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="Description"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/profile_photo"
         app:layout_constraintTop_toBottomOf="@id/editTextNumber" />
 
     <Button
@@ -90,8 +90,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="VIEW PHOTO"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="@+id/profile_photo"
+        app:layout_constraintEnd_toEndOf="@+id/profile_photo"
         app:layout_constraintTop_toBottomOf="@id/textView8" />
 
     <Button
@@ -100,8 +100,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="ADD PHOTO"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="@+id/profile_photo"
+        app:layout_constraintEnd_toEndOf="@+id/profile_photo"
         app:layout_constraintTop_toBottomOf="@id/button3" />
 
     <Button
@@ -110,8 +110,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="DELETE PHOTO"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="@+id/profile_photo"
+        app:layout_constraintEnd_toEndOf="@+id/profile_photo"
         app:layout_constraintTop_toBottomOf="@id/button4" />
 
     <Button

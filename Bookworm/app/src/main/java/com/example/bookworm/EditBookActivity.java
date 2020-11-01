@@ -19,6 +19,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class EditBookActivity extends AppCompatActivity {
 
@@ -64,15 +65,20 @@ public class EditBookActivity extends AppCompatActivity {
         Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
+            if (task.isSuccessful() && task.getResult().size() > 0) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     selectedBook = document.toObject(Book.class);
                 }
                 titleEditText.setText(selectedBook.getTitle());
                 authorEditText.setText(selectedBook.getAuthor());
                 isbnText.setText(selectedBook.getIsbn());
-                descriptionEditText.setText(selectedBook.getDescription());
                 ownerNameText.setText(selectedBook.getOwner());
+                ArrayList<String> descriptions = selectedBook.getDescription();
+                String description = "";
+                for (String s : descriptions) {
+                    description = description.concat(s).concat(" ");
+                }
+                descriptionEditText.setText(description);
             }
             }
         });
@@ -140,13 +146,19 @@ public class EditBookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String title = titleEditText.getText().toString();
                 String author = authorEditText.getText().toString();
-                String description = descriptionEditText.getText().toString();
+                ArrayList<String> descriptions = new ArrayList<String>();
+                String[] ss = descriptionEditText.getText().toString().split(" ");
+                for (String s : ss) {
+                    if (!s.equals("")){
+                        descriptions.add(s);
+                    }
+                }
                 if (title.equals("") || author.equals("")) {
                     Toast.makeText(EditBookActivity.this, "Title and author are required", Toast.LENGTH_SHORT).show();
                 } else {
                     selectedBook.setTitle(title);
                     selectedBook.setAuthor(author);
-                    selectedBook.setDescription(description);
+                    selectedBook.setDescription(descriptions);
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);
                     Database.writeBook(selectedBook, returnValue);

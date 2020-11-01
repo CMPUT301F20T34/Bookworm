@@ -3,6 +3,9 @@
     package="com.example.bookworm">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -11,12 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditBookActivity"></activity>
+        <activity android:name=".ViewBookActivity"></activity>
+        <activity android:name=".SearchResultsActivity" />
+        <activity android:name=".EditBookActivity" />
         <activity android:name=".AddBookActivity" />
         <activity android:name=".OwnerBooklistActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".Profile" />
+        <activity android:name=".ProfileActivity" />
         <activity android:name=".BorrowerMainActivity" />
         <activity android:name=".ListBorrowing" />
         <activity android:name=".ListAccepted" />

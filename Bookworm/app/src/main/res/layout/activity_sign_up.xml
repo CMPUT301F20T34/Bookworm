@@ -125,7 +125,7 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="signupRedirectLogin"
-        android:text="@string/need_an_account_sign_up_for_one_here"
+        android:text="@string/already_signed_up_login_here"
         android:textColor="@android:color/holo_blue_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
