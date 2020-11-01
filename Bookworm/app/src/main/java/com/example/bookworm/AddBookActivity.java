@@ -152,15 +152,15 @@ public class AddBookActivity extends AppCompatActivity {
                                 // Write the book to the database
                                 final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                                 returnValue.add(0);
-                                Database.writeBook(book, returnValue);
+                                Database.writeBook(book);
                                 Handler handler = new Handler();
                                 handler.postDelayed(() -> {
-                                    if (returnValue.get(0) == 1) {
+                                    if (Database.getListenerSignal() == 1) {
                                         Toast.makeText(AddBookActivity.this,
                                             "Your book is successfully saved",
                                             Toast.LENGTH_SHORT).show();
                                         finish();
-                                    } else if (returnValue.get(0) == -1){
+                                    } else if (Database.getListenerSignal() == -1){
                                         Toast.makeText(AddBookActivity.this,
                                             "Something went wrong while adding your book",
                                             Toast.LENGTH_SHORT).show();

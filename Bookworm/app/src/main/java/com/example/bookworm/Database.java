@@ -1,6 +1,8 @@
 package com.example.bookworm;
 
 import android.net.Uri;
+import android.provider.ContactsContract;
+import android.system.Os;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -32,6 +34,7 @@ import java.util.Map;
  * Contains all methods related to reading and writing from the database.
  */
 public class Database {
+    private static int listenerSignal = 0;
     private static final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private static final Library library = new Library();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -46,6 +49,7 @@ public class Database {
         return library;
     }
 
+    static int getListenerSignal(){ return listenerSignal; }
     /**
      * Writes a library to the Main_Library database
      * @param lib the library to be written
@@ -93,83 +97,35 @@ public class Database {
     /**
      * Updates a book in the database or writes a new one if it does not exist yet
      * @param book the book to be written
-     * @param returnValue an array containing a single value changed to 1 for success and -1 for failure
      */
-    static void writeBook(final Book book, final ArrayList<Integer> returnValue){
-        final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
-        Task bookTask = bookCollection.whereEqualTo("isbn", book.getIsbn()).get();
-        if (returnValue.size() == 0){
-            throw new IllegalArgumentException("returnValue must have a value in it.");
-        }
-        bookTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    static void writeBook(final Book book){
+        Database.listenerSignal = 0;
+        final DocumentReference bookDocument = libraryCollection
+                .document(libraryName)
+                .collection("books")
+                .document(book.getIsbn());
+        Map<String, Object> bookInfo = new HashMap<>();
+        bookInfo.put("author", book.getAuthor());
+        bookInfo.put("borrower", book.getBorrower());
+        bookInfo.put( "borrowerId", book.getBorrowerId());
+        bookInfo.put("description", book.getDescription());
+        bookInfo.put("isbn", book.getIsbn());
+        bookInfo.put("owner", book.getOwner());
+        bookInfo.put("ownerId", book.getOwnerId());
+        bookInfo.put("photograph", book.getPhotograph());
+        bookInfo.put("status", book.getStatus());
+        bookInfo.put("title", book.getTitle());
+        bookDocument.set(bookInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(QuerySnapshot querySnapshot) {
-                //If the book does not exist yet then a new one gets added
-                if (querySnapshot.getDocuments().size() == 0) {
-                    Map<String, Object> bookInfo = new HashMap<>();
-                    bookInfo.put("author", book.getAuthor());
-                    bookInfo.put("borrower", book.getBorrower());
-                    bookInfo.put( "borrowerId", book.getBorrowerId());
-                    bookInfo.put("description", book.getDescription());
-                    bookInfo.put("isbn", book.getIsbn());
-                    bookInfo.put("owner", book.getOwner());
-                    bookInfo.put("ownerId", book.getOwnerId());
-                    bookInfo.put("photograph", book.getPhotograph());
-                    bookInfo.put("status", book.getStatus());
-                    bookInfo.put("title", book.getTitle());
-                    bookCollection.add(bookInfo)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                                    returnValue.set(0, 1);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error adding document", e);
-                                    returnValue.set(0, -1);
-                                }
-                            });
-                } else {
-                    // If the book already exist it is updated by its id
-                    String bookId = querySnapshot.getDocuments().get(0).getId();
-                    bookCollection.document(bookId)
-                        .update(
-                                "author", book.getAuthor(),
-                                "borrower", book.getBorrower(),
-                                "borrowerId", book.getBorrowerId(),
-                                "description", book.getDescription(),
-                                "isbn", book.getIsbn(),
-                                "owner", book.getOwner(),
-                                "ownerId", book.getOwnerId(),
-                                "photograph", book.getPhotograph(),
-                                "status", book.getStatus(),
-                                "title", book.getTitle()
-                        )
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                returnValue.set(0, 1);
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error updating document", e);
-                                returnValue.set(0, -1);
-                            }
-                        });
-                }
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot written");
+                Database.listenerSignal = 1;
             }
-        })
-        .addOnFailureListener(new OnFailureListener() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error querying collection");
-                returnValue.set(0, -1);
+                Log.w(TAG, "Error adding document", e);
+                Database.listenerSignal = -1;
             }
         });
     }
@@ -177,52 +133,28 @@ public class Database {
     /**
      * Deletes a book from the database
      * @param book the book to be deleted
-     * @param returnValue an array containing a single value changed to 1 for success and -1 for failure
      */
-    static void deleteBook(final Book book, final ArrayList<Integer> returnValue){
-        if (returnValue.size() == 0){
-            throw new IllegalArgumentException("returnValue must have a value in it.");
-        }
-        final CollectionReference bookCollection = libraryCollection.document(libraryName).collection("books");
-        Task bookTask = bookCollection.whereEqualTo("isbn", book.getIsbn()).get();
-        bookTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-
-            @Override
-            public void onSuccess(QuerySnapshot querySnapshot) {
-                //If the book does not exist yet then a new one gets added
-                if (querySnapshot.getDocuments().size() == 0) {
-                    Log.d(TAG, "Book does not exist in database");
-                    returnValue.set(0, 1);
-                }
-                //If the book already exist it is updated by its id
-                else{
-                    String bookId = querySnapshot.getDocuments().get(0).getId();
-                    bookCollection.document(bookId)
-                            .delete()
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                    returnValue.set(0, 1);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error updating document", e);
-                                    returnValue.set(0, -1);
-                                }
-                            });
-                }
-            }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error querying collection");
-                returnValue.set(0, -1);
-            }
-        });
+    static void deleteBook(final Book book){
+        Database.listenerSignal = 0;
+        libraryCollection
+                .document(libraryName)
+                .collection("books")
+                .document(book.getIsbn())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Book deleted!");
+                        Database.listenerSignal = 1;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting book.", e);
+                        Database.listenerSignal = -1;
+                    }
+                });
     }
 
     /**
@@ -280,14 +212,9 @@ public class Database {
     /**
      * Updates the user in the database
      * @param user The user to update with
-     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
      */
-    static void updateUser(final User user, final ArrayList<Integer> returnValue){
-        final CollectionReference userCollection = libraryCollection.document(libraryName).collection("users");
-        Task userTask = userCollection.document(user.getUsername()).get();
-        if (returnValue.size() == 0){
-            throw new IllegalArgumentException("returnValue must have a value in it.");
-        }
+    static void updateUser(final User user){
+        Database.listenerSignal = 0;
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
                 .collection("users")
@@ -302,14 +229,14 @@ public class Database {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "User profile updated");
-                        returnValue.set(0,1);
+                        Database.listenerSignal = 1;
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Failed to update user profile");
-                        returnValue.set(0,-1);
+                        Database.listenerSignal = -1;
                     }
                 });
     }
@@ -317,12 +244,9 @@ public class Database {
     /**
      * Deletes a user from the database
      * @param user The user to be deleted
-     * @param returnValue An arraylist with a value that is changed to -1 for failure and 1 for success
      */
-    static void deleteUser(final User user, final ArrayList<Integer> returnValue){
-        if (returnValue.size() == 0){
-            throw new IllegalArgumentException("returnValue must have a value in it.");
-        }
+    static void deleteUser(final User user){
+        Database.listenerSignal = 0;
         libraryCollection.document(libraryName).collection("users")
                 .document(user.getUsername())
                 .delete()
@@ -330,14 +254,69 @@ public class Database {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "Book does not exist in database");
-                        returnValue.set(0, 1);
+                        Database.listenerSignal = 1;
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error updating document", e);
-                        returnValue.set(0, -1);
+                        Database.listenerSignal = -1;
+                    }
+                });
+    }
+
+    /**
+     * Write/updates a Request object into the database with "isbn-borrowerId" as a documentId
+     * @param request The request to be written int the database
+     */
+    static void writeRequest(final Request request){
+        Database.listenerSignal = 0;
+        final DocumentReference requestDocument = libraryCollection
+                .document(libraryName)
+                .collection("requests")
+                .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername());
+        Map<String, Object> requestInfo = new HashMap<>();
+        requestInfo.put("book", request.getBook());
+        requestInfo.put("timestamp", request.getTimestamp());
+        requestInfo.put("borrowerId", request.getCreator());
+        requestInfo.put("description", request.getStatus());
+        requestDocument.set(requestInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot written");
+                Database.listenerSignal = 1;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error adding document", e);
+                Database.listenerSignal = -1;
+            }
+        });
+    }
+
+    /**
+     * Deletes a Request from the database.
+     * @param request The request to be deleted
+     */
+    static void deleteRequest(final Request request){
+        Database.listenerSignal = 0;
+        libraryCollection.document(libraryName).collection("requests")
+                .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Request does not exist in database");
+                        Database.listenerSignal = 1;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                        Database.listenerSignal = -1;
                     }
                 });
     }
