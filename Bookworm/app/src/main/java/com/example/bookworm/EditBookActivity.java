@@ -4,11 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +26,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static com.example.bookworm.ViewPhotoFragment.newInstance;
 
 public class EditBookActivity extends AppCompatActivity {
 
@@ -37,6 +49,10 @@ public class EditBookActivity extends AppCompatActivity {
     private Button viewAllRequestsButton;
     private Button deleteButton;
     private Button saveChangesButton;
+    private ImageView BookPhoto;
+    private Uri filePath;
+    private final int PICK_IMAGE_REQUEST = 22;
+    private String sPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +71,8 @@ public class EditBookActivity extends AppCompatActivity {
         viewAllRequestsButton = findViewById(R.id.button10);
         deleteButton = findViewById(R.id.button11);
         saveChangesButton = findViewById(R.id.button12);
+        BookPhoto = findViewById(R.id.book_photo);
+        BookPhoto.setImageResource(R.drawable.ic_book);
 
         String[] fields = {"ownerId", "isbn"};
         Intent intent = getIntent();
@@ -79,6 +97,9 @@ public class EditBookActivity extends AppCompatActivity {
                     description = description.concat(s).concat(" ");
                 }
                 descriptionEditText.setText(description);
+                if (selectedBook.getPhotograph() != null) {
+                    BookPhoto.setImageBitmap(StringToBitMap(selectedBook.getPhotograph()));
+                }
             }
             }
         });
@@ -86,21 +107,30 @@ public class EditBookActivity extends AppCompatActivity {
         viewPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                try {
+                    BitmapDrawable drawable = (BitmapDrawable) BookPhoto.getDrawable();
+                    Bitmap bitmap = drawable.getBitmap();
+                    ViewPhotoFragment fragment = newInstance(bitmap);
+                    fragment.show(getSupportFragmentManager(), "VIEW_PHOTO");
+                }
+                catch (Exception e){
+                    Toast.makeText(EditBookActivity.this, "No book photo available", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         addPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                AddImage();
             }
         });
+
 
         deletePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                DelImage();
             }
         });
 
@@ -153,12 +183,17 @@ public class EditBookActivity extends AppCompatActivity {
                         descriptions.add(s);
                     }
                 }
+                //BitmapDrawable drawable = (BitmapDrawable) BookPhoto.getDrawable();
+                //Bitmap bitmap = drawable.getBitmap();
                 if (title.equals("") || author.equals("")) {
                     Toast.makeText(EditBookActivity.this, "Title and author are required", Toast.LENGTH_SHORT).show();
                 } else {
                     selectedBook.setTitle(title);
                     selectedBook.setAuthor(author);
-                    selectedBook.setDescription(descriptions);
+                    selectedBook.setDescription(description);
+                    //if (sPhoto != null) {
+                    selectedBook.setPhotograph(sPhoto);
+                    //}
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);
                     Database.writeBook(selectedBook, returnValue);
@@ -183,5 +218,71 @@ public class EditBookActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void AddImage() {
+
+        // Defining Implicit Intent to mobile gallery
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), PICK_IMAGE_REQUEST);
+    }
+
+    private void DelImage() {
+        sPhoto = null;
+        BookPhoto.setImageResource(R.drawable.ic_book);
+    }
+
+    public String BitMapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    // Override onActivityResult method
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // checking request code and result code
+        // if request code is PICK_IMAGE_REQUEST and
+        // resultCode is RESULT_OK
+        // then set image in the image view
+        if (requestCode == PICK_IMAGE_REQUEST
+                && resultCode == RESULT_OK
+                && data != null
+                && data.getData() != null) {
+            // Get the Uri of data
+            filePath = data.getData();
+            try {
+                // Setting image on image view using Bitmap
+                Bitmap bitmap = MediaStore
+                        .Images
+                        .Media
+                        .getBitmap(getContentResolver(), filePath);
+                sPhoto = BitMapToString(bitmap);
+                BookPhoto.setImageBitmap(bitmap);
+            }
+
+            catch (IOException e) {
+                // Log the exception
+                e.printStackTrace();
+            }
+        }
     }
 }
