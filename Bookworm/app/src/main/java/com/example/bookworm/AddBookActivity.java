@@ -142,7 +142,7 @@ public class AddBookActivity extends AppCompatActivity {
                     book.setTitle(title);
                     book.setAuthor(author);
                     book.setIsbn(isbn);
-                    book.setDescription(description);
+                    book.setDescription(descriptions);
                     //book.setPhotograph(sPhoto);
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);

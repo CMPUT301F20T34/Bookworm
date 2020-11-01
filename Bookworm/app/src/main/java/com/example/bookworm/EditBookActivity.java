@@ -190,7 +190,7 @@ public class EditBookActivity extends AppCompatActivity {
                 } else {
                     selectedBook.setTitle(title);
                     selectedBook.setAuthor(author);
-                    selectedBook.setDescription(description);
+                    selectedBook.setDescription(descriptions);
                     //if (sPhoto != null) {
                     selectedBook.setPhotograph(sPhoto);
                     //}
