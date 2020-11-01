@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +33,7 @@ import java.util.Map;
  */
 public class Database {
     private static final FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    private static Library library = new Library();
+    private static final Library library = new Library();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final CollectionReference libraryCollection = db.collection("Libraries");
     private static final String libraryName = "Main_Library";
@@ -129,9 +132,8 @@ public class Database {
                                     returnValue.set(0, -1);
                                 }
                             });
-                }
-                //If the book already exist it is updated by its id
-                else{
+                } else {
+                    // If the book already exist it is updated by its id
                     String bookId = querySnapshot.getDocuments().get(0).getId();
                     bookCollection.document(bookId)
                         .update(
@@ -224,6 +226,19 @@ public class Database {
     }
 
     /**
+     * Returns all books that contain the searchTerm as their exact title.
+     * Will rework in the future to return books that contain the searchTerm.
+     * @param searchTerm The keyword that is being searched
+     * @return Task<QuerySnapshot> The result of the query.
+     */
+    public static Task<QuerySnapshot> searchBooks(final String searchTerm) {
+        CollectionReference books = libraryCollection.document(libraryName)
+            .collection(bookName);
+
+        return books.whereEqualTo("title", searchTerm).get();
+    }
+
+    /**
      * Finds all the books in which the status matches one of the provided and
      * the keyword given
      * @param statuses An array of statues that the book can match
@@ -248,8 +263,9 @@ public class Database {
      * @param username the username of the user
      * @param phoneNumber email of the user
      * @param email phone number of the user
+     * @return Task containing the result of the creation
      */
-    static void createUser(final String username, String phoneNumber, String email) {
+    static Task<Void> createUser(final String username, String phoneNumber, String email) {
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
                 .collection("users")
@@ -257,13 +273,8 @@ public class Database {
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", phoneNumber);
         userInfo.put("email", email);
-        documentReference.set(userInfo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "User profile is created for " + username);
-                    }
-                });
+        return documentReference.set(userInfo);
+
     }
 
     /**
@@ -332,12 +343,34 @@ public class Database {
     }
 
     /**
+     * Uploads an image on the user's phone to be the
+     * profile image of that user's account
+     * @param targetLoc the db storage location of the image
+     * @param userID the id of the logged-in user
+     * @param photoUri the Uri representing the image file
+     * @return An asynchronous task that finishes when the upload finishes.
+     */
+    static UploadTask writeProfilePhoto(StorageReference targetLoc, String userID, Uri photoUri) {
+        return targetLoc.putFile(photoUri);
+    }
+
+    /**
      * Returns the contact info associated with a given username
      * @param username the username of the user
      * @return Task<DocumentSnapshot> A Task containing a DocumentSnapshot with the contact info
      */
     static Task<DocumentSnapshot> getUser(final String username){
         return libraryCollection.document(libraryName).collection("users").document(username).get();
+    }
+
+    /**
+     * Returns the user from a given email.
+     * Used to retrieve the user info from the signed in user
+     * @param email the email of the user
+     * @return Task<QuerySnapshot>
+     */
+    static Task<QuerySnapshot> getUserFromEmail(final String email) {
+        return libraryCollection.document(libraryName).collection(userName).whereEqualTo("email", email).get();
     }
 
     /**

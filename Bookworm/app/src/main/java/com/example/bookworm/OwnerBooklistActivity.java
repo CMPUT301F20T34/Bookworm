@@ -1,17 +1,16 @@
 package com.example.bookworm;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -72,7 +71,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (view != null){
-                    String isbn = ((TextView) view.findViewById(R.id.textView4)).getText().toString();
+                    String isbn = ((TextView) view.findViewById(R.id.phone_profile)).getText().toString();
                     Intent intent = new Intent(recyclerView.getContext(), EditBookActivity.class);
                     intent.putExtra("isbn", isbn);
                     startActivity(intent);

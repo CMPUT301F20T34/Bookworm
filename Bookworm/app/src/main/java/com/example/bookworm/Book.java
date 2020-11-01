@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.annotation.RegEx;
+
 public class Book {
     private static ArrayList<String> validStatuses = new ArrayList<String>(Arrays.asList("available", "requested", "accepted", "borrowed"));
     private String title;
@@ -20,7 +22,21 @@ public class Book {
 //    private ArrayList<Request> requests;
     private String photograph;
 
-    public Book() {
+    public Book() { }
+
+    public Book(String title, String author, String description, String isbn, String status) {
+        this.title = title;
+        this.author = author;
+//        this.description = description;
+        this.isbn = isbn;
+        this.status = status;
+    }
+
+    public Book(String title, String author, String username, String status) {
+        this.title = title;
+        this.author = author;
+        this.owner = username;
+        this.status = status;
 
     }
 
@@ -28,6 +44,13 @@ public class Book {
         this.owner = owner;
         this.ownerId = ownerId;
         this.status = "available";
+    }
+
+    /* Create Book object with minimal parameters */
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
     }
 
     /**

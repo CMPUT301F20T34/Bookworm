@@ -1,8 +1,5 @@
 package com.example.bookworm;
 
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -30,7 +26,7 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
 
         public MyViewHolder(@NonNull View itemView, ImageView ownerPhoto, TextView ownerName,
                             TextView title, TextView author, TextView isbn, TextView status,
-                            TextView currentBurrower) {
+                            TextView currentBorrower) {
             super(itemView);
             this.ownerPhoto = ownerPhoto;
             this.ownerName = ownerName;
@@ -38,7 +34,7 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
             this.author = author;
             this.isbn = isbn;
             this.status = status;
-            this.currentBurrower = currentBurrower;
+            this.currentBurrower = currentBorrower;
         }
 
 
@@ -58,8 +54,8 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         TextView ownerName = view.findViewById(R.id.textView);
         TextView title = view.findViewById(R.id.textView2);
         TextView author = view.findViewById(R.id.textView3);
-        TextView isbn = view.findViewById(R.id.textView4);
-        TextView status = view.findViewById(R.id.textView5);
+        TextView isbn = view.findViewById(R.id.phone_profile);
+        TextView status = view.findViewById(R.id.email_profile);
         TextView currentBurrower = view.findViewById(R.id.textView6);
 
         MyViewHolder vh = new MyViewHolder(view, ownerPhoto, ownerName,
