@@ -1,11 +1,14 @@
 package com.example.bookworm;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import com.example.bookworm.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.annotation.RegEx;
 
 public class Book {
     private static ArrayList<String> validStatuses = new ArrayList<String>(Arrays.asList("available", "requested", "accepted", "borrowed"));
@@ -19,7 +22,7 @@ public class Book {
     private String borrower;
     private String borrowerId;
 //    private ArrayList<Request> requests;
-    private Drawable photograph;
+    private String photograph;
 
     public Book() { }
 
@@ -50,6 +53,11 @@ public class Book {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String descriptionAsString() {
+        return String.join(" ", description);
     }
 
     /**
@@ -188,7 +196,7 @@ public class Book {
      * Returns the photograph of the book
      * @return Image
      */
-    public Drawable getPhotograph() {
+    public String getPhotograph() {
         return photograph;
     }
 
@@ -196,8 +204,12 @@ public class Book {
      * Sets the photograph
      * @param photograph
      */
-    public void setPhotograph(Drawable photograph) {
+    public void setPhotograph(String photograph) {
         this.photograph = photograph;
+    }
+
+    public Bitmap getDrawablePhotograph() {
+        return Util.stringToBitMap(photograph);
     }
 
     /**

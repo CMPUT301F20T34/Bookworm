@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 //import static org.junit.Assert.assertThrows;
 
 /**
@@ -106,6 +107,7 @@ public class DataBaseTest {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                        assertNotEquals(docs.size(), 0);
                         assertEquals(docs.get(0).get("title"), "Animal Farm");
                     }
                 });

@@ -370,6 +370,12 @@ public class Database {
                 .get();
     }
 
+    static Task<Void> createRequest(final Book book, String username) {
+        return libraryCollection.document(libraryName)
+            .collection(requestName).document(book.getIsbn() + "-" + username)
+            .set(book);
+    }
+
     /**
      * Queries a collection for a field matching a value
      * @param collection the collection to be queried

@@ -2,10 +2,13 @@ package com.example.bookworm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,15 +39,12 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
         // Get the results for each book, display in the user
         Database.searchBooks(searchTerm)
             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        books.add(new Book(
-                            (String) doc.get("title"),
-                            (String) doc.get("author"),
-                            (String) doc.get("owner"),
-                            (String) doc.get("status")
-                        ));
+                        Book book = doc.toObject(Book.class);
+                        books.add(book);
                     }
                     SearchResultsAdapter adapter = new SearchResultsAdapter(context, books, onBookListener);
                     searchResults.setAdapter(adapter);
@@ -54,11 +54,14 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-
+                    Toast.makeText(context,
+                        "Error: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
                 }
             });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBookClick(int position) {
         Book selectedBook = this.books.get(position);
@@ -67,6 +70,8 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
         intent.putExtra("author", selectedBook.getAuthor());
         intent.putExtra("owner", selectedBook.getOwnerId());
         intent.putExtra("status", selectedBook.getStatus());
+        intent.putExtra("description", selectedBook.descriptionAsString());
+        intent.putExtra("isbn", selectedBook.getIsbn());
         startActivity(intent);
     }
 }

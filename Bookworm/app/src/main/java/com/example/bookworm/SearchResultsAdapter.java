@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         holder.getAuthor().setText(books.get(position).getAuthor());
         holder.getUsername().setText(books.get(position).getOwner());
         holder.getStatus().setText(books.get(position).getStatus());
+        holder.getImage().setImageBitmap(books.get(position).getDrawablePhotograph());
     }
 
     @Override
@@ -49,18 +51,26 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         private final TextView author;
         private final TextView username;
         private final TextView status;
+        private final ImageView image;
         OnBookListener onBookListener;
 
         public SRViewHolder(@NonNull View itemView, OnBookListener onBookListener) {
             super(itemView);
-            title = itemView.findViewById(R.id.search_result_title);
-            author = itemView.findViewById(R.id.search_result_author);
-            username = itemView.findViewById(R.id.search_result_owner);
-            status = itemView.findViewById(R.id.search_result_status);
+            this.title = itemView.findViewById(R.id.search_result_title);
+            this.author = itemView.findViewById(R.id.search_result_author);
+            this.username = itemView.findViewById(R.id.search_result_owner);
+            this.status = itemView.findViewById(R.id.search_result_status);
+            this.image = itemView.findViewById(R.id.search_result_image);
             this.onBookListener = onBookListener;
 
             itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            this.onBookListener.onBookClick(getAdapterPosition());
+        }
+
 
         public TextView getTitle() {
             return title;
@@ -78,9 +88,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             return status;
         }
 
-        @Override
-        public void onClick(View v) {
-            this.onBookListener.onBookClick(getAdapterPosition());
+        public ImageView getImage() {
+            return image;
         }
     }
 
