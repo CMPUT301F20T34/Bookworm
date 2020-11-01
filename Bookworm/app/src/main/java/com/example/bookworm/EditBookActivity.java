@@ -73,6 +73,7 @@ public class EditBookActivity extends AppCompatActivity {
         saveChangesButton = findViewById(R.id.button12);
         BookPhoto = findViewById(R.id.book_photo);
         BookPhoto.setImageResource(R.drawable.ic_book);
+        BookPhoto.setTag(R.drawable.ic_book);
 
         String[] fields = {"ownerId", "isbn"};
         Intent intent = getIntent();
@@ -99,6 +100,7 @@ public class EditBookActivity extends AppCompatActivity {
                 descriptionEditText.setText(description);
                 if (selectedBook.getPhotograph() != null) {
                     BookPhoto.setImageBitmap(StringToBitMap(selectedBook.getPhotograph()));
+                    BookPhoto.setTag(0);
                 }
             }
             }
@@ -221,22 +223,32 @@ public class EditBookActivity extends AppCompatActivity {
     }
 
     private void AddImage() {
-
-        // Defining Implicit Intent to mobile gallery
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), PICK_IMAGE_REQUEST);
+        if ((int) BookPhoto.getTag() == R.drawable.ic_book) {
+            // Defining Implicit Intent to mobile gallery
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), PICK_IMAGE_REQUEST);
+        }
+        else{
+            Toast.makeText(EditBookActivity.this, "Book Photo already exists! please try to remove then add a new one.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void DelImage() {
-        sPhoto = null;
-        BookPhoto.setImageResource(R.drawable.ic_book);
+        if ((int) BookPhoto.getTag() != R.drawable.ic_book) {
+            sPhoto = null;
+            BookPhoto.setImageResource(R.drawable.ic_book);
+            BookPhoto.setTag(R.drawable.ic_book);
+        }
+        else{
+            Toast.makeText(EditBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public String BitMapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, baos);
         byte[] b = baos.toByteArray();
         String temp = Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
@@ -277,6 +289,7 @@ public class EditBookActivity extends AppCompatActivity {
                         .getBitmap(getContentResolver(), filePath);
                 sPhoto = BitMapToString(bitmap);
                 BookPhoto.setImageBitmap(bitmap);
+                BookPhoto.setTag(0);
             }
 
             catch (IOException e) {
