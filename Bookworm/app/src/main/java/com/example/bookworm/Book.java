@@ -7,10 +7,11 @@ import androidx.annotation.RequiresApi;
 
 import com.example.bookworm.util.Util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Book {
+public class Book implements Serializable {
     private static ArrayList<String> validStatuses = new ArrayList<String>(Arrays.asList("available", "requested", "accepted", "borrowed"));
     private String title;
     private String author;

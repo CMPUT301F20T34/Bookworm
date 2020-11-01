@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bookworm.util.Util;
+
 import java.util.ArrayList;
 
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.SRViewHolder>{
@@ -34,11 +36,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     @Override
     public void onBindViewHolder(@NonNull SRViewHolder holder, int position) {
-        holder.getTitle().setText(books.get(position).getTitle());
-        holder.getAuthor().setText(books.get(position).getAuthor());
-        holder.getUsername().setText(books.get(position).getOwner());
-        holder.getStatus().setText(books.get(position).getStatus());
-        holder.getImage().setImageBitmap(books.get(position).getDrawablePhotograph());
+        Book book = books.get(position);
+        holder.getTitle().setText(book.getTitle());
+        holder.getAuthor().setText(book.getAuthor());
+        holder.getUsername().setText(book.getOwner());
+        holder.getStatus().setText(book.getStatus());
+        if (book.getDrawablePhotograph() != null) {
+            holder.getImage().setImageBitmap(Util.scaleToFitHeight(book.getDrawablePhotograph(), 500));
+        }
     }
 
     @Override

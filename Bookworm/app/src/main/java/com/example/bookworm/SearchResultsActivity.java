@@ -2,6 +2,7 @@ package com.example.bookworm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class SearchResultsActivity extends AppCompatActivity implements SearchResultsAdapter.OnBookListener {
@@ -61,6 +63,10 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
             });
     }
 
+    /**
+     * Views the book in a new activity when a search result is tapped on
+     * @param position the position of the tap in the recyclerView
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBookClick(int position) {
@@ -68,10 +74,36 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
         Intent intent = new Intent(this, ViewBookActivity.class);
         intent.putExtra("title", selectedBook.getTitle());
         intent.putExtra("author", selectedBook.getAuthor());
-        intent.putExtra("owner", selectedBook.getOwnerId());
+        intent.putExtra("owner", selectedBook.getOwner());
         intent.putExtra("status", selectedBook.getStatus());
         intent.putExtra("description", selectedBook.descriptionAsString());
         intent.putExtra("isbn", selectedBook.getIsbn());
+
+        /* Passing a large bitmap between activities
+         * https://stackoverflow.com/questions/11010386/passing-android-bitmap-data-within-activity-using-intent-in-android
+         * Posted by Zaid Daghestani
+         * Accessed October 31st, 2020
+         */
+        if (selectedBook.getPhotograph() != null) {
+            try {
+                //Write file
+                String filename = "bitmap.png";
+                Bitmap bmp = selectedBook.getDrawablePhotograph();
+                FileOutputStream stream = this.openFileOutput(filename, Context.MODE_PRIVATE);
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                //Cleanup
+                stream.close();
+                bmp.recycle();
+
+                //Pop intent
+                intent.putExtra("photograph", filename);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            intent.putExtra("photograph", "null");
+        }
         startActivity(intent);
     }
 }

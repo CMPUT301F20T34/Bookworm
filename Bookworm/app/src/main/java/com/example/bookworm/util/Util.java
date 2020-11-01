@@ -129,4 +129,31 @@ public class Util {
         }
     }
 
+    /* Following methods are from
+     * https://en.proft.me/2017/08/2/how-work-bitmap-android/
+     * Accessed October 31st, 2020
+     */
+
+    /**
+     * Resizes a bitmap to a set width, keeping the aspect ratio
+     * @param b the bitmap to resize
+     * @param width the target width of the resulting bitmap
+     * @return the new, resized bitmap
+     */
+    public static Bitmap scaleToFitWidth(Bitmap b, int width) {
+        float factor = width / (float) b.getWidth();
+        return Bitmap.createScaledBitmap(b, width, (int) (b.getHeight() * factor), true);
+    }
+
+    /**
+     * Resizes a bitmap to a set height, keeping the aspect ratio
+     * @param b the bitmap to resize
+     * @param height the target height of the resulting bitmap
+     * @return the new, resized bitmap
+     */
+    public static Bitmap scaleToFitHeight(Bitmap b, int height) {
+        float factor = height / (float) b.getHeight();
+        return Bitmap.createScaledBitmap(b, (int) (b.getWidth() * factor), height, true);
+    }
+
 }
