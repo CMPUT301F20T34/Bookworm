@@ -78,7 +78,6 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
         intent.putExtra("status", selectedBook.getStatus());
         intent.putExtra("description", selectedBook.descriptionAsString());
         intent.putExtra("isbn", selectedBook.getIsbn());
-
         /* Passing a large bitmap between activities
          * https://stackoverflow.com/questions/11010386/passing-android-bitmap-data-within-activity-using-intent-in-android
          * Posted by Zaid Daghestani

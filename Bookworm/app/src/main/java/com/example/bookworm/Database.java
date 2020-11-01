@@ -384,10 +384,27 @@ public class Database {
                 .get();
     }
 
-    static Task<Void> createRequest(final Book book, String username) {
+    /**
+     * Creates a request in the database for a given request object
+     * @param req the request that must be stored in the database
+     * @param username the username of the signed-in user (for document ID)
+     * @return a task representing the eventual completion of the database access
+     */
+    static Task<Void> createRequest(final Request req, String username) {
         return libraryCollection.document(libraryName)
-            .collection(requestName).document(book.getIsbn() + "-" + username)
-            .set(book);
+            .collection(requestName).document(req.getBook().getIsbn() + "-" + username)
+            .set(req);
+    }
+
+    /**
+     * Get all books that are requested by the currently signed-in user
+     *
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getRequestedBooks() {
+        return libraryCollection.document(libraryName)
+            .collection(requestName).whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
+            .get();
     }
 
     /**

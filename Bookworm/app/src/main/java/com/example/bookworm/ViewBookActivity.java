@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookworm.util.Util;
@@ -36,6 +38,7 @@ public class ViewBookActivity extends AppCompatActivity {
     Button requestButton;
     final Context context = this;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +85,14 @@ public class ViewBookActivity extends AppCompatActivity {
             // Attempt to create a request from the book and the current
             // signed in user.
             Book book = new Book(title, author, description, isbn, status);
+            book.setOwner(owner);
             String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             Database.getUserFromEmail(email)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     // Successfully got username from the email of the user.
                     DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                    String username = (String) doc.getId();
-                    System.out.println(username);
-                    Database.createRequest(book, username)
+                    Request request = new Request(book, doc.toObject(User.class), "available");
+                    Database.createRequest(request, doc.getId())
 
                         .addOnSuccessListener(aVoid -> {
                             // Successfully created the request in the database.
