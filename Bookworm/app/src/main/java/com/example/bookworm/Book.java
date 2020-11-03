@@ -36,6 +36,9 @@ public class Book implements Serializable {
     }
 
     public Book(String title, String author, String username, String status) {
+        if (!this.validStatuses.contains(status)){
+            throw new IllegalArgumentException("Status must be one of available, requested, accepted, borrowed");
+        }
         this.title = title;
         this.author = author;
         this.owner = username;

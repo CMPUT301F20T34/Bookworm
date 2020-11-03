@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotEquals;
 
 /**
  * Test class for MainActivity. All the UI tests are written here.
- * Robotium test framework is used
+ * Robotium test framework is used since Firebase requires a Context object which it gets from the Activity
  */
 public class DataBaseTest {
     private Solo solo; // Main test class of robotium
@@ -37,7 +37,7 @@ public class DataBaseTest {
     }
 
     private Book mockBook() {
-        return new Book("1984", "George Orwell", "Available", mockUser().getUsername());
+        return new Book("1984", "George Orwell", mockUser().getUsername(), "available");
     }
 
     private Request mockRequest() {
@@ -59,20 +59,10 @@ public class DataBaseTest {
     }
 
     /**
-     * Gets the activity
-     *
-     * @throws Exception
+     * Tests methods related to Book objects (writing, updating, querying, deleting)
      */
     @Test
-    public void start() throws Exception {
-        Activity activity = rule.getActivity();
-    }
-
-    /**
-     * Tests the writing of books by the writeBook method
-     */
-    @Test
-    public void databaseTest() throws InterruptedException {
+    public void testBookMethods() throws InterruptedException {
         //Writes a new book to the database
         Book testBook = mockBook();
         testBook.setIsbn("1621325");
@@ -84,6 +74,8 @@ public class DataBaseTest {
 
         //Updates a book in the database
         testBook.setTitle("Animal Farm");
+        testBook.setDescription(new ArrayList<String>(List.of("Dystopian", "Political")));
+        testBook.setStatus("available");
         Database.writeBook(testBook);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
@@ -120,7 +112,7 @@ public class DataBaseTest {
                 });
 
         //Tests for keyword search
-        Database.bookKeywordSearch(new String[]{"available"}, "fantasy")
+        Database.bookKeywordSearch(new String[]{"available"}, "Political")
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -146,9 +138,7 @@ public class DataBaseTest {
     public void testUserMethods() throws InterruptedException {
         //Tests the writing/updating of users
         ArrayList<Integer> callback = new ArrayList<Integer>(Collections.singletonList(1));
-        User testUser = new User();
-        testUser.setUsername("DatabaseTest");
-        testUser.setEmail("test@database.com");
+        User testUser = mockUser();
         Database.updateUser(testUser);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
