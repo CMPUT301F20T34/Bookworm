@@ -84,7 +84,7 @@ public class ViewBookActivity extends AppCompatActivity {
 
         requestButton = findViewById(R.id.view_book_request);
 
-        if (status != "Available") {
+        if (!status.equals("available")) {
             requestButton.setEnabled(false);
         }
 

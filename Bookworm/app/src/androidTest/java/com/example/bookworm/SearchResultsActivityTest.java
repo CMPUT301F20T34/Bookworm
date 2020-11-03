@@ -22,7 +22,7 @@ public class SearchResultsActivityTest {
     private FirebaseAuth fAuth;
 
     public Book mockBook() {
-        return new Book("Title", "Author", "Description", "ISBN", "Status");
+        return new Book("Title", "Author", "Description", "ISBN", "available");
     }
 
     @Rule
@@ -32,10 +32,9 @@ public class SearchResultsActivityTest {
     /**
      * Runs before all tests and creates solo instance,
      * Signs out of firebase and goes to the SignUp activity
-     * @throws Exception
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         fAuth = FirebaseAuth.getInstance();
         fAuth.signOut();
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
@@ -50,10 +49,9 @@ public class SearchResultsActivityTest {
     /**
      * Gets the activity
      *
-     * @throws Exception
      */
     @Test
-    public void start() throws Exception {
+    public void start() {
         Activity activity = rule.getActivity();
     }
 
