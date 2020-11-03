@@ -162,6 +162,10 @@ public class DataBaseTest {
         assertEquals(Database.getListenerSignal(), 1);
     }
 
+    /**
+     * Test methods related to getting & setting requests
+     * @throws InterruptedException When the sleeping thread is interrupted
+     */
     @Test
     public void testRequestMethods() throws InterruptedException {
         //Writes a new request
@@ -173,7 +177,7 @@ public class DataBaseTest {
         assertEquals(Database.getListenerSignal(), 1);
 
         //Updates a request
-        testRequest.setStatus("Accepted");
+        testRequest.setStatus("Accepted"); // uses the same ID, so will overwrite in DB
         Database.createSynchronousRequest(testRequest);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
@@ -186,7 +190,6 @@ public class DataBaseTest {
             Thread.sleep(100);
         }
         assertEquals(Database.getListenerSignal(), 1);
-
     }
 
     /**

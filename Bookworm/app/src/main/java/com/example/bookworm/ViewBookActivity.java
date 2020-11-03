@@ -81,7 +81,13 @@ public class ViewBookActivity extends AppCompatActivity {
             // Store a static photo containing "No photo provided" or something like it.
         }
 
+
         requestButton = findViewById(R.id.view_book_request);
+
+        if (status != "Available") {
+            requestButton.setEnabled(false);
+        }
+
         requestButton.setOnClickListener(v -> {
 
             // Attempt to create a request from the book and the current
