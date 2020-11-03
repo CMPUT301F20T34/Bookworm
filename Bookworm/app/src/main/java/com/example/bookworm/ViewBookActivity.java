@@ -59,14 +59,14 @@ public class ViewBookActivity extends AppCompatActivity {
         titleView = findViewById(R.id.view_book_title);
         authorView = findViewById(R.id.view_book_author);
         ownerView = findViewById(R.id.view_book_owner);
-        descriptionView = findViewById(R.id.view_book_static_description);
+        descriptionView = findViewById(R.id.view_book_description);
         statusView = findViewById(R.id.view_book_status);
         photoView = findViewById(R.id.view_book_image);
 
         titleView.setText("Title: " + title);
         authorView.setText("Author: " + author);
         ownerView.setText("Owner: " + owner);
-        descriptionView.setText("Description:\n" + description);
+        descriptionView.setText(description);
         statusView.setText("Status: " + status.substring(0, 1).toUpperCase() + status.substring(1));
         if (filename != "null") {
             try {
@@ -77,6 +77,8 @@ public class ViewBookActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            // Store a static photo containing "No photo provided" or something like it.
         }
 
         requestButton = findViewById(R.id.view_book_request);
@@ -92,7 +94,8 @@ public class ViewBookActivity extends AppCompatActivity {
                     // Successfully got username from the email of the user.
                     DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                     Request request = new Request(book, doc.toObject(User.class), "available");
-                    Database.createRequest(request, doc.getId())
+                    request.getCreator().setUsername(doc.getId()); // Not set automatically
+                    Database.createRequest(request)
 
                         .addOnSuccessListener(aVoid -> {
                             // Successfully created the request in the database.

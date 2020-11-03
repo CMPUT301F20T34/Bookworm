@@ -16,7 +16,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -167,7 +166,7 @@ public class DataBaseTest {
     public void testRequestMethods() throws InterruptedException {
         //Writes a new request
         Request testRequest = mockRequest();
-        Database.writeRequest(testRequest);
+        Database.createSynchronousRequest(testRequest);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
@@ -175,7 +174,7 @@ public class DataBaseTest {
 
         //Updates a request
         testRequest.setStatus("Accepted");
-        Database.writeRequest(testRequest);
+        Database.createSynchronousRequest(testRequest);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }

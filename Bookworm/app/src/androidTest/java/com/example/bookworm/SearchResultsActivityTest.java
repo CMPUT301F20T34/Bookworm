@@ -14,8 +14,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.Assert.assertTrue;
 
 
@@ -66,13 +64,10 @@ public class SearchResultsActivityTest {
 
         // Write an arbitrary book to the database
         Book book = mockBook();
-        ArrayList<Integer> returnVals = new ArrayList<>();
-        returnVals.add(0);
-        Database.writeBook(book, returnVals);
-        while (returnVals.get(0) == 0) {
+        Database.writeBook(book);
+        while (Database.getListenerSignal() == 0) {
             Thread.sleep(100);
         }
-        returnVals.set(0, 0);
 
         // Enter the title of the book to search
         solo.enterText((EditText) solo.getView(R.id.keywordSearchBar), "Happy Lands");
@@ -85,7 +80,7 @@ public class SearchResultsActivityTest {
         assertTrue(solo.waitForText("Happy Lands", 2, 1000));
 
         // Delete the book
-        Database.deleteBook(book, returnVals);
+        Database.deleteBook(book);
     }
 
 
