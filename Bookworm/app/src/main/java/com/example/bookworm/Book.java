@@ -30,12 +30,24 @@ public class Book implements Serializable {
     public Book(String title, String author, String description, String isbn, String status) {
         this.title = title;
         this.author = author;
-//        this.description = description;
+        this.description = new ArrayList<>();
+        this.description.addAll(Arrays.asList(description.split(" ")));
+        this.isbn = isbn;
+        this.status = status;
+    }
+
+    public Book(String title, String author, ArrayList<String> description, String isbn, String status) {
+        this.title = title;
+        this.author = author;
+        this.description = description;
         this.isbn = isbn;
         this.status = status;
     }
 
     public Book(String title, String author, String username, String status) {
+        if (!this.validStatuses.contains(status)){
+            throw new IllegalArgumentException("Status must be one of available, requested, accepted, borrowed");
+        }
         this.title = title;
         this.author = author;
         this.owner = username;
@@ -114,7 +126,7 @@ public class Book implements Serializable {
      * @param status status of the book
      */
     public void setStatus(String status) {
-        if (!this.validStatuses.contains(status)){
+        if (!validStatuses.contains(status)){
             throw new IllegalArgumentException("Status must be one of available, requested, accepted, borrowed");
         }
         this.status = status;

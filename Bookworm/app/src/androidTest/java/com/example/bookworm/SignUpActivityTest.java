@@ -28,8 +28,8 @@ public class SignUpActivityTest {
     private FirebaseAuth fAuth;
 
     @Rule
-    public ActivityTestRule<MainActivity> rule =
-            new ActivityTestRule<>(MainActivity.class, true, true);
+    public ActivityTestRule<SignUpActivity> rule =
+            new ActivityTestRule<>(SignUpActivity.class, true, true);
 
     /**
      * Runs before all tests and creates solo instance,
@@ -79,6 +79,7 @@ public class SignUpActivityTest {
      */
     @Test
     public void passwordsDontMatch() {
+        solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
         String pass = Util.getRandomString(20);
 
         // Ensure there is no error to start
@@ -106,6 +107,7 @@ public class SignUpActivityTest {
     @Test
     public void badEmail() {
         // Somehow get to the correct activity
+        solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
         String pass = Util.getRandomString(20);
 
         EditText emailView = (EditText) solo.getView(R.id.email_address_signup);
@@ -131,6 +133,7 @@ public class SignUpActivityTest {
     @Test
     public void badPhoneNumber() {
         // Somehow get to the correct activity
+        solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
         String pass = Util.getRandomString(20);
 
         // Confirm error is not present
@@ -149,25 +152,6 @@ public class SignUpActivityTest {
 
         // Check to make sure the number is rejected
         assertFalse(TextUtils.isEmpty(phoneView.getError()));
-    }
-
-    /**
-     * Ensures that a user that doesn't exist entered with a password
-     * that doesn't exist is rejected by the DB
-     */
-    @Test
-    public void wrongUsernameAndPassword() {
-        // Somehow get to the correct activity
-        solo.assertCurrentActivity("Wrong Activity", SignUpActivity.class);
-
-        // Enter random values
-        solo.enterText((EditText) solo.getView(R.id.username_login), Util.getRandomString(100));
-        solo.enterText((EditText) solo.getView(R.id.password_login), Util.getRandomString(100));
-
-        // Confirm the login
-        solo.clickOnView(solo.getView(R.id.register_button));
-
-        // Somehow get that the db has rejected the values
     }
 
     /**

@@ -4,13 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.bookworm.util.Util;
 
 import java.util.ArrayList;
 
@@ -30,7 +27,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     @Override
     public SRViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view =  inflater.inflate(R.layout.search_result_content, parent, false);
+        View view =  inflater.inflate(R.layout.content_borrower_lists, parent, false);
         return new SRViewHolder(view, this.onBookListener);
     }
 
@@ -41,9 +38,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         holder.getAuthor().setText(book.getAuthor());
         holder.getUsername().setText(book.getOwner());
         holder.getStatus().setText(book.getStatus());
-        if (book.getDrawablePhotograph() != null) {
-            holder.getImage().setImageBitmap(Util.scaleToFitHeight(book.getDrawablePhotograph(), 500));
-        }
+        holder.getIsbn().setText(book.getIsbn());
     }
 
     @Override
@@ -56,16 +51,16 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         private final TextView author;
         private final TextView username;
         private final TextView status;
-        private final ImageView image;
+        private final TextView isbn;
         OnBookListener onBookListener;
 
         public SRViewHolder(@NonNull View itemView, OnBookListener onBookListener) {
             super(itemView);
-            this.title = itemView.findViewById(R.id.search_result_title);
-            this.author = itemView.findViewById(R.id.search_result_author);
-            this.username = itemView.findViewById(R.id.search_result_owner);
-            this.status = itemView.findViewById(R.id.search_result_status);
-            this.image = itemView.findViewById(R.id.search_result_image);
+            this.title = itemView.findViewById(R.id.book_title);
+            this.author = itemView.findViewById(R.id.book_author);
+            this.username = itemView.findViewById(R.id.book_owner);
+            this.status = itemView.findViewById(R.id.book_status);
+            this.isbn = itemView.findViewById(R.id.book_isbn);
             this.onBookListener = onBookListener;
 
             itemView.setOnClickListener(this);
@@ -93,8 +88,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             return status;
         }
 
-        public ImageView getImage() {
-            return image;
+        public TextView getIsbn() {
+            return isbn;
         }
     }
 

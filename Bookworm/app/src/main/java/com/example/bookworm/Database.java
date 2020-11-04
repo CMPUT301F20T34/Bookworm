@@ -1,8 +1,6 @@
 package com.example.bookworm;
 
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.system.Os;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -31,10 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains all methods related to reading and writing from the database.
+ * Contains all methods related to reading, writing, and deleting from the database.
  */
 public class Database {
-    private static int listenerSignal = 0;
+    private static int listenerSignal = 0;  // Used to verify that a write/read/delete has completed
     private static final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private static final Library library = new Library();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -49,7 +47,12 @@ public class Database {
         return library;
     }
 
+    /**
+     * Returns the listener signal to verify that the db operation has completed
+     * @return listenerSignal an int, 0 if incomplete, 1 if success, -1 if failed
+     */
     static int getListenerSignal(){ return listenerSignal; }
+
     /**
      * Writes a library to the Main_Library database
      * @param lib the library to be written
@@ -102,7 +105,7 @@ public class Database {
         Database.listenerSignal = 0;
         final DocumentReference bookDocument = libraryCollection
                 .document(libraryName)
-                .collection("books")
+                .collection(bookName)
                 .document(book.getIsbn());
         Map<String, Object> bookInfo = new HashMap<>();
         bookInfo.put("author", book.getAuthor());
@@ -138,7 +141,7 @@ public class Database {
         Database.listenerSignal = 0;
         libraryCollection
                 .document(libraryName)
-                .collection("books")
+                .collection(bookName)
                 .document(book.getIsbn())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -171,8 +174,8 @@ public class Database {
     }
 
     /**
-     * Finds all the books in which the status matches one of the provided and
-     * the keyword given
+     * Finds all the books in which the status matches one of the provided statues and
+     * the description contains the keyword given
      * @param statuses An array of statues that the book can match
      * @param keyword The keyword to be searched for
      * @return A task containing a querysnapshot that returns all documents matching the parameters
@@ -200,7 +203,7 @@ public class Database {
     static Task<Void> createUser(final String username, String phoneNumber, String email) {
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
-                .collection("users")
+                .collection(userName)
                 .document(username);
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", phoneNumber);
@@ -217,7 +220,7 @@ public class Database {
         Database.listenerSignal = 0;
         DocumentReference documentReference = libraryCollection
                 .document(libraryName)
-                .collection("users")
+                .collection(userName)
                 .document(user.getUsername());
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", user.getPhone());
@@ -247,7 +250,7 @@ public class Database {
      */
     static void deleteUser(final User user){
         Database.listenerSignal = 0;
-        libraryCollection.document(libraryName).collection("users")
+        libraryCollection.document(libraryName).collection(userName)
                 .document(user.getUsername())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -270,18 +273,10 @@ public class Database {
      * Write/updates a Request object into the database with "isbn-borrowerId" as a documentId
      * @param request The request to be written int the database
      */
-    static void writeRequest(final Request request){
+    static void createSynchronousRequest(final Request request){
         Database.listenerSignal = 0;
-        final DocumentReference requestDocument = libraryCollection
-                .document(libraryName)
-                .collection("requests")
-                .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername());
-        Map<String, Object> requestInfo = new HashMap<>();
-        requestInfo.put("book", request.getBook());
-        requestInfo.put("timestamp", request.getTimestamp());
-        requestInfo.put("borrowerId", request.getCreator());
-        requestInfo.put("description", request.getStatus());
-        requestDocument.set(requestInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+        Database.createRequest(request)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "DocumentSnapshot written");
@@ -302,7 +297,7 @@ public class Database {
      */
     static void deleteRequest(final Request request){
         Database.listenerSignal = 0;
-        libraryCollection.document(libraryName).collection("requests")
+        libraryCollection.document(libraryName).collection(requestName)
                 .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -339,7 +334,7 @@ public class Database {
      * @return Task<DocumentSnapshot> A Task containing a DocumentSnapshot with the contact info
      */
     static Task<DocumentSnapshot> getUser(final String username){
-        return libraryCollection.document(libraryName).collection("users").document(username).get();
+        return libraryCollection.document(libraryName).collection(userName).document(username).get();
     }
 
     /**
@@ -359,19 +354,18 @@ public class Database {
      */
     static Task<DocumentSnapshot> userExists(final String username) {
         return libraryCollection.document(libraryName)
-                .collection("users").document(username)
+                .collection(userName).document(username)
                 .get();
     }
 
     /**
      * Creates a request in the database for a given request object
      * @param req the request that must be stored in the database
-     * @param username the username of the signed-in user (for document ID)
      * @return a task representing the eventual completion of the database access
      */
-    static Task<Void> createRequest(final Request req, String username) {
+    static Task<Void> createRequest(final Request req) {
         return libraryCollection.document(libraryName)
-            .collection(requestName).document(req.getBook().getIsbn() + "-" + username)
+            .collection(requestName).document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
             .set(req);
     }
 
@@ -401,7 +395,7 @@ public class Database {
             throw new IllegalArgumentException("ArrayList cannot be empty");
         }
         CollectionReference queryCollection = libraryCollection.document(libraryName).collection(collection);
-        Query query = (Query) queryCollection;
+        Query query = queryCollection;
         for (int i = 0; i < fields.length; i++){
             query = query.whereEqualTo(fields[i], values[i]);
         }

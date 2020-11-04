@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -65,10 +66,20 @@ public class MainActivity extends AppCompatActivity {
         mySearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CheckBox titleCheckbox = findViewById(R.id.titleCheckbox);
+                CheckBox descCheckbox = findViewById(R.id.descCheckbox);
                 TextView keywordView = findViewById(R.id.keywordSearchBar);
                 Intent intent = new Intent(getApplicationContext(), SearchResultsActivity.class);
-                intent.putExtra("searchTerm", keywordView.getText().toString());
-                startActivity(intent);
+                if (titleCheckbox.isChecked()){
+                    intent.putExtra("type", "title");
+                }
+                else if (descCheckbox.isChecked()){
+                    intent.putExtra("type", "description");
+                }
+                if (titleCheckbox.isChecked() ^ descCheckbox.isChecked()){
+                    intent.putExtra("searchTerm", keywordView.getText().toString());
+                    startActivity(intent);
+                }
             }
         });
         myBorrowerInfoButton = findViewById(R.id.borrow_info_button);
