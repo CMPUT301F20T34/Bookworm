@@ -81,6 +81,38 @@ public class SearchResultsActivityTest {
         Database.deleteBook(book);
     }
 
+    /**
+     * Tests searching by keywords in the description
+     * @throws InterruptedException
+     */
+    @Test
+    public void testDescSearchResult() throws InterruptedException {
+        // Ensure we are logged in
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+
+        // Write an arbitrary book to the database
+        Book book = mockBook();
+        Database.writeBook(book);
+        while (Database.getListenerSignal() == 0){
+            Thread.sleep(100);
+        }
+
+        // Enter the title of the book to search
+        solo.enterText((EditText) solo.getView(R.id.keywordSearchBar), "Description");
+        solo.clickOnView(solo.getView(R.id.descCheckbox));
+        solo.clickOnView(solo.getView(R.id.titleCheckbox));
+        solo.clickOnView(solo.getView(R.id.search_button));
+
+        // Ensure that we went to the search activity
+        solo.assertCurrentActivity("Wrong Activity", SearchResultsActivity.class);
+
+        // Ensure that there is at least one result
+        assertTrue(solo.waitForText("Title", 2, 1000));
+
+        // Delete the book
+        Database.deleteBook(book);
+    }
+
 
     /**
      * Closes the activity after each test.
