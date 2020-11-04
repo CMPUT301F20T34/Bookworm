@@ -16,7 +16,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -153,19 +152,23 @@ public class DataBaseTest {
         assertEquals(Database.getListenerSignal(), 1);
     }
 
+    /**
+     * Test methods related to getting & setting requests
+     * @throws InterruptedException When the sleeping thread is interrupted
+     */
     @Test
     public void testRequestMethods() throws InterruptedException {
         //Writes a new request
         Request testRequest = mockRequest();
-        Database.writeRequest(testRequest);
+        Database.createSynchronousRequest(testRequest);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
         assertEquals(Database.getListenerSignal(), 1);
 
         //Updates a request
-        testRequest.setStatus("Accepted");
-        Database.writeRequest(testRequest);
+        testRequest.setStatus("Accepted"); // uses the same ID, so will overwrite in DB
+        Database.createSynchronousRequest(testRequest);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
@@ -177,7 +180,6 @@ public class DataBaseTest {
             Thread.sleep(100);
         }
         assertEquals(Database.getListenerSignal(), 1);
-
     }
 
     /**

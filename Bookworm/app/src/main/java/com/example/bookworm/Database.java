@@ -1,8 +1,6 @@
 package com.example.bookworm;
 
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.system.Os;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -275,18 +273,10 @@ public class Database {
      * Write/updates a Request object into the database with "isbn-borrowerId" as a documentId
      * @param request The request to be written int the database
      */
-    static void writeRequest(final Request request){
+    static void createSynchronousRequest(final Request request){
         Database.listenerSignal = 0;
-        final DocumentReference requestDocument = libraryCollection
-                .document(libraryName)
-                .collection(requestName)
-                .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername());
-        Map<String, Object> requestInfo = new HashMap<>();
-        requestInfo.put("book", request.getBook());
-        requestInfo.put("timestamp", request.getTimestamp());
-        requestInfo.put("borrowerId", request.getCreator());
-        requestInfo.put("description", request.getStatus());
-        requestDocument.set(requestInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+        Database.createRequest(request)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "DocumentSnapshot written");
@@ -371,12 +361,11 @@ public class Database {
     /**
      * Creates a request in the database for a given request object
      * @param req the request that must be stored in the database
-     * @param username the username of the signed-in user (for document ID)
      * @return a task representing the eventual completion of the database access
      */
-    static Task<Void> createRequest(final Request req, String username) {
+    static Task<Void> createRequest(final Request req) {
         return libraryCollection.document(libraryName)
-            .collection(requestName).document(req.getBook().getIsbn() + "-" + username)
+            .collection(requestName).document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
             .set(req);
     }
 
