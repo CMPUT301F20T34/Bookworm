@@ -15,26 +15,30 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     private ArrayList<Book> books;
     private Context context;
+    private OnBookListener onBookListener;
 
-    public SearchResultsAdapter(Context context, ArrayList<Book> books) {
+    public SearchResultsAdapter(Context context, ArrayList<Book> books, OnBookListener onBookListener) {
            this.context = context;
            this.books = books;
+           this.onBookListener = onBookListener;
     }
 
     @NonNull
     @Override
     public SRViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view =  inflater.inflate(R.layout.search_result_content, parent, false);
-        return new SRViewHolder(view);
+        View view =  inflater.inflate(R.layout.content_borrower_lists, parent, false);
+        return new SRViewHolder(view, this.onBookListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SRViewHolder holder, int position) {
-        holder.getTitle().setText(books.get(position).getTitle());
-        holder.getAuthor().setText(books.get(position).getAuthor());
-        holder.getUsername().setText(books.get(position).getOwner());
-        holder.getStatus().setText(books.get(position).getStatus());
+        Book book = books.get(position);
+        holder.getTitle().setText(book.getTitle());
+        holder.getAuthor().setText(book.getAuthor());
+        holder.getUsername().setText(book.getOwner());
+        holder.getStatus().setText(book.getStatus());
+        holder.getIsbn().setText(book.getIsbn());
     }
 
     @Override
@@ -42,19 +46,31 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         return books.size();
     }
 
-    public class SRViewHolder extends RecyclerView.ViewHolder{
+    public class SRViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView title;
         private final TextView author;
         private final TextView username;
         private final TextView status;
+        private final TextView isbn;
+        OnBookListener onBookListener;
 
-        public SRViewHolder(@NonNull View itemView) {
+        public SRViewHolder(@NonNull View itemView, OnBookListener onBookListener) {
             super(itemView);
-            title = itemView.findViewById(R.id.search_result_title);
-            author = itemView.findViewById(R.id.search_result_author);
-            username = itemView.findViewById(R.id.search_result_owner);
-            status = itemView.findViewById(R.id.search_result_status);
+            this.title = itemView.findViewById(R.id.book_title);
+            this.author = itemView.findViewById(R.id.book_author);
+            this.username = itemView.findViewById(R.id.book_owner);
+            this.status = itemView.findViewById(R.id.book_status);
+            this.isbn = itemView.findViewById(R.id.book_isbn);
+            this.onBookListener = onBookListener;
+
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            this.onBookListener.onBookClick(getAdapterPosition());
+        }
+
 
         public TextView getTitle() {
             return title;
@@ -71,5 +87,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         public TextView getStatus() {
             return status;
         }
+
+        public TextView getIsbn() {
+            return isbn;
+        }
     }
+
+    public interface OnBookListener {
+        void onBookClick(int position);
+    }
+
 }

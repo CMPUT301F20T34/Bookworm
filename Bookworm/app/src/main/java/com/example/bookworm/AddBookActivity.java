@@ -63,10 +63,6 @@ public class AddBookActivity extends AppCompatActivity {
     private Uri photoUri;
     private StorageReference storageReference;
     private final int RESULT_LOAD_IMAGE = 100;
-
-    private ImageView BookPhoto;
-    private Uri filePath;
-    private final int ADD_IMAGE_REQUEST = 20;
     private String sPhoto;
 
     @Override
@@ -85,9 +81,8 @@ public class AddBookActivity extends AppCompatActivity {
         deletePhotoButton = findViewById(R.id.button5);
         addButton = findViewById(R.id.button6);
         profilePhoto = findViewById(R.id.profile_photo);
+        profilePhoto.setTag(R.drawable.ic_book);
 
-
-        BookPhoto = findViewById(R.id.book_photo);
         //BookPhoto.setImageResource(R.drawable.ic_book);
 
 
@@ -119,7 +114,7 @@ public class AddBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    BitmapDrawable drawable = (BitmapDrawable) BookPhoto.getDrawable();
+                    BitmapDrawable drawable = (BitmapDrawable) profilePhoto.getDrawable();
                     Bitmap bitmap = drawable.getBitmap();
                     ViewPhotoFragment fragment = newInstance(bitmap);
                     fragment.show(getSupportFragmentManager(), "VIEW_PHOTO");
@@ -167,52 +162,78 @@ public class AddBookActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(title) || TextUtils.isEmpty(author) || TextUtils.isEmpty(isbn)) {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
                 } else {
+                    // Attempt to upload the image.
+                    Database.writeProfilePhoto(storageReference.child(path), userID, photoUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // The form does not have missing information
+                                book.setTitle(title);
+                                book.setAuthor(author);
+                                book.setIsbn(isbn);
+                                book.setPhotograph(sPhoto);
+                                book.setDescription(descriptions);
 
-                    book.setTitle(title);
-                    book.setAuthor(author);
-                    book.setIsbn(isbn);
-                    book.setDescription(descriptions);
-                    //book.setPhotograph(sPhoto);
-                    final ArrayList<Integer> returnValue = new ArrayList<Integer>();
-                    returnValue.add(0);
-                    Database.writeBook(book, returnValue);
-                    int waitTime = 2000;
-                    if (book.getPhotograph() == null) {
-                        waitTime = 1000;
-                    }
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            if (returnValue.get(0) == 1) {
-                                Toast.makeText(AddBookActivity.this, "Your book is successfully added", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(addButton.getContext(), OwnerBooklistActivity.class);
-                                startActivity(intent);
-                            } else if (returnValue.get(0) == -1) {
-                                Toast.makeText(AddBookActivity.this, "Something went wrong while adding your book", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(AddBookActivity.this, "Something went wrong while adding your book, please try again", Toast.LENGTH_SHORT).show();
+                                // Write the book to the database
+                                final ArrayList<Integer> returnValue = new ArrayList<Integer>();
+                                returnValue.add(0);
+                                Database.writeBook(book);
+                                Handler handler = new Handler();
+                                handler.postDelayed(() -> {
+                                    if (Database.getListenerSignal() == 1) {
+                                        Toast.makeText(AddBookActivity.this,
+                                            "Your book is successfully saved",
+                                            Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    } else if (Database.getListenerSignal() == -1){
+                                        Toast.makeText(AddBookActivity.this,
+                                            "Something went wrong while adding your book",
+                                            Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(AddBookActivity.this,
+                                            "Something went wrong while adding your book, please try again",
+                                            Toast.LENGTH_SHORT).show();
+                                    }
+                                }, 1000);
                             }
-                        }
-                    }, waitTime);
-
+                        })
+                            .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
+                                    "Image could not be written to database",
+                                    Toast.LENGTH_SHORT)
+                                    .show()
+                            );
                 }
             }
         });
     }
 
 
-    private void AddImage() {
 
-        // Defining Implicit Intent to mobile gallery
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), ADD_IMAGE_REQUEST);
+    private void AddImage() {
+        if ((int) profilePhoto.getTag() == R.drawable.ic_book) {
+            // Defining Implicit Intent to mobile gallery
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), ADD_IMAGE_REQUEST);
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
+        }
+        else{
+            Toast.makeText(AddBookActivity.this, "Book Photo already exists! please try to remove then add a new one.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void DelImage() {
-        sPhoto = null;
-        BookPhoto.setImageResource(R.drawable.ic_book);
+        if ((int) profilePhoto.getTag() != R.drawable.ic_book) {
+            sPhoto = null;
+            profilePhoto.setImageResource(R.drawable.ic_book);
+            profilePhoto.setTag(R.drawable.ic_book);
+        }
+        else{
+            Toast.makeText(AddBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public String BitMapToString(Bitmap bitmap) {
@@ -234,6 +255,7 @@ public class AddBookActivity extends AppCompatActivity {
         }
     }
 
+
     // Override onActivityResult method
 
     /**
@@ -242,41 +264,32 @@ public class AddBookActivity extends AppCompatActivity {
      * User: Atul Mavani
      * Accessed Oct. 31, 2020
      *
-     * @param requestCode the request from the activity
+     * @param reqCode the request from the activity
      * @param resultCode  the result of the activity (OK / failure)
      * @param data        any data that was returned
      */
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // checking request code and result code
-        // if request code is PICK_IMAGE_REQUEST and
-        // resultCode is RESULT_OK
-        // then set image in the image view
-        if (requestCode == ADD_IMAGE_REQUEST
-                && resultCode == RESULT_OK
-                && data != null
-                && data.getData() != null) {
-            // Get the Uri of data
-            filePath = data.getData();
+    protected void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
             try {
-                // Setting image on image view using Bitmap
-                Bitmap bitmap = MediaStore
-                        .Images
-                        .Media
-                        .getBitmap(getContentResolver(), filePath);
-                //sPhoto = BitMapToString(bitmap);
-                BookPhoto.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                // Log the exception
+                this.photoUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(this.photoUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                sPhoto = BitMapToString(selectedImage);
+                profilePhoto.setImageBitmap(selectedImage);
+                profilePhoto.setTag(0);
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
+                Toast.makeText(AddBookActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
             }
+
+        }else {
+            Toast.makeText(AddBookActivity.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
         }
     }
-}
+                                              }
+
 
 
 

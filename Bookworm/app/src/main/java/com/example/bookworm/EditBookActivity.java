@@ -155,15 +155,15 @@ public class EditBookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                 returnValue.add(0);
-                Database.deleteBook(selectedBook, returnValue);
+                Database.deleteBook(selectedBook);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        if (returnValue.get(0) == 1) {
+                        if (Database.getListenerSignal() == 1) {
                             Toast.makeText(EditBookActivity.this, "Your book is successfully deleted", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
                             startActivity(intent);
-                        } else if (returnValue.get(0) == -1){
+                        } else if (Database.getListenerSignal() == -1){
                             Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book, please try again", Toast.LENGTH_SHORT).show();
@@ -198,25 +198,26 @@ public class EditBookActivity extends AppCompatActivity {
                     //}
                     final ArrayList<Integer> returnValue = new ArrayList<Integer>();
                     returnValue.add(0);
-                    Database.writeBook(selectedBook, returnValue);
-                    int waitTime = 2000;
-                    if (selectedBook.getPhotograph() == null) {
-                        waitTime = 1000;
-                    }
+//                    Database.writeBook(selectedBook, returnValue);
+//                    int waitTime = 2000;
+//                    if (selectedBook.getPhotograph() == null) {
+//                        waitTime = 1000;
+//                    }
+                    Database.writeBook(selectedBook);
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            if (returnValue.get(0) == 1) {
+                            if (Database.getListenerSignal() == 1) {
                                 Toast.makeText(EditBookActivity.this, "Your book is successfully updated", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(saveChangesButton.getContext(), OwnerBooklistActivity.class);
                                 startActivity(intent);
-                            } else if (returnValue.get(0) == -1){
+                            } else if (Database.getListenerSignal() == -1){
                                 Toast.makeText(EditBookActivity.this, "Something went wrong while updating your book", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(EditBookActivity.this, "Something went wrong while updating your book, please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }, waitTime);
+                    }, 2000);
                 }
             }
         });
