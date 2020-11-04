@@ -1,5 +1,8 @@
 package com.example.bookworm;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -71,6 +74,10 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         // - replace the contents of the view with that element
 //        holder.ownerPhoto.setImageResource(R.drawable.ic_launcher_foreground);
         Book book = booklist.get(position);
+        if (book.getPhotograph() != null) {
+            holder.ownerPhoto.setImageBitmap(StringToBitMap(book.getPhotograph()));
+        }
+
         holder.ownerName.setText(book.getOwner());
         holder.title.setText(book.getTitle());
         holder.author.setText(book.getAuthor());
@@ -83,5 +90,16 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
     @Override
     public int getItemCount() {
         return this.booklist.size();
+    }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
     }
 }

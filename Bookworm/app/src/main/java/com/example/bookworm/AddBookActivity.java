@@ -3,10 +3,17 @@ package com.example.bookworm;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
+
 import android.text.TextUtils;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,9 +37,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
 import java.util.ArrayList;
+
+import static com.example.bookworm.ViewPhotoFragment.newInstance;
 
 public class AddBookActivity extends AppCompatActivity {
     private Book book;
@@ -50,6 +63,7 @@ public class AddBookActivity extends AppCompatActivity {
     private Uri photoUri;
     private StorageReference storageReference;
     private final int RESULT_LOAD_IMAGE = 100;
+    private String sPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +81,13 @@ public class AddBookActivity extends AppCompatActivity {
         deletePhotoButton = findViewById(R.id.button5);
         addButton = findViewById(R.id.button6);
         profilePhoto = findViewById(R.id.profile_photo);
+        profilePhoto.setTag(R.drawable.ic_book);
+
+        //BookPhoto.setImageResource(R.drawable.ic_book);
+
 
         // Define authentication and storage references
+
         fAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
         final String email = fAuth.getCurrentUser().getEmail();
@@ -94,23 +113,28 @@ public class AddBookActivity extends AppCompatActivity {
         viewPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                try {
+                    BitmapDrawable drawable = (BitmapDrawable) profilePhoto.getDrawable();
+                    Bitmap bitmap = drawable.getBitmap();
+                    ViewPhotoFragment fragment = newInstance(bitmap);
+                    fragment.show(getSupportFragmentManager(), "VIEW_PHOTO");
+                } catch (Exception e) {
+                    Toast.makeText(AddBookActivity.this, "No book photo available", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         addPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
+                AddImage();
             }
         });
 
         deletePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                DelImage();
             }
         });
 
@@ -124,7 +148,7 @@ public class AddBookActivity extends AppCompatActivity {
                 ArrayList<String> descriptions = new ArrayList<String>();
                 String[] ss = descriptionEditText.getText().toString().split(" ");
                 for (String s : ss) {
-                    if (!TextUtils.isEmpty(s)){
+                    if (!TextUtils.isEmpty(s)) {
                         descriptions.add(s);
                     }
                 }
@@ -147,6 +171,7 @@ public class AddBookActivity extends AppCompatActivity {
                                 book.setTitle(title);
                                 book.setAuthor(author);
                                 book.setIsbn(isbn);
+                                book.setPhotograph(sPhoto);
                                 book.setDescription(descriptions);
 
                                 // Write the book to the database
@@ -172,24 +197,76 @@ public class AddBookActivity extends AppCompatActivity {
                                 }, 1000);
                             }
                         })
-                        .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
-                            "Image could not be written to database",
-                            Toast.LENGTH_SHORT)
-                            .show()
-                        );
+                            .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
+                                    "Image could not be written to database",
+                                    Toast.LENGTH_SHORT)
+                                    .show()
+                            );
                 }
             }
         });
     }
+
+
+
+    private void AddImage() {
+        if ((int) profilePhoto.getTag() == R.drawable.ic_book) {
+            // Defining Implicit Intent to mobile gallery
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), ADD_IMAGE_REQUEST);
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
+        }
+        else{
+            Toast.makeText(AddBookActivity.this, "Book Photo already exists! please try to remove then add a new one.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void DelImage() {
+        if ((int) profilePhoto.getTag() != R.drawable.ic_book) {
+            sPhoto = null;
+            profilePhoto.setImageResource(R.drawable.ic_book);
+            profilePhoto.setTag(R.drawable.ic_book);
+        }
+        else{
+            Toast.makeText(AddBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public String BitMapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+
+    // Override onActivityResult method
 
     /**
      * Get images from user's phone
      * https://stackoverflow.com/questions/38352148/get-image-from-the-gallery-and-show-in-imageview#38352844
      * User: Atul Mavani
      * Accessed Oct. 31, 2020
+     *
      * @param reqCode the request from the activity
-     * @param resultCode the result of the activity (OK / failure)
-     * @param data any data that was returned
+     * @param resultCode  the result of the activity (OK / failure)
+     * @param data        any data that was returned
      */
     @Override
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
@@ -199,7 +276,9 @@ public class AddBookActivity extends AppCompatActivity {
                 this.photoUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(this.photoUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                sPhoto = BitMapToString(selectedImage);
                 profilePhoto.setImageBitmap(selectedImage);
+                profilePhoto.setTag(0);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(AddBookActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
@@ -209,7 +288,10 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(AddBookActivity.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
         }
     }
-}
+                                              }
+
+
+
 
 //    /**
 //     * Runs when the application first begins, ensures that we have permission to access the user's data.
