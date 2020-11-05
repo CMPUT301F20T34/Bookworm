@@ -1,9 +1,9 @@
 package com.example.bookworm;
 
-<<<<<<< HEAD
-public class ViewContactInfoActivity {
-=======
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.io.IOException;
+
 public class ViewContactInfoActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -22,6 +24,7 @@ public class ViewContactInfoActivity extends AppCompatActivity {
     private TextView usernameView;
     private TextView phoneView;
     private TextView emailView;
+    private ImageView contactImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,7 @@ public class ViewContactInfoActivity extends AppCompatActivity {
         usernameView = (TextView) findViewById(R.id.usernameView2);
         phoneView = (TextView) findViewById(R.id.viewPhoneNumber);
         emailView = (TextView) findViewById(R.id.viewEmail);
-        ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
+        contactImage = (ImageView) findViewById(R.id.contactImage);
 
         if(username != ""){
             usernameView.setText(username);
@@ -52,9 +55,20 @@ public class ViewContactInfoActivity extends AppCompatActivity {
                         emailView.setText(task.getResult().get("email").toString());
                     }
                 }});
+            Database.getProfilePhoto(username).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), task.getResult());
+                            contactImage.setImageBitmap(bitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
         }
         //contactImage.setImageResource(); // Need more info on how we are handling images
     }
-
->>>>>>> Fixed saving contact info and added my functionality to profile view.
 }

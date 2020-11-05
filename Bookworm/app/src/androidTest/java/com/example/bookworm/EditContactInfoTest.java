@@ -2,26 +2,19 @@ package com.example.bookworm;
 
 import android.app.Activity;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.widget.EditText;
 
-=======
 import android.util.Log;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
->>>>>>> Fixed saving contact info and added my functionality to profile view.
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-<<<<<<< HEAD
-import com.example.bookworm.util.Util;
-=======
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
->>>>>>> Fixed saving contact info and added my functionality to profile view.
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -45,14 +38,11 @@ public class EditContactInfoTest {
     public ActivityTestRule<EditContactInfoActivity> rule =
             new ActivityTestRule<>(EditContactInfoActivity.class, true, true);
 
-<<<<<<< HEAD
-=======
     public User getMockUser(){
         return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
         //return new User("Daniel", "abc123", "daniel@hotmail.com", "587-999-1234");
     }
 
->>>>>>> Fixed saving contact info and added my functionality to profile view.
     /**
      * Setup for all tests
      *
@@ -78,21 +68,7 @@ public class EditContactInfoTest {
      * Tests for relevant contact info for a user based on a specific username
      * Relevant field's are checked to display correct info
      */
-<<<<<<< HEAD
-<<<<<<< HEAD
     @Test
-    public void correctDisplayInfo() {
-
-        String username = "myUserName123";
-
-        Activity activity = rule.getActivity();
-        Intent intent = new Intent(activity.getApplicationContext(), EditContactInfoActivity.class);
-        intent.putExtra("username", username);
-=======
-
-=======
-    @Test
->>>>>>> Fixed saving contact info and added my functionality to profile view.
     public void correctDisplayInfo() {
 
         User testUser = getMockUser();
@@ -102,19 +78,13 @@ public class EditContactInfoTest {
         Activity activity = rule.getActivity();
         Intent intent = new Intent(activity.getApplicationContext(), EditContactInfoActivity.class);
         intent.putExtra("username", testUser.getUsername());
->>>>>>> Fixed saving contact info and added my functionality to profile view.
         activity.startActivity(intent);
 
         // Somehow get to the correct activity
         solo.assertCurrentActivity("Wrong Activity", EditContactInfoActivity.class);
 
-<<<<<<< HEAD
-        assertTrue(solo.waitForText("123 " + username + " Ave", 1, 2000));
-        assertTrue(solo.waitForText("123-456-7890"));
-=======
         assertTrue(solo.waitForText(testUser.getEmail(), 1, 15000));
         assertTrue(solo.waitForText(testUser.getPhone(), 1, 15000));
->>>>>>> Fixed saving contact info and added my functionality to profile view.
     }
 
     /**
@@ -122,13 +92,6 @@ public class EditContactInfoTest {
      */
     @Test
     public void saveButton() {
-<<<<<<< HEAD
-        String username = "mySavedUserName123";
-
-        Activity activity = rule.getActivity();
-        Intent intent = new Intent(activity.getApplicationContext(), EditContactInfoActivity.class);
-        intent.putExtra("username", username);
-=======
         User testUser = getMockUser();
 
         Database.updateUser(testUser);
@@ -136,29 +99,11 @@ public class EditContactInfoTest {
         Activity activity = rule.getActivity();
         Intent intent = new Intent(activity.getApplicationContext(), EditContactInfoActivity.class);
         intent.putExtra("username", testUser.getUsername());
->>>>>>> Fixed saving contact info and added my functionality to profile view.
         activity.startActivity(intent);
 
         // Somehow get to the correct activity
         solo.assertCurrentActivity("Wrong Activity", EditContactInfoActivity.class);
 
-<<<<<<< HEAD
-        assertTrue(solo.waitForText("123 " + username + " Ave", 1, 2000));
-        assertTrue(solo.waitForText("123-456-7890"));
-
-        solo.clearEditText((EditText) solo.getView(R.id.editAddress));
-        solo.enterText((EditText) solo.getView(R.id.editAddress), "12345 86th Ave");
-        assertTrue(solo.waitForText("12345 86th Ave"));
-
-        solo.clearEditText((EditText) solo.getView(R.id.editPhoneNumber));
-        solo.enterText((EditText) solo.getView(R.id.editPhoneNumber), "098-765-4321");
-        assertTrue(solo.waitForText("098-765-4321"));
-
-        solo.clickOnView(solo.getView(R.id.saveChangesButton));
-
-        assertTrue(solo.waitForText("Contact info saved for user:"));
-        assertTrue(solo.waitForText(username));
-=======
         assertTrue(solo.waitForText(testUser.getEmail(), 1, 15000));
         assertTrue(solo.waitForText(testUser.getPhone(), 1, 15000));
 
@@ -177,17 +122,19 @@ public class EditContactInfoTest {
 
         solo.clickOnView(solo.getView(R.id.saveChangesButton));
 
-        try{
-            Thread.sleep(5000);
-        }catch (Exception e){}
+        while(Database.getListenerSignal() == 0){
+            try{
+                Thread.sleep(1000);
+            }catch (Exception e){}
+        }
 
         Task<DocumentSnapshot> getuserTask = Database.getUser(testUser.getUsername());
         getuserTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    assertTrue(new String(newPhoneNumber).equals(task.getResult().get("phoneNumber")));
-                    assertTrue(new String(newEmail).equals(task.getResult().get("email")));
+                    assertTrue(new String(newPhoneNumber).equals(task.getResult().get("phoneNumber").toString()));
+                    assertTrue(new String(newEmail).equals(task.getResult().get("email").toString()));
                 }
             }});
 
@@ -196,7 +143,6 @@ public class EditContactInfoTest {
                 Thread.sleep(100);
             }catch (Exception e){}
         }
->>>>>>> Fixed saving contact info and added my functionality to profile view.
     }
 
     /**
