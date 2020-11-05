@@ -79,6 +79,7 @@ public class EditContactInfoTest {
      * Relevant field's are checked to display correct info
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
     @Test
     public void correctDisplayInfo() {
 
@@ -89,6 +90,9 @@ public class EditContactInfoTest {
         intent.putExtra("username", username);
 =======
 
+=======
+    @Test
+>>>>>>> Fixed saving contact info and added my functionality to profile view.
     public void correctDisplayInfo() {
 
         User testUser = getMockUser();
@@ -173,22 +177,17 @@ public class EditContactInfoTest {
 
         solo.clickOnView(solo.getView(R.id.saveChangesButton));
 
-        /*while(Database.getListenerSignal() == 0){
-            try{
-                Thread.sleep(100);
-            }catch (Exception e){}
-        }*/
-
-        Log.d("EditContactInfo Test", "Starting database check for save");
+        try{
+            Thread.sleep(5000);
+        }catch (Exception e){}
 
         Task<DocumentSnapshot> getuserTask = Database.getUser(testUser.getUsername());
         getuserTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    Log.d("EditContactInfo Test", "Database info: " + task.getResult().get("phoneNumber").toString() + ".");
-                    assertTrue(task.getResult().get("phoneNumber").toString() == newPhoneNumber);
-                    assertTrue(task.getResult().get("email").toString() == newEmail);
+                    assertTrue(new String(newPhoneNumber).equals(task.getResult().get("phoneNumber")));
+                    assertTrue(new String(newEmail).equals(task.getResult().get("email")));
                 }
             }});
 

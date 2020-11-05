@@ -5,7 +5,10 @@ public class EditContactInfoActivity {
 =======
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +21,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import org.w3c.dom.Text;
+
+import java.io.IOException;
+
 import javax.annotation.Nullable;
 
 public class EditContactInfoActivity extends AppCompatActivity {
@@ -25,8 +32,12 @@ public class EditContactInfoActivity extends AppCompatActivity {
     private FirebaseAuth fAuth;
 
     private String username = "";
+    private TextView usernameView;
     private TextView phoneEditView;
     private TextView emailEditView;
+    private ImageView contactImage;
+
+    private final int PICK_IMAGE_REQUEST = 22;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +50,13 @@ public class EditContactInfoActivity extends AppCompatActivity {
             username = getIntent().getStringExtra("username");
         }
 
+        usernameView = (TextView) findViewById(R.id.usernameView);
         phoneEditView = (TextView) findViewById(R.id.editPhoneNumber);
         emailEditView = (TextView) findViewById(R.id.editEmail);
-        ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
+        contactImage = (ImageView) findViewById(R.id.contactImage);
 
         if(username != ""){
+            usernameView.setText(username);
             phoneEditView.setText("Loading phone number...");
             emailEditView.setText("Loading email...");
             Database.getUser(username).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -60,13 +73,10 @@ public class EditContactInfoActivity extends AppCompatActivity {
 
     public void editImageButton(View view){
         ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
-
-        // Call to gallery activity to get image
-
-        AlertDialog inputAlert = new AlertDialog.Builder(this).create();
-        inputAlert.setTitle("Currently need gallery support!");
-        inputAlert.setMessage("Will be here soon though!");
-        inputAlert.show();
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), PICK_IMAGE_REQUEST);
     }
 
     public void saveContactInfo(View view){
@@ -76,12 +86,6 @@ public class EditContactInfoActivity extends AppCompatActivity {
 
         Database.updateUser(userUpdate);
 
-        while(Database.getListenerSignal() == 0){
-            try{
-                Thread.sleep(100);
-            }catch (Exception e){}
-        }
-
         AlertDialog inputAlert = new AlertDialog.Builder(this).create();
         inputAlert.setTitle("Contact info saved for user:");
         inputAlert.setMessage(username);
@@ -89,11 +93,20 @@ public class EditContactInfoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Handle gallery activity return
-        // Set image
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
+
+            Uri imageFilePath = data.getData();
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFilePath);
+                contactImage.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 >>>>>>> Fixed saving contact info and added my functionality to profile view.
