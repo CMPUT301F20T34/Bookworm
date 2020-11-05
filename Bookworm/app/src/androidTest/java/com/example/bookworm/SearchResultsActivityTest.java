@@ -14,6 +14,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static org.junit.Assert.assertTrue;
 
 
@@ -90,14 +93,15 @@ public class SearchResultsActivityTest {
         // Ensure we are logged in
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
-        // Write an arbitrary book to the database
+        // Write an arbitrary book to the database with description
         Book book = mockBook();
+        book.setDescription(new ArrayList<String>(Arrays.asList("Test", "Description")));
         Database.writeBook(book);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
 
-        // Enter the title of the book to search
+        // Enter the description of the book to search
         solo.enterText((EditText) solo.getView(R.id.keywordSearchBar), "Description");
         solo.clickOnView(solo.getView(R.id.descCheckbox));
         solo.clickOnView(solo.getView(R.id.titleCheckbox));
@@ -106,8 +110,10 @@ public class SearchResultsActivityTest {
         // Ensure that we went to the search activity
         solo.assertCurrentActivity("Wrong Activity", SearchResultsActivity.class);
 
-        // Ensure that there is at least one result
-        assertTrue(solo.waitForText("Title", 2, 1000));
+        // Check for correct book title for description
+        assertTrue(solo.waitForText("Title", 1, 1000));
+        //Check that description shows up
+        assertTrue(solo.waitForText("Test Description", 1, 1000));
 
         // Delete the book
         Database.deleteBook(book);
