@@ -3,17 +3,11 @@ package com.example.bookworm;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.util.Base64;
-import android.util.Log;
-
 import android.text.TextUtils;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -37,12 +30,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 
 import static com.example.bookworm.ViewPhotoFragment.newInstance;
@@ -63,7 +52,6 @@ public class AddBookActivity extends AppCompatActivity {
     private Uri photoUri;
     private StorageReference storageReference;
     private final int RESULT_LOAD_IMAGE = 100;
-    private String sPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,69 +141,74 @@ public class AddBookActivity extends AppCompatActivity {
                     }
                 }
 
-                // Define needed information
-                String userID = FirebaseAuth.getInstance().getUid();
-                String path = "images/users/" + userID + "/books/" + isbn + ".jpg";
-                String owner = ownerNameText.getText().toString();
-
                 // If the form is missing information
                 if (TextUtils.isEmpty(title) || TextUtils.isEmpty(author) || TextUtils.isEmpty(isbn)) {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Attempt to upload the image.
-                    Database.writeProfilePhoto(storageReference.child(path), userID, photoUri)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                // The form does not have missing information
-                                book.setTitle(title);
-                                book.setAuthor(author);
-                                book.setIsbn(isbn);
-                                book.setPhotograph(sPhoto);
-                                book.setDescription(descriptions);
-
-                                // Write the book to the database
-                                final ArrayList<Integer> returnValue = new ArrayList<Integer>();
-                                returnValue.add(0);
-                                Database.writeBook(book);
-                                Handler handler = new Handler();
-                                handler.postDelayed(() -> {
-                                    if (Database.getListenerSignal() == 1) {
-                                        Toast.makeText(AddBookActivity.this,
-                                            "Your book is successfully saved",
-                                            Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    } else if (Database.getListenerSignal() == -1){
-                                        Toast.makeText(AddBookActivity.this,
-                                            "Something went wrong while adding your book",
-                                            Toast.LENGTH_SHORT).show();
+                    // Attempt to upload the image, if the image exists
+                    String userID = FirebaseAuth.getInstance().getUid();
+                    if (photoUri == null) {
+                        addBookToDB(title, author, isbn, descriptions);
+                    } else {
+                        Database.writeBookPhoto(userID, isbn, photoUri)
+                            .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        addBookToDB(title, author, isbn, descriptions);
                                     } else {
                                         Toast.makeText(AddBookActivity.this,
-                                            "Something went wrong while adding your book, please try again",
-                                            Toast.LENGTH_SHORT).show();
+                                            "Image could not be written to database",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
                                     }
-                                }, 1000);
-                            }
-                        })
-                            .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
-                                    "Image could not be written to database",
-                                    Toast.LENGTH_SHORT)
-                                    .show()
-                            );
+                                }
+                            });
+                    }
                 }
             }
         });
     }
 
+    /**
+     * Centralized logic for writing the book to the
+     * DB and waiting for the response
+     * @param title the title of the book
+     * @param author the author of the book
+     * @param isbn the isbn of the book
+     * @param descriptions an array of the book's description's keywords
+     */
+    private void addBookToDB(String title, String author, String isbn, ArrayList<String> descriptions) {
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setIsbn(isbn);
+        book.setDescription(descriptions);
+
+        // Write the book to the database
+        Database.writeBook(book);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            if (Database.getListenerSignal() == 1) {
+                Toast.makeText(AddBookActivity.this,
+                    "Your book is successfully saved",
+                    Toast.LENGTH_SHORT).show();
+                finish();
+            } else if (Database.getListenerSignal() == -1){
+                Toast.makeText(AddBookActivity.this,
+                    "Something went wrong while adding your book",
+                    Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(AddBookActivity.this,
+                    "Something went wrong while adding your book, please try again",
+                    Toast.LENGTH_SHORT).show();
+            }
+        }, 1000);
+    }
 
 
     private void AddImage() {
         if ((int) profilePhoto.getTag() == R.drawable.ic_book) {
             // Defining Implicit Intent to mobile gallery
-//            Intent intent = new Intent();
-//            intent.setType("image/*");
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
-//            startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), ADD_IMAGE_REQUEST);
             Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
             photoPickerIntent.setType("image/*");
             startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
@@ -227,7 +220,7 @@ public class AddBookActivity extends AppCompatActivity {
 
     private void DelImage() {
         if ((int) profilePhoto.getTag() != R.drawable.ic_book) {
-            sPhoto = null;
+            photoUri = null;
             profilePhoto.setImageResource(R.drawable.ic_book);
             profilePhoto.setTag(R.drawable.ic_book);
         }
@@ -235,28 +228,6 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(AddBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
         }
     }
-
-    public String BitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
-        }
-    }
-
-
-    // Override onActivityResult method
 
     /**
      * Get images from user's phone
@@ -276,7 +247,6 @@ public class AddBookActivity extends AppCompatActivity {
                 this.photoUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(this.photoUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                sPhoto = BitMapToString(selectedImage);
                 profilePhoto.setImageBitmap(selectedImage);
                 profilePhoto.setTag(0);
             } catch (FileNotFoundException e) {

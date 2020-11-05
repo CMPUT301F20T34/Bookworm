@@ -20,6 +20,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -49,15 +50,19 @@ public class Database {
 
     /**
      * Returns the listener signal to verify that the db operation has completed
+     *
      * @return listenerSignal an int, 0 if incomplete, 1 if success, -1 if failed
      */
-    static int getListenerSignal(){ return listenerSignal; }
+    static int getListenerSignal() {
+        return listenerSignal;
+    }
 
     /**
      * Writes a library to the Main_Library database
+     *
      * @param lib the library to be written
      */
-    static void writeLibrary(Library lib){
+    static void writeLibrary(Library lib) {
         final WriteBatch batch = db.batch();
         ArrayList<Book> books = lib.getBooks();
         ArrayList<User> users = lib.getUsers();
@@ -81,36 +86,37 @@ public class Database {
         }
 
         batch.commit()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // These are a method which gets executed when the task is succeeded
-                        Log.d(TAG, "Data has been added successfully!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // These are a method which gets executed if there’s any problem
-                        Log.d(TAG, "Data could not be added!" + e.toString());
-                    }
-                });
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    // These are a method which gets executed when the task is succeeded
+                    Log.d(TAG, "Data has been added successfully!");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // These are a method which gets executed if there’s any problem
+                    Log.d(TAG, "Data could not be added!" + e.toString());
+                }
+            });
     }
 
     /**
      * Updates a book in the database or writes a new one if it does not exist yet
+     *
      * @param book the book to be written
      */
-    static void writeBook(final Book book){
+    static void writeBook(final Book book) {
         Database.listenerSignal = 0;
         final DocumentReference bookDocument = libraryCollection
-                .document(libraryName)
-                .collection(bookName)
-                .document(book.getIsbn());
+            .document(libraryName)
+            .collection(bookName)
+            .document(book.getIsbn());
         Map<String, Object> bookInfo = new HashMap<>();
         bookInfo.put("author", book.getAuthor());
         bookInfo.put("borrower", book.getBorrower());
-        bookInfo.put( "borrowerId", book.getBorrowerId());
+        bookInfo.put("borrowerId", book.getBorrowerId());
         bookInfo.put("description", book.getDescription());
         bookInfo.put("isbn", book.getIsbn());
         bookInfo.put("owner", book.getOwner());
@@ -135,34 +141,36 @@ public class Database {
 
     /**
      * Deletes a book from the database
+     *
      * @param book the book to be deleted
      */
-    static void deleteBook(final Book book){
+    static void deleteBook(final Book book) {
         Database.listenerSignal = 0;
         libraryCollection
-                .document(libraryName)
-                .collection(bookName)
-                .document(book.getIsbn())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Book deleted!");
-                        Database.listenerSignal = 1;
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting book.", e);
-                        Database.listenerSignal = -1;
-                    }
-                });
+            .document(libraryName)
+            .collection(bookName)
+            .document(book.getIsbn())
+            .delete()
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Book deleted!");
+                    Database.listenerSignal = 1;
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Error deleting book.", e);
+                    Database.listenerSignal = -1;
+                }
+            });
     }
 
     /**
      * Returns all books that contain the searchTerm as their exact title.
      * Will rework in the future to return books that contain the searchTerm.
+     *
      * @param searchTerm The keyword that is being searched
      * @return Task<QuerySnapshot> The result of the query.
      */
@@ -176,18 +184,19 @@ public class Database {
     /**
      * Finds all the books in which the status matches one of the provided statues and
      * the description contains the keyword given
+     *
      * @param statuses An array of statues that the book can match
-     * @param keyword The keyword to be searched for
+     * @param keyword  The keyword to be searched for
      * @return A task containing a querysnapshot that returns all documents matching the parameters
      */
-    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword){
-        if (statuses.length == 0){
+    static Task<QuerySnapshot> bookKeywordSearch(String[] statuses, String keyword) {
+        if (statuses.length == 0) {
             throw new IllegalArgumentException("statuses cannot be empty");
         }
 
         Query query = libraryCollection.document(libraryName).collection("books")
-                .whereIn("status", Arrays.asList(statuses))
-                .whereArrayContains("description", keyword);
+            .whereIn("status", Arrays.asList(statuses))
+            .whereArrayContains("description", keyword);
 
         return query.get();
     }
@@ -195,16 +204,17 @@ public class Database {
     /**
      * Creates a user in the database with their username,
      * email, and phone number
-     * @param username the username of the user
+     *
+     * @param username    the username of the user
      * @param phoneNumber email of the user
-     * @param email phone number of the user
+     * @param email       phone number of the user
      * @return Task containing the result of the creation
      */
     static Task<Void> createUser(final String username, String phoneNumber, String email) {
         DocumentReference documentReference = libraryCollection
-                .document(libraryName)
-                .collection(userName)
-                .document(username);
+            .document(libraryName)
+            .collection(userName)
+            .document(username);
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", phoneNumber);
         userInfo.put("email", email);
@@ -214,75 +224,78 @@ public class Database {
 
     /**
      * Updates the user in the database
+     *
      * @param user The user to update with
      */
-    static void updateUser(final User user){
+    static void updateUser(final User user) {
         Database.listenerSignal = 0;
         DocumentReference documentReference = libraryCollection
-                .document(libraryName)
-                .collection(userName)
-                .document(user.getUsername());
+            .document(libraryName)
+            .collection(userName)
+            .document(user.getUsername());
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", user.getPhone());
         userInfo.put("email", user.getEmail());
         userInfo.put("borrower", user.getBorrower());
         userInfo.put("owner", user.getOwner());
         documentReference.set(userInfo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "User profile updated");
-                        Database.listenerSignal = 1;
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Failed to update user profile");
-                        Database.listenerSignal = -1;
-                    }
-                });
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "User profile updated");
+                    Database.listenerSignal = 1;
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Failed to update user profile");
+                    Database.listenerSignal = -1;
+                }
+            });
     }
 
     /**
      * Deletes a user from the database
+     *
      * @param user The user to be deleted
      */
-    static void deleteUser(final User user){
+    static void deleteUser(final User user) {
         Database.listenerSignal = 0;
         libraryCollection.document(libraryName).collection(userName)
-                .document(user.getUsername())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Book does not exist in database");
-                        Database.listenerSignal = 1;
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                        Database.listenerSignal = -1;
-                    }
-                });
+            .document(user.getUsername())
+            .delete()
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Book does not exist in database");
+                    Database.listenerSignal = 1;
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Error updating document", e);
+                    Database.listenerSignal = -1;
+                }
+            });
     }
 
     /**
      * Write/updates a Request object into the database with "isbn-borrowerId" as a documentId
+     *
      * @param request The request to be written int the database
      */
-    static void createSynchronousRequest(final Request request){
+    static void createSynchronousRequest(final Request request) {
         Database.listenerSignal = 0;
         Database.createRequest(request)
             .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "DocumentSnapshot written");
-                Database.listenerSignal = 1;
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "DocumentSnapshot written");
+                    Database.listenerSignal = 1;
+                }
+            }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error adding document", e);
@@ -293,40 +306,86 @@ public class Database {
 
     /**
      * Deletes a Request from the database.
+     *
      * @param request The request to be deleted
      */
-    static void deleteRequest(final Request request){
+    static void deleteRequest(final Request request) {
         Database.listenerSignal = 0;
         libraryCollection.document(libraryName).collection(requestName)
-                .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Request does not exist in database");
-                        Database.listenerSignal = 1;
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                        Database.listenerSignal = -1;
-                    }
-                });
+            .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername())
+            .delete()
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Request does not exist in database");
+                    Database.listenerSignal = 1;
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Error updating document", e);
+                    Database.listenerSignal = -1;
+                }
+            });
+    }
+
+    /**
+     * Uploads an image on the user's phone to be the
+     * image for the book with the listed isbn.
+     * @param userID the ID of the current user
+     * @param isbn the isbn of the book which we are creating an image for.
+     * @param photoUri the Uri representing the image file
+     * @return An asynchronous task that finishes when the upload finishes.
+     */
+    static UploadTask writeBookPhoto(String userID, String isbn, Uri photoUri) {
+        String path = getBookImagePath(userID, isbn);
+        StorageReference loc = FirebaseStorage.getInstance().getReference().child(path);
+        loc.putFile(photoUri);
+        loc.getDownloadUrl();
+        return loc.putFile(photoUri);
+    }
+
+    /**
+     * Gets the image of the book with the specified userID & ISBN
+     * @param userID The id of the currently signed-in user
+     * @param isbn the isbn of the book which image we want
+     * @return a task containing the URI of the image.
+     */
+    static Task<Uri> getBookPhoto(String userID, String isbn) {
+        String path = getBookImagePath(userID, isbn);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference loc = storageRef.child(path);
+        return loc.getDownloadUrl();
     }
 
     /**
      * Uploads an image on the user's phone to be the
      * profile image of that user's account
-     * @param targetLoc the db storage location of the image
-     * @param userID the id of the logged-in user
-     * @param photoUri the Uri representing the image file
-     * @return An asynchronous task that finishes when the upload finishes.
+     * @param userID the id of the currently signed-in user
+     * @param photoUri the Uri of the photo
+     * @return an upload task representing the completion of the upload.
      */
-    static UploadTask writeProfilePhoto(StorageReference targetLoc, String userID, Uri photoUri) {
-        return targetLoc.putFile(photoUri);
+    static UploadTask writeProfilePhoto(String userID, Uri photoUri) {
+        String path = getProfilePhotoPath(userID);
+        StorageReference loc = FirebaseStorage.getInstance().getReference().child(path);
+        loc.putFile(photoUri);
+        loc.getDownloadUrl();
+        return loc.putFile(photoUri);
     }
+
+    /**
+     * Gets the profile photo of the specified user
+     * @param userID the id of the user we are searching for.
+     * @return a task containing the URI of the image
+     */
+    static Task<Uri> getProfilePhoto(String userID) {
+        String path = getProfilePhotoPath(userID);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference loc = storageRef.child(path);
+        return loc.getDownloadUrl();
+    }
+
 
     /**
      * Returns the contact info associated with a given username
@@ -447,5 +506,24 @@ public class Database {
                 }
             }
         });
+    }
+
+    /**
+     * Returns the path to the user's profile photo in storage
+     * @param userID the userID of the signed-in user
+     * @return the path to the user's profile photo
+     */
+    private static String getProfilePhotoPath(String userID) {
+        return "profiles/users/" + userID + "/profile.jpg";
+    }
+
+    /**
+     * Creates the path to a book's image storage reference
+     * @param userID the current user's ID
+     * @param isbn the isbn of the book which we are targeting
+     * @return the string representing the path to the book's image.
+     */
+    private static String getBookImagePath(String userID, String isbn) {
+        return "images/users/" + userID + "/books/" + isbn + ".jpg";
     }
 }

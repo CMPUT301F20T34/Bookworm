@@ -1,10 +1,10 @@
 package com.example.bookworm;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,10 +13,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyViewHolder> {
     private ArrayList<Book> booklist;
+    private Context context;
+
+    public BooklistAdapter(Context context, ArrayList<Book> booklist) {
+        this.context = context;
+        this.booklist = booklist;
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView ownerPhoto;
@@ -39,12 +48,6 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
             this.status = status;
             this.currentBurrower = currentBorrower;
         }
-
-
-    }
-
-    public BooklistAdapter(ArrayList<Book> booklist) {
-        this.booklist = booklist;
     }
 
     @Override
@@ -74,9 +77,6 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         // - replace the contents of the view with that element
 //        holder.ownerPhoto.setImageResource(R.drawable.ic_launcher_foreground);
         Book book = booklist.get(position);
-        if (book.getPhotograph() != null) {
-            holder.ownerPhoto.setImageBitmap(StringToBitMap(book.getPhotograph()));
-        }
 
         holder.ownerName.setText(book.getOwner());
         holder.title.setText(book.getTitle());
@@ -84,6 +84,10 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         holder.isbn.setText(book.getIsbn());
         holder.status.setText(book.getStatus());
         holder.currentBurrower.setText(book.getBorrower());
+        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), book.getIsbn())
+            .addOnSuccessListener(uri -> {
+                Picasso.get().load(uri).into(holder.ownerPhoto);
+            });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
