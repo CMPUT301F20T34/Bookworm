@@ -63,6 +63,14 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    public void editProfile(View view) {
+        Intent intent = new Intent(getApplicationContext(), EditContactInfoActivity.class);
+        TextView usernameView = findViewById(R.id.username_profile);
+        String username = usernameView.getText().toString();
+        intent.putExtra("username", username);
+        startActivity(intent);
+    }
+
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));

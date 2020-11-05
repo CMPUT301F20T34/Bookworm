@@ -15,10 +15,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-public class ViewContactInfoActivity  extends AppCompatActivity {
+public class ViewContactInfoActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
 
+    private TextView usernameView;
     private TextView phoneView;
     private TextView emailView;
 
@@ -34,11 +35,13 @@ public class ViewContactInfoActivity  extends AppCompatActivity {
             username = getIntent().getStringExtra("username");
         }
 
+        usernameView = (TextView) findViewById(R.id.usernameView2);
         phoneView = (TextView) findViewById(R.id.viewPhoneNumber);
         emailView = (TextView) findViewById(R.id.viewEmail);
         ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
 
         if(username != ""){
+            usernameView.setText(username);
             phoneView.setText("Loading phone number...");
             emailView.setText("Loading email...");
             Database.getUser(username).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
