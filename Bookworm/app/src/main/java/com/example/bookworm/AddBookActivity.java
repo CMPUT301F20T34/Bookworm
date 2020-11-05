@@ -3,17 +3,12 @@ package com.example.bookworm;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.util.Base64;
-import android.util.Log;
-
 import android.text.TextUtils;
-
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,12 +32,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 
 import static com.example.bookworm.ViewPhotoFragment.newInstance;
@@ -153,17 +145,13 @@ public class AddBookActivity extends AppCompatActivity {
                     }
                 }
 
-                // Define needed information
-                String userID = FirebaseAuth.getInstance().getUid();
-                String path = "images/users/" + userID + "/books/" + isbn + ".jpg";
-                String owner = ownerNameText.getText().toString();
-
                 // If the form is missing information
                 if (TextUtils.isEmpty(title) || TextUtils.isEmpty(author) || TextUtils.isEmpty(isbn)) {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
                 } else {
                     // Attempt to upload the image.
-                    Database.writeProfilePhoto(storageReference.child(path), userID, photoUri)
+                    String userID = FirebaseAuth.getInstance().getUid();
+                    Database.writeBookPhoto(userID, isbn, photoUri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -171,12 +159,9 @@ public class AddBookActivity extends AppCompatActivity {
                                 book.setTitle(title);
                                 book.setAuthor(author);
                                 book.setIsbn(isbn);
-                                book.setPhotograph(sPhoto);
                                 book.setDescription(descriptions);
 
                                 // Write the book to the database
-                                final ArrayList<Integer> returnValue = new ArrayList<Integer>();
-                                returnValue.add(0);
                                 Database.writeBook(book);
                                 Handler handler = new Handler();
                                 handler.postDelayed(() -> {
@@ -197,11 +182,11 @@ public class AddBookActivity extends AppCompatActivity {
                                 }, 1000);
                             }
                         })
-                            .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
-                                    "Image could not be written to database",
-                                    Toast.LENGTH_SHORT)
-                                    .show()
-                            );
+                        .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
+                            "Image could not be written to database",
+                            Toast.LENGTH_SHORT)
+                                .show()
+                        );
                 }
             }
         });
@@ -212,10 +197,6 @@ public class AddBookActivity extends AppCompatActivity {
     private void AddImage() {
         if ((int) profilePhoto.getTag() == R.drawable.ic_book) {
             // Defining Implicit Intent to mobile gallery
-//            Intent intent = new Intent();
-//            intent.setType("image/*");
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
-//            startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), ADD_IMAGE_REQUEST);
             Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
             photoPickerIntent.setType("image/*");
             startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
@@ -255,9 +236,6 @@ public class AddBookActivity extends AppCompatActivity {
         }
     }
 
-
-    // Override onActivityResult method
-
     /**
      * Get images from user's phone
      * https://stackoverflow.com/questions/38352148/get-image-from-the-gallery-and-show-in-imageview#38352844
@@ -276,7 +254,6 @@ public class AddBookActivity extends AppCompatActivity {
                 this.photoUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(this.photoUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                sPhoto = BitMapToString(selectedImage);
                 profilePhoto.setImageBitmap(selectedImage);
                 profilePhoto.setTag(0);
             } catch (FileNotFoundException e) {

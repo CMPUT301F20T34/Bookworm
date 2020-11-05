@@ -62,6 +62,10 @@ public class ViewBookActivity extends AppCompatActivity {
         descriptionView = findViewById(R.id.view_book_description);
         statusView = findViewById(R.id.view_book_status);
         photoView = findViewById(R.id.view_book_image);
+        Database.getBookPhoto(this,
+            FirebaseAuth.getInstance().getUid(),
+            isbn)
+            .into(photoView);
 
         titleView.setText("Title: " + title);
         authorView.setText("Author: " + author);

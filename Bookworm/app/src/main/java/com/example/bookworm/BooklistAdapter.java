@@ -1,10 +1,10 @@
 package com.example.bookworm;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,10 +13,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyViewHolder> {
     private ArrayList<Book> booklist;
+    private Context context;
+
+    public BooklistAdapter(Context context, ArrayList<Book> booklist) {
+        this.context = context;
+        this.booklist = booklist;
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView ownerPhoto;
@@ -43,9 +51,7 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
 
     }
 
-    public BooklistAdapter(ArrayList<Book> booklist) {
-        this.booklist = booklist;
-    }
+
 
     @Override
     public BooklistAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
@@ -74,9 +80,10 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         // - replace the contents of the view with that element
 //        holder.ownerPhoto.setImageResource(R.drawable.ic_launcher_foreground);
         Book book = booklist.get(position);
-        if (book.getPhotograph() != null) {
-            holder.ownerPhoto.setImageBitmap(StringToBitMap(book.getPhotograph()));
-        }
+        Database.getBookPhoto(this.context,
+            FirebaseAuth.getInstance().getUid(),
+            book.getIsbn())
+            .into(holder.ownerPhoto);
 
         holder.ownerName.setText(book.getOwner());
         holder.title.setText(book.getTitle());
