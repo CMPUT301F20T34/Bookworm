@@ -381,6 +381,30 @@ public class Database {
     }
 
     /**
+     * Get all books that are borrowing by the currently signed-in user
+     *
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getBorrowingBooks() {
+        return libraryCollection.document(libraryName)
+                .collection(bookName).whereEqualTo("borrowerId", fAuth.getCurrentUser().getUid())
+                .get();
+    }
+
+    /**
+     * Get all books that are requested by the currently signed-in user and their requests are accepted by the owners.
+     *
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getAcceptedBooks() {
+        return libraryCollection.document(libraryName)
+                .collection(requestName)
+                .whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
+                .whereEqualTo("status","Accepted")
+                .get();
+    }
+
+    /**
      * Queries a collection for a field matching a value
      * @param collection the collection to be queried
      * @param fields a list of fields to be looked at

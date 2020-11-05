@@ -26,34 +26,33 @@ public class ListRequested extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_borrower_lists);
         booklist = new ArrayList<Book>();
-
+        //setup the recycler view and its adapter
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this,booklist);
         recyclerView.setAdapter(adapter);
-
-        System.out.println("Here");
-
+        //get requested books of the current user
         Database.getRequestedBooks()
-            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Request request = doc.toObject(Request.class);
-                        System.out.println(request.getBook().getPhotograph());
-                        booklist.add(request.getBook());
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            //convert the QuerySnapshot to the request object
+                            Request request = doc.toObject(Request.class);
+                            //add the requested book to the list
+                            booklist.add(request.getBook());
+                        }
+                        adapter.notifyDataSetChanged();
                     }
-                    adapter.notifyDataSetChanged();
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(context,
-                        "Could not load requested books. Please try again.",
-                        Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context,
+                                "Could not load requested books. Please try again.",
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
     }
 }
