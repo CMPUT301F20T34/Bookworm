@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -32,7 +30,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -151,47 +148,55 @@ public class AddBookActivity extends AppCompatActivity {
                 } else {
                     // Attempt to upload the image.
                     String userID = FirebaseAuth.getInstance().getUid();
-                    Database.writeBookPhoto(userID, isbn, photoUri)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                // The form does not have missing information
-                                book.setTitle(title);
-                                book.setAuthor(author);
-                                book.setIsbn(isbn);
-                                book.setDescription(descriptions);
-
-                                // Write the book to the database
-                                Database.writeBook(book);
-                                Handler handler = new Handler();
-                                handler.postDelayed(() -> {
-                                    if (Database.getListenerSignal() == 1) {
-                                        Toast.makeText(AddBookActivity.this,
-                                            "Your book is successfully saved",
-                                            Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    } else if (Database.getListenerSignal() == -1){
-                                        Toast.makeText(AddBookActivity.this,
-                                            "Something went wrong while adding your book",
-                                            Toast.LENGTH_SHORT).show();
+                    if (photoUri == null) {
+                        addBookToDB(title, author, isbn, descriptions);
+                    } else {
+                        Database.writeBookPhoto(userID, isbn, photoUri)
+                            .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        addBookToDB(title, author, isbn, descriptions);
                                     } else {
                                         Toast.makeText(AddBookActivity.this,
-                                            "Something went wrong while adding your book, please try again",
-                                            Toast.LENGTH_SHORT).show();
+                                            "Image could not be written to database",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
                                     }
-                                }, 1000);
-                            }
-                        })
-                        .addOnFailureListener(e -> Toast.makeText(AddBookActivity.this,
-                            "Image could not be written to database",
-                            Toast.LENGTH_SHORT)
-                                .show()
-                        );
+                                }
+                            });
+                    }
                 }
             }
         });
     }
 
+    private void addBookToDB(String title, String author, String isbn, ArrayList<String> descriptions) {
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setIsbn(isbn);
+        book.setDescription(descriptions);
+
+        // Write the book to the database
+        Database.writeBook(book);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            if (Database.getListenerSignal() == 1) {
+                Toast.makeText(AddBookActivity.this,
+                    "Your book is successfully saved",
+                    Toast.LENGTH_SHORT).show();
+                finish();
+            } else if (Database.getListenerSignal() == -1){
+                Toast.makeText(AddBookActivity.this,
+                    "Something went wrong while adding your book",
+                    Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(AddBookActivity.this,
+                    "Something went wrong while adding your book, please try again",
+                    Toast.LENGTH_SHORT).show();
+            }
+        }, 1000);
+    }
 
 
     private void AddImage() {
