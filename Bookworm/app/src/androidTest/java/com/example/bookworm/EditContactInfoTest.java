@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test class for ViewContactInfo. All the UI tests for ViewContactInfo are written here.
+ * Test class for EditContactInfo. All the UI tests for EditContactInfo are written here.
  * Robotium test framework is used
  */
 @RunWith(AndroidJUnit4.class)
@@ -39,7 +39,7 @@ public class EditContactInfoTest {
             new ActivityTestRule<>(EditContactInfoActivity.class, true, true);
 
     public User getMockUser(){
-        return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+        return new User("danielm", "testpass", "danielm@hotmail.com", "587-555-4231");
         //return new User("Daniel", "abc123", "daniel@hotmail.com", "587-999-1234");
     }
 
@@ -70,7 +70,6 @@ public class EditContactInfoTest {
      */
     @Test
     public void correctDisplayInfo() {
-
         User testUser = getMockUser();
 
         Database.updateUser(testUser);
@@ -80,7 +79,6 @@ public class EditContactInfoTest {
         intent.putExtra("username", testUser.getUsername());
         activity.startActivity(intent);
 
-        // Somehow get to the correct activity
         solo.assertCurrentActivity("Wrong Activity", EditContactInfoActivity.class);
 
         assertTrue(solo.waitForText(testUser.getEmail(), 1, 15000));
@@ -89,6 +87,7 @@ public class EditContactInfoTest {
 
     /**
      * Tests for save functionality when the corresponding button is pressed
+     * Also ensures all correct information is displayed
      */
     @Test
     public void saveButton() {
@@ -101,14 +100,13 @@ public class EditContactInfoTest {
         intent.putExtra("username", testUser.getUsername());
         activity.startActivity(intent);
 
-        // Somehow get to the correct activity
         solo.assertCurrentActivity("Wrong Activity", EditContactInfoActivity.class);
 
         assertTrue(solo.waitForText(testUser.getEmail(), 1, 15000));
         assertTrue(solo.waitForText(testUser.getPhone(), 1, 15000));
 
-        String newEmail = "mikehunter2@hotmail.com";
-        String newPhoneNumber = "587-111-1234";
+        String newEmail = "danielmmm@hotmail.com";
+        String newPhoneNumber = "587-555-1234";
 
         EditText editPhoneNumberView = (EditText) solo.getView(R.id.editPhoneNumber);
         solo.clearEditText(editPhoneNumberView);

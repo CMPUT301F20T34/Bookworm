@@ -26,6 +26,10 @@ import java.io.IOException;
 
 import javax.annotation.Nullable;
 
+/**
+ * EditContactInfoActivity class
+ * Handles all functionality of activity_edit_contact_info
+ */
 public class EditContactInfoActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -40,6 +44,11 @@ public class EditContactInfoActivity extends AppCompatActivity {
 
     private final int PICK_IMAGE_REQUEST = 22;
 
+    /**
+     * onCreate initializer.
+     * Initializes the EditContactInfo activity and retrieves all relevant data from the database to display it.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,9 +85,13 @@ public class EditContactInfoActivity extends AppCompatActivity {
                         }
                     });
         }
-        //contactImage.setImageResource(); Need more info on how we are handling images
     }
 
+    /**
+     * Edit image button functionality
+     * Starts the galley activity with intent to get an image.
+     * @param view
+     */
     public void editImageButton(View view){
         ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
         Intent intent = new Intent();
@@ -87,13 +100,20 @@ public class EditContactInfoActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Image from here..."), PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * Button functionality for save button
+     * Updates the user specified information to the database and also updates the database profile image
+     * @param view
+     */
     public void saveContactInfo(View view){
         User userUpdate = new User(username, "", emailEditView.getText().toString(), phoneEditView.getText().toString());
 
         Database.updateUser(userUpdate);
 
         String userId = FirebaseAuth.getInstance().getUid();
-        Database.writeProfilePhoto(userId, imageFilePath);
+        if(imageFilePath != null) {
+            Database.writeProfilePhoto(userId, imageFilePath);
+        }
 
         AlertDialog inputAlert = new AlertDialog.Builder(this).create();
         inputAlert.setTitle("Contact info saved for user:");
@@ -101,6 +121,13 @@ public class EditContactInfoActivity extends AppCompatActivity {
         inputAlert.show();
     }
 
+    /**
+     * Overriding onActivityResult to handle image return from gallery if available.
+     * Calls super to avoid any unintended changes.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);

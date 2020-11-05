@@ -30,6 +30,10 @@ public class ViewContactInfoTest {
     public ActivityTestRule<ViewContactInfoActivity> rule =
             new ActivityTestRule<>(ViewContactInfoActivity.class, true, true);
 
+    /**
+     * Gives a mock user to be used in the tests
+     * @return User mockUser
+     */
     public User getMockUser(){
         return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
         //return new User("Daniel", "abc123", "daniel@hotmail.com", "587-999-1234");
@@ -48,7 +52,6 @@ public class ViewContactInfoTest {
 
     /**
      * Gets the activity
-     *
      * @throws Exception
      */
     @Test
@@ -62,7 +65,6 @@ public class ViewContactInfoTest {
      */
     @Test
     public void correctDisplayInfo() {
-
         User testUser = getMockUser();
 
         Database.updateUser(testUser);

@@ -17,6 +17,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.io.IOException;
 
+/**
+ * ViewContactInfoActivity class
+ * Handles all functionality of activity_view_contact_info
+ */
 public class ViewContactInfoActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -26,6 +30,11 @@ public class ViewContactInfoActivity extends AppCompatActivity {
     private TextView emailView;
     private ImageView contactImage;
 
+    /**
+     * onCreate initializer.
+     * Initializes the ViewContactInfo activity and retrieves all relevant data from the database to display it.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +78,5 @@ public class ViewContactInfoActivity extends AppCompatActivity {
                 }
             });
         }
-        //contactImage.setImageResource(); // Need more info on how we are handling images
     }
 }
