@@ -156,6 +156,7 @@ public class AddBookActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                     if (task.isSuccessful()) {
                                         addBookToDB(title, author, isbn, descriptions);
+                                        finishAdd();
                                     } else {
                                         Toast.makeText(AddBookActivity.this,
                                             "Image could not be written to database",
@@ -227,6 +228,11 @@ public class AddBookActivity extends AppCompatActivity {
         else{
             Toast.makeText(AddBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void finishAdd() {
+        Intent intent = new Intent(this, OwnerBooklistActivity.class);
+        startActivity(intent);
     }
 
     /**
