@@ -137,7 +137,9 @@ public class EditBookActivity extends AppCompatActivity {
         currentBorrowerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getApplicationContext(), ViewContactInfoActivity.class);
+                intent.putExtra("username", selectedBook.getBorrower());
+                startActivity(intent);
             }
         });
 
