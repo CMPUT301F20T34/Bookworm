@@ -1,6 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+=======
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/contactImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="73dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/avatar_1"
+        tools:srcCompat="@tools:sample/avatars"
+        tools:ignore="VectorDrawableCompat" />
+
+    <TextView
+        android:id="@+id/phoneNumberLabel"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginRight="256dp"
+        android:gravity="right"
+        android:text="Phone Number:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contactImage" />
+
+    <TextView
+        android:id="@+id/EmailLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginRight="256dp"
+        android:gravity="right"
+        android:text="Email:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
+
+    <EditText
+        android:id="@+id/viewPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:ems="10"
+        android:inputType="none"
+        app:layout_constraintLeft_toRightOf="@id/phoneNumberLabel"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contactImage" />
+
+    <EditText
+        android:id="@+id/viewEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="none"
+        app:layout_constraintTop_toBottomOf="@+id/viewPhoneNumber"
+        app:layout_constraintLeft_toRightOf="@id/EmailLabel"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="295dp" />
+>>>>>>> Fixed saving contact info and added my functionality to profile view.
 </androidx.constraintlayout.widget.ConstraintLayout>
