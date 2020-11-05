@@ -106,13 +106,19 @@ public class EditContactInfoActivity extends AppCompatActivity {
      * @param view
      */
     public void saveContactInfo(View view){
-        User userUpdate = new User(username, "", emailEditView.getText().toString(), phoneEditView.getText().toString());
 
-        Database.updateUser(userUpdate);
+        if(username != "") {
+            User userUpdate = new User(username, "", emailEditView.getText().toString(), phoneEditView.getText().toString());
 
-        String userId = FirebaseAuth.getInstance().getUid();
-        if(imageFilePath != null) {
-            Database.writeProfilePhoto(userId, imageFilePath);
+            Database.updateUser(userUpdate);
+
+            String userId = FirebaseAuth.getInstance().getUid();
+            if(imageFilePath != null) {
+                Database.writeProfilePhoto(userId, imageFilePath);
+            }
+
+            fAuth = FirebaseAuth.getInstance();
+            fAuth.getCurrentUser().updateEmail(emailEditView.getText().toString());
         }
 
         AlertDialog inputAlert = new AlertDialog.Builder(this).create();
