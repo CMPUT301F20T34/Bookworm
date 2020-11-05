@@ -1,12 +1,14 @@
 package com.example.bookworm;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         return new SRViewHolder(view, this.onBookListener);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull SRViewHolder holder, int position) {
         Book book = books.get(position);
@@ -39,6 +42,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         holder.getUsername().setText(book.getOwner());
         holder.getStatus().setText(book.getStatus());
         holder.getIsbn().setText(book.getIsbn());
+        holder.getDescription().setText(book.descriptionAsString());
     }
 
     @Override
@@ -52,6 +56,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         private final TextView username;
         private final TextView status;
         private final TextView isbn;
+        private final TextView description;
         OnBookListener onBookListener;
 
         public SRViewHolder(@NonNull View itemView, OnBookListener onBookListener) {
@@ -61,6 +66,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             this.username = itemView.findViewById(R.id.book_owner);
             this.status = itemView.findViewById(R.id.book_status);
             this.isbn = itemView.findViewById(R.id.book_isbn);
+            this.description = itemView.findViewById(R.id.book_description);
             this.onBookListener = onBookListener;
 
             itemView.setOnClickListener(this);
@@ -91,6 +97,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         public TextView getIsbn() {
             return isbn;
         }
+
+        public TextView getDescription() { return description; }
     }
 
     public interface OnBookListener {
