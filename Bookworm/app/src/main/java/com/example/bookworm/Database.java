@@ -1,15 +1,11 @@
 package com.example.bookworm;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -345,13 +341,16 @@ public class Database {
     static UploadTask writeBookPhoto(String userID, String isbn, Uri photoUri) {
         String path = getBookImagePath(userID, isbn);
         StorageReference loc = FirebaseStorage.getInstance().getReference().child(path);
+        loc.putFile(photoUri);
+        loc.getDownloadUrl();
         return loc.putFile(photoUri);
     }
 
-    static RequestBuilder<Drawable> getBookPhoto(Context context, String userID, String isbn) {
+    static Task<Uri> getBookPhoto(String userID, String isbn) {
         String path = getBookImagePath(userID, isbn);
-        StorageReference loc = FirebaseStorage.getInstance().getReference().child(path);
-        return Glide.with(context).load(loc);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference loc = storageRef.child(path);
+        return loc.getDownloadUrl();
     }
 
     /**

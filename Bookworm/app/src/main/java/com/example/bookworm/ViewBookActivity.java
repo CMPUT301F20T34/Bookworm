@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
@@ -15,11 +14,9 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bookworm.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-
-import java.io.FileInputStream;
+import com.squareup.picasso.Picasso;
 
 public class ViewBookActivity extends AppCompatActivity {
     String title;
@@ -62,28 +59,16 @@ public class ViewBookActivity extends AppCompatActivity {
         descriptionView = findViewById(R.id.view_book_description);
         statusView = findViewById(R.id.view_book_status);
         photoView = findViewById(R.id.view_book_image);
-        Database.getBookPhoto(this,
-            FirebaseAuth.getInstance().getUid(),
-            isbn)
-            .into(photoView);
+        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), isbn)
+            .addOnSuccessListener(uri -> {
+                Picasso.get().load(uri).into(photoView);
+            });
 
         titleView.setText("Title: " + title);
         authorView.setText("Author: " + author);
         ownerView.setText("Owner: " + owner);
         descriptionView.setText(description);
         statusView.setText("Status: " + status.substring(0, 1).toUpperCase() + status.substring(1));
-        if (filename != "null") {
-            try {
-                FileInputStream is = this.openFileInput(filename);
-                photograph = BitmapFactory.decodeStream(is);
-                is.close();
-                photoView.setImageBitmap(Util.scaleToFitHeight(photograph, 650));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            // Store a static photo containing "No photo provided" or something like it.
-        }
 
 
         requestButton = findViewById(R.id.view_book_request);
@@ -124,7 +109,6 @@ public class ViewBookActivity extends AppCompatActivity {
                                 .show();
                         });
                 })
-
                 .addOnFailureListener(e -> Toast.makeText(context,
                     // Could not get username from current signed in user.
                     "Error: " + e.getMessage(),

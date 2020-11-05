@@ -3,6 +3,7 @@ package com.example.bookworm;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -80,10 +82,6 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         // - replace the contents of the view with that element
 //        holder.ownerPhoto.setImageResource(R.drawable.ic_launcher_foreground);
         Book book = booklist.get(position);
-        Database.getBookPhoto(this.context,
-            FirebaseAuth.getInstance().getUid(),
-            book.getIsbn())
-            .into(holder.ownerPhoto);
 
         holder.ownerName.setText(book.getOwner());
         holder.title.setText(book.getTitle());
@@ -91,6 +89,13 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         holder.isbn.setText(book.getIsbn());
         holder.status.setText(book.getStatus());
         holder.currentBurrower.setText(book.getBorrower());
+        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), book.getIsbn())
+            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    holder.ownerPhoto.setImageBitmap(BitmapFactory.decodeFile(uri.toString()));
+                }
+            });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

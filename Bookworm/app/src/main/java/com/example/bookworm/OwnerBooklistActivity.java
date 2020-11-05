@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -27,6 +28,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private BooklistAdapter bookListAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private Context context = this;
     Button addBookButton;
 
     @Override
@@ -37,7 +39,6 @@ public class OwnerBooklistActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        bookListAdapter = new BooklistAdapter(this, booklist);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -52,6 +53,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     booklist.add(document.toObject(Book.class));
                 }
+                bookListAdapter = new BooklistAdapter(context, booklist);
                 recyclerView.setAdapter(bookListAdapter);
             }
             }
