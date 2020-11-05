@@ -78,7 +78,7 @@ public class BookTest {
 
     /**
      * Check getter an setter for status attribute.
-     * Check that status is one of {"avaiable", "requested", "accepted", "borrowed"}.
+     * Check that status is one of {"available", "requested", "accepted", "borrowed"}.
      */
     @Test
     public void testStatusGetterAndSetter() {
