@@ -3,7 +3,6 @@ package com.example.bookworm;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -49,11 +48,7 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
             this.status = status;
             this.currentBurrower = currentBorrower;
         }
-
-
     }
-
-
 
     @Override
     public BooklistAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
@@ -90,11 +85,8 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         holder.status.setText(book.getStatus());
         holder.currentBurrower.setText(book.getBorrower());
         Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), book.getIsbn())
-            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    holder.ownerPhoto.setImageBitmap(BitmapFactory.decodeFile(uri.toString()));
-                }
+            .addOnSuccessListener(uri -> {
+                Picasso.get().load(uri).into(holder.ownerPhoto);
             });
     }
 

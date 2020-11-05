@@ -332,7 +332,7 @@ public class Database {
 
     /**
      * Uploads an image on the user's phone to be the
-     * profile image of that user's account
+     * image for the book with the listed isbn.
      * @param userID the ID of the current user
      * @param isbn the isbn of the book which we are creating an image for.
      * @param photoUri the Uri representing the image file
@@ -346,12 +346,46 @@ public class Database {
         return loc.putFile(photoUri);
     }
 
+    /**
+     * Gets the image of the book with the specified userID & ISBN
+     * @param userID The id of the currently signed-in user
+     * @param isbn the isbn of the book which image we want
+     * @return a task containing the URI of the image.
+     */
     static Task<Uri> getBookPhoto(String userID, String isbn) {
         String path = getBookImagePath(userID, isbn);
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference loc = storageRef.child(path);
         return loc.getDownloadUrl();
     }
+
+    /**
+     * Uploads an image on the user's phone to be the
+     * profile image of that user's account
+     * @param userID the id of the currently signed-in user
+     * @param photoUri the Uri of the photo
+     * @return an upload task representing the completion of the upload.
+     */
+    static UploadTask writeProfilePhoto(String userID, Uri photoUri) {
+        String path = getProfilePhotoPath(userID);
+        StorageReference loc = FirebaseStorage.getInstance().getReference().child(path);
+        loc.putFile(photoUri);
+        loc.getDownloadUrl();
+        return loc.putFile(photoUri);
+    }
+
+    /**
+     * Gets the profile photo of the specified user
+     * @param userID the id of the user we are searching for.
+     * @return a task containing the URI of the image
+     */
+    static Task<Uri> getProfilePhoto(String userID) {
+        String path = getProfilePhotoPath(userID);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference loc = storageRef.child(path);
+        return loc.getDownloadUrl();
+    }
+
 
     /**
      * Returns the contact info associated with a given username
@@ -472,6 +506,15 @@ public class Database {
                 }
             }
         });
+    }
+
+    /**
+     * Returns the path to the user's profile photo in storage
+     * @param userID the userID of the signed-in user
+     * @return the path to the user's profile photo
+     */
+    private static String getProfilePhotoPath(String userID) {
+        return "profiles/users/" + userID + "/profile.jpg";
     }
 
     /**

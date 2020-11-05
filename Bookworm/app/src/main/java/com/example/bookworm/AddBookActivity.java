@@ -52,7 +52,6 @@ public class AddBookActivity extends AppCompatActivity {
     private Uri photoUri;
     private StorageReference storageReference;
     private final int RESULT_LOAD_IMAGE = 100;
-    private String sPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +145,7 @@ public class AddBookActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(title) || TextUtils.isEmpty(author) || TextUtils.isEmpty(isbn)) {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Attempt to upload the image.
+                    // Attempt to upload the image, if the image exists
                     String userID = FirebaseAuth.getInstance().getUid();
                     if (photoUri == null) {
                         addBookToDB(title, author, isbn, descriptions);
@@ -171,6 +170,14 @@ public class AddBookActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Centralized logic for writing the book to the
+     * DB and waiting for the response
+     * @param title the title of the book
+     * @param author the author of the book
+     * @param isbn the isbn of the book
+     * @param descriptions an array of the book's description's keywords
+     */
     private void addBookToDB(String title, String author, String isbn, ArrayList<String> descriptions) {
         book.setTitle(title);
         book.setAuthor(author);
@@ -213,7 +220,7 @@ public class AddBookActivity extends AppCompatActivity {
 
     private void DelImage() {
         if ((int) profilePhoto.getTag() != R.drawable.ic_book) {
-            sPhoto = null;
+            photoUri = null;
             profilePhoto.setImageResource(R.drawable.ic_book);
             profilePhoto.setTag(R.drawable.ic_book);
         }
