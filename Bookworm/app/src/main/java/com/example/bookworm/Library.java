@@ -2,6 +2,10 @@ package com.example.bookworm;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a user's library, or all the information that
+ * they need to know.
+ */
 public class Library {
 
     private ArrayList<User> users;

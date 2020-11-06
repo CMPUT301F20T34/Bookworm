@@ -21,6 +21,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Shows the results of a search, whether it was by title or keyword
+ */
 public class SearchResultsActivity extends AppCompatActivity implements SearchResultsAdapter.OnBookListener {
     final ArrayList<Book> books = new ArrayList<>();
     final Context context = this;

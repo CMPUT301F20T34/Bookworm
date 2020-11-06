@@ -24,6 +24,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Map;
 
+/**
+ * Shows the profile of the current user in a static form.
+ */
 public class ProfileActivity extends AppCompatActivity {
     FirebaseUser fUser;
     String authEmail;
@@ -93,6 +96,10 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Moves to the activity for editing the current user's profile
+     * @param view
+     */
     public void editProfile(View view) {
         Intent intent = new Intent(getApplicationContext(), EditContactInfoActivity.class);
         TextView usernameView = findViewById(R.id.username_profile);
@@ -101,6 +108,10 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Logs the current user out, and returns to the login activity.
+     * @param view the view that was clicked on.
+     */
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));

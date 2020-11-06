@@ -21,6 +21,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Lists all the books that a user currently owns,
+ * allows for scanning, adding, or editing books.
+ */
 public class OwnerBooklistActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -79,12 +83,19 @@ public class OwnerBooklistActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the booklist when activity has returned from elsewhere.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         queryBook();
     }
 
+    /**
+     * Queries all books with the required information for the currently
+     * signed-in user.
+     */
     private void queryBook() {
         String[] fields = {"ownerId"};
         String[] values = {fAuth.getCurrentUser().getUid()};

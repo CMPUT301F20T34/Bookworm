@@ -17,10 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
+/**
+ * The adapter for the booklist activity
+ */
 public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyViewHolder> {
     private ArrayList<Book> booklist;
     private Context context;

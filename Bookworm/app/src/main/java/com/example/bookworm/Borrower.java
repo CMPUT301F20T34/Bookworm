@@ -2,6 +2,10 @@ package com.example.bookworm;
 
 import java.util.ArrayList;
 
+/**
+ * The borrower class handles all activities related
+ * to borrowing books.
+ */
 public class Borrower implements BookUser {
     private ArrayList<Book> books;
     private ArrayList<Request> requests;

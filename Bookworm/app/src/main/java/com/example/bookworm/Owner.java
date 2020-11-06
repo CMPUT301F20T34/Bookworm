@@ -2,6 +2,9 @@ package com.example.bookworm;
 
 import java.util.ArrayList;
 
+/**
+ * Handles all tasks relating to owning a book.
+ */
 public class Owner implements BookUser {
     private ArrayList<Book> books;
     private ArrayList<Request> requests;

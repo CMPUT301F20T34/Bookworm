@@ -359,6 +359,12 @@ public class Database {
         return loc.getDownloadUrl();
     }
 
+    /**
+     * Deletes a book's image from storage
+     * @param userID the userID of the currently signed-in user.
+     * @param isbn the isbn of the book to delete
+     * @return a task containing the result of the deletion.
+     */
     static Task<Void> deleteBookPhoto(String userID, String isbn) {
         String path = getBookImagePath(userID, isbn);
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
