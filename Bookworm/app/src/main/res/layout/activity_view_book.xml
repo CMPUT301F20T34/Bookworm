@@ -109,6 +109,7 @@
         android:layout_height="36dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
+        android:onClick="ownerContactInfoButton"
         android:text="View Owner Contact Information"
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
