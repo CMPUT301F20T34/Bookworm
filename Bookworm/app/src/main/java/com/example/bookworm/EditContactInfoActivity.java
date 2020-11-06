@@ -73,7 +73,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
                     }
                 }});
 
-            Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
+            Database.getProfilePhoto(username)
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
@@ -114,7 +114,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
 
             String userId = FirebaseAuth.getInstance().getUid();
             if(imageFilePath != null) {
-                Database.writeProfilePhoto(userId, imageFilePath);
+                Database.writeProfilePhoto(username, imageFilePath);
             }
 
             fAuth = FirebaseAuth.getInstance();

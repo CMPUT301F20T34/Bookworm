@@ -47,18 +47,6 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
         }
 
-        Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
-            .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Picasso.get().load(task.getResult()).into(profilePhoto);
-                    } else {
-                        profilePhoto.setImageResource(R.drawable.ic_book);
-                    }
-                }
-            });
-
         System.out.println("here");
         Database.getUserFromEmail(authEmail)
             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -66,6 +54,17 @@ public class ProfileActivity extends AppCompatActivity {
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Map<String, Object> data = doc.getData();
+                        Database.getProfilePhoto(doc.getId())
+                                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()) {
+                                            Picasso.get().load(task.getResult()).into(profilePhoto);
+                                        } else {
+                                            profilePhoto.setImageResource(R.drawable.ic_book);
+                                        }
+                                    }
+                                });
                         phoneNumber.setText(data.get("phoneNumber").toString());
                         email.setText(data.get("email").toString());
                         username.setText(doc.getId());
