@@ -14,10 +14,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -92,7 +92,7 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
-                        Picasso.get().load(task.getResult()).into(holder.ownerPhoto);
+                        Glide.with(context).load(task.getResult()).into(holder.ownerPhoto);
                     } else {
                         holder.ownerPhoto.setImageResource(R.drawable.ic_book);
                     }
