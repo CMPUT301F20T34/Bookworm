@@ -233,8 +233,7 @@ public class AddBookActivity extends AppCompatActivity {
      * Finish adding the book to the database and return to OwnerBooklistActivity
      */
     private void finishAdd() {
-        Intent intent = new Intent(this, OwnerBooklistActivity.class);
-        startActivity(intent);
+        finish();
     }
 
     /**
