@@ -71,7 +71,6 @@ public class EditContactInfoActivity extends AppCompatActivity {
                         phoneEditView.setText(task.getResult().get("phoneNumber").toString());
                         emailEditView.setText(task.getResult().get("email").toString());
                     }
-<<<<<<< HEAD
                 }
             });
             Database.getProfilePhoto(fAuth.getUid()).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -84,21 +83,6 @@ public class EditContactInfoActivity extends AppCompatActivity {
                     }
                 }
             });
-=======
-                }});
-
-            Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
-                .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()) {
-                            Picasso.get().load(task.getResult()).into(contactImage);
-                        } else {
-                            contactImage.setImageResource(R.drawable.ic_book);
-                        }
-                    }
-                });
->>>>>>> 1f059f3cd5a0214175f1c2357737fc53d0e2ed6c
         }
     }
 
