@@ -43,21 +43,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        String[] fields = {"ownerId"};
-        String[] values = {fAuth.getCurrentUser().getUid()};
-        Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
-                booklist = new ArrayList<>();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    booklist.add(document.toObject(Book.class));
-                }
-                bookListAdapter = new BooklistAdapter(context, booklist);
-                recyclerView.setAdapter(bookListAdapter);
-            }
-            }
-        });
+        queryBook();
 
         addBookButton = findViewById(R.id.button2);
         addBookButton.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +75,30 @@ public class OwnerBooklistActivity extends AppCompatActivity {
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        queryBook();
+    }
+
+    private void queryBook() {
+        String[] fields = {"ownerId"};
+        String[] values = {fAuth.getCurrentUser().getUid()};
+        Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    booklist = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        booklist.add(document.toObject(Book.class));
+                    }
+                    bookListAdapter = new BooklistAdapter(context, booklist);
+                    recyclerView.setAdapter(bookListAdapter);
+                }
             }
         });
     }
