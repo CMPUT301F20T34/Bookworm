@@ -49,7 +49,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if (task.isSuccessful()) {
-                booklist = new ArrayList<Book>();
+                booklist = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     booklist.add(document.toObject(Book.class));
                 }

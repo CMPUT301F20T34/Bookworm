@@ -409,9 +409,9 @@ public class Database {
     /**
      * Checks if a user exists in the database with the given username
      * @param username the username to be checked
-     * @return Task<DocumentSnapshot>
+     * @return The list of documents which match the user
      */
-    static Task<DocumentSnapshot> userExists(final String username) {
+    static Task<DocumentSnapshot> getUserFromUsername(final String username) {
         return libraryCollection.document(libraryName)
                 .collection(userName).document(username)
                 .get();

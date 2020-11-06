@@ -1,9 +1,7 @@
 package com.example.bookworm;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,11 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-
-import java.io.IOException;
+import com.squareup.picasso.Picasso;
 
 /**
  * ViewContactInfoActivity class
@@ -64,19 +63,20 @@ public class ViewContactInfoActivity extends AppCompatActivity {
                         emailView.setText(task.getResult().get("email").toString());
                     }
                 }});
-            Database.getProfilePhoto(username).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), task.getResult());
-                            contactImage.setImageBitmap(bitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
+            Database.getProfilePhoto(username)
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(contactImage);
                     }
-                }
-            });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        contactImage.setImageResource(R.drawable.ic_book);
+                    }
+                });
         }
     }
 }

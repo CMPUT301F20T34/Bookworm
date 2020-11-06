@@ -14,17 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
-
-import javax.annotation.Nullable;
 
 /**
  * EditContactInfoActivity class
@@ -77,13 +72,18 @@ public class EditContactInfoActivity extends AppCompatActivity {
                         emailEditView.setText(task.getResult().get("email").toString());
                     }
                 }});
+
             Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri).into(contactImage);
+                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            Picasso.get().load(task.getResult()).into(contactImage);
+                        } else {
+                            contactImage.setImageResource(R.drawable.ic_book);
                         }
-                    });
+                    }
+                });
         }
     }
 
