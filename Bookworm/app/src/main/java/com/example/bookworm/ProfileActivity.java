@@ -61,13 +61,23 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
 
-        System.out.println("here");
         Database.getUserFromEmail(authEmail)
             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Map<String, Object> data = doc.getData();
+                        Database.getProfilePhoto(doc.getId())
+                                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()) {
+                                            Glide.with(context).load(task.getResult()).into(profilePhoto);
+                                        } else {
+                                            profilePhoto.setImageResource(R.drawable.ic_book);
+                                        }
+                                    }
+                                });
                         phoneNumber.setText(data.get("phoneNumber").toString());
                         email.setText(data.get("email").toString());
                         username.setText(doc.getId());

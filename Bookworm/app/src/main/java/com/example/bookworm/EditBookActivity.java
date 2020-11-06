@@ -104,6 +104,20 @@ public class EditBookActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         selectedBook = document.toObject(Book.class);
                     }
+                    Database.getBookPhoto(selectedBook.getOwner(), isbn)
+                            .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+                                        Glide.with(context).load(task.getResult()).into(bookPhoto);
+                                        bookPhoto.setTag(-1);
+                                    } else {
+                                        bookPhoto.setImageResource(R.drawable.ic_book);
+                                        bookPhoto.setTag(R.drawable.ic_book);
+                                    }
+
+                                }
+                            });
                     titleEditText.setText(selectedBook.getTitle());
                     authorEditText.setText(selectedBook.getAuthor());
                     isbnText.setText(selectedBook.getIsbn());
@@ -209,7 +223,7 @@ public class EditBookActivity extends AppCompatActivity {
                     if (photoUri == null) {
                         addBookToDB(title, author, isbn, descriptions);
                     } else {
-                        Database.writeBookPhoto(userID, isbn, photoUri)
+                        Database.writeBookPhoto(ownerNameText.getText().toString(), isbn, photoUri)
                             .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {

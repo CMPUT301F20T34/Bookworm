@@ -60,7 +60,7 @@ public class ViewBookActivity extends AppCompatActivity {
         descriptionView = findViewById(R.id.view_book_description);
         statusView = findViewById(R.id.view_book_status);
         photoView = findViewById(R.id.view_book_image);
-        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), isbn)
+        Database.getBookPhoto(owner, isbn)
             .addOnSuccessListener(uri -> {
                 Glide.with(this).load(uri).into(photoView);
             })
