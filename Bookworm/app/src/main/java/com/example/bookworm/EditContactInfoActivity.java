@@ -76,14 +76,18 @@ public class EditContactInfoActivity extends AppCompatActivity {
                         phoneEditView.setText(task.getResult().get("phoneNumber").toString());
                         emailEditView.setText(task.getResult().get("email").toString());
                     }
-                }});
-            Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri).into(contactImage);
-                        }
-                    });
+                }
+            });
+            Database.getProfilePhoto(fAuth.getUid()).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Picasso.get().load(task.getResult()).into(contactImage);
+                    } else {
+                        contactImage.setImageResource(R.drawable.ic_book);
+                    }
+                }
+            });
         }
     }
 

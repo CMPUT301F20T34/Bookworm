@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -59,21 +60,19 @@ public class ViewContactInfoActivity extends AppCompatActivity {
             Database.getUser(username).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         phoneView.setText(task.getResult().get("phoneNumber").toString());
                         emailView.setText(task.getResult().get("email").toString());
                     }
-                }});
+                }
+            });
             Database.getProfilePhoto(username).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), task.getResult());
-                            contactImage.setImageBitmap(bitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    if (task.isSuccessful()) {
+                        Picasso.get().load(task.getResult()).into(contactImage);
+                    } else {
+                        contactImage.setImageResource(R.drawable.ic_book);
                     }
                 }
             });
