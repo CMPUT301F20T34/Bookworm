@@ -50,7 +50,7 @@ public class BorrowerMainActivityTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
         //perform login
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.username_login), "peisong@ualberta.ca");
+        solo.enterText((EditText) solo.getView(R.id.username_login), "peisong");
         solo.enterText((EditText) solo.getView(R.id.password_login), "12345678");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);

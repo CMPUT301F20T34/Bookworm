@@ -15,9 +15,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class LoginActivity extends AppCompatActivity {
-    EditText emailField;
+    EditText usernameField;
     EditText passwordField;
     FirebaseAuth fAuth;
     Button login;
@@ -29,21 +30,21 @@ public class LoginActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
-        emailField = findViewById(R.id.username_login);
+        usernameField = findViewById(R.id.username_login);
         passwordField = findViewById(R.id.password_login);
         login = findViewById(R.id.login_button);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = emailField.getText().toString().trim();
+                String username = usernameField.getText().toString().trim();
                 String password = passwordField.getText().toString().trim();
 
                 // CHANGE THIS TO USE EMAILS
 
-                // Ensure email is non-empty
-                if (TextUtils.isEmpty(email)) {
-                    emailField.setError("Email is a required value.");
+                // Ensure username is non-empty
+                if (TextUtils.isEmpty(username)) {
+                    usernameField.setError("Username is a required value.");
                     return;
                 }
 
@@ -54,28 +55,38 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 /* (query email from provided username) */
-
-                // Authenticate user's information
-                System.out.println(email);
-                System.out.println(password);
-                fAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this,
-                                            "Login successful.",
-                                            Toast.LENGTH_SHORT)
-                                            .show();
-                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                } else {
-                                    Toast.makeText(LoginActivity.this,
-                                            "Error: " + task.getException().getMessage(),
-                                            Toast.LENGTH_LONG)
-                                            .show();
-                                }
+                Database.getUserFromUsername(username)
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful() && task.getResult().exists()) {
+                                // The username entered does exist
+                                String email = (String) task.getResult().get("email");
+                                fAuth.signInWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(LoginActivity.this,
+                                                    "Login successful.",
+                                                    Toast.LENGTH_SHORT)
+                                                    .show();
+                                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            } else {
+                                                Toast.makeText(LoginActivity.this,
+                                                    "Error: " + task.getException().getMessage(),
+                                                    Toast.LENGTH_LONG)
+                                                    .show();
+                                            }
+                                        }
+                                    });
+                            } else if (!task.getResult().exists()) {
+                                Toast.makeText(LoginActivity.this, "Username or password is incorrect.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Error on login. Please try again.", Toast.LENGTH_SHORT).show();
                             }
-                        });
+                        }
+                    });
             }
         });
     }

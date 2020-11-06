@@ -1,9 +1,7 @@
 package com.example.bookworm;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,12 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.squareup.picasso.Picasso;
+<<<<<<< HEAD
 
 import java.io.IOException;
+=======
+>>>>>>> 1f059f3cd5a0214175f1c2357737fc53d0e2ed6c
 
 /**
  * ViewContactInfoActivity class
@@ -64,6 +67,7 @@ public class ViewContactInfoActivity extends AppCompatActivity {
                         phoneView.setText(task.getResult().get("phoneNumber").toString());
                         emailView.setText(task.getResult().get("email").toString());
                     }
+<<<<<<< HEAD
                 }
             });
             Database.getProfilePhoto(username).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -72,10 +76,23 @@ public class ViewContactInfoActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Picasso.get().load(task.getResult()).into(contactImage);
                     } else {
+=======
+                }});
+
+            Database.getProfilePhoto(username)
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(contactImage);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+>>>>>>> 1f059f3cd5a0214175f1c2357737fc53d0e2ed6c
                         contactImage.setImageResource(R.drawable.ic_book);
                     }
-                }
-            });
+                });
         }
     }
 }

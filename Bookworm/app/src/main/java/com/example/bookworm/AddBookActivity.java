@@ -21,9 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -71,8 +68,6 @@ public class AddBookActivity extends AppCompatActivity {
         profilePhoto = findViewById(R.id.profile_photo);
         profilePhoto.setTag(R.drawable.ic_book);
 
-        //BookPhoto.setImageResource(R.drawable.ic_book);
-
 
         // Define authentication and storage references
 
@@ -83,9 +78,8 @@ public class AddBookActivity extends AppCompatActivity {
 
 //        checkFilePermissions();
 
-        CollectionReference users = FirebaseFirestore.getInstance().collection("Libraries").document("Main_Library").collection("users");
-        Query query = users.whereEqualTo("email", email);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Database.getUserFromEmail(email)
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -156,6 +150,7 @@ public class AddBookActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                     if (task.isSuccessful()) {
                                         addBookToDB(title, author, isbn, descriptions);
+                                        finishAdd();
                                     } else {
                                         Toast.makeText(AddBookActivity.this,
                                             "Image could not be written to database",
@@ -205,7 +200,9 @@ public class AddBookActivity extends AppCompatActivity {
         }, 1000);
     }
 
-
+    /**
+     * Start the activity for adding an image to the book.
+     */
     private void AddImage() {
         if ((int) profilePhoto.getTag() == R.drawable.ic_book) {
             // Defining Implicit Intent to mobile gallery
@@ -218,6 +215,9 @@ public class AddBookActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Delete the image currently in the preview
+     */
     private void DelImage() {
         if ((int) profilePhoto.getTag() != R.drawable.ic_book) {
             photoUri = null;
@@ -227,6 +227,14 @@ public class AddBookActivity extends AppCompatActivity {
         else{
             Toast.makeText(AddBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Finish adding the book to the database and return to OwnerBooklistActivity
+     */
+    private void finishAdd() {
+        Intent intent = new Intent(this, OwnerBooklistActivity.class);
+        startActivity(intent);
     }
 
     /**

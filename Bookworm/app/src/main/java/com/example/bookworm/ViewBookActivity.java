@@ -12,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.squareup.picasso.Picasso;
@@ -52,8 +54,6 @@ public class ViewBookActivity extends AppCompatActivity {
         description = intent.getStringExtra("description");
         isbn = intent.getStringExtra("isbn");
 
-        String filename = getIntent().getStringExtra("photograph");
-
         titleView = findViewById(R.id.view_book_title);
         authorView = findViewById(R.id.view_book_author);
         ownerView = findViewById(R.id.view_book_owner);
@@ -63,7 +63,14 @@ public class ViewBookActivity extends AppCompatActivity {
         Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), isbn)
             .addOnSuccessListener(uri -> {
                 Picasso.get().load(uri).into(photoView);
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    photoView.setImageResource(R.drawable.ic_book);
+                }
             });
+
 
         titleView.setText("Title: " + title);
         authorView.setText("Author: " + author);

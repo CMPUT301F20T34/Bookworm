@@ -1,7 +1,5 @@
 package com.example.bookworm;
 
-import android.app.Activity;
-
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
@@ -90,6 +88,7 @@ public class DataBaseTest {
                         assertEquals(docs.get(0).get("title"), "Animal Farm");
                     }
                 });
+
         //Tests for a correct response with multiple fields
         Database.queryCollection("books", new String[]{"title", "author"}, new String[]{"Animal Farm", "George Orwell"})
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -100,6 +99,7 @@ public class DataBaseTest {
                         assertEquals(docs.get(0).get("title"), "Animal Farm");
                     }
                 });
+
         //Tests for querying for a book that doesn't exist
         Database.queryCollection("books", new String[]{"title"}, new String[]{"1984"})
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

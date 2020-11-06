@@ -13,8 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookworm.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                 // Ensure username is non-empty
                 if (TextUtils.isEmpty(username)) {
-                    usernameField.setError("Email is a required value.");
+                    usernameField.setError("Username is a required value.");
                     return;
                 }
 
@@ -100,13 +98,12 @@ public class SignUpActivity extends AppCompatActivity {
                 // Phone number is allowed to be empty
 
                 /* Check if the username is already taken */
-                Database.userExists(username)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                Database.getUserFromUsername(username)
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                            /* If the username is not yet taken */
-                            if (!documentSnapshot.exists()) {
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful() && !task.getResult().exists()) {
+                                // Username does not already exist
                                 fAuth.createUserWithEmailAndPassword(email, password1)
                                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                         @Override
@@ -130,23 +127,16 @@ public class SignUpActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-                            } else {
+                            } else if (task.getResult().exists()) {
                                 /* Username is taken */
                                 Toast.makeText(SignUpActivity.this,
                                     "Error: Username already exists",
                                     Toast.LENGTH_LONG)
                                     .show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, "Error on signup. Please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(SignUpActivity.this,
-                                "Unable to access database. Please try again later.",
-                                Toast.LENGTH_LONG)
-                                .show();
-                            }
                     });
             }
         });
