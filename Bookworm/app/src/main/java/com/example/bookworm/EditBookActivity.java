@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +26,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -135,7 +133,7 @@ public class EditBookActivity extends AppCompatActivity {
         addPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddImage();
+                addImage();
             }
         });
 
@@ -143,7 +141,7 @@ public class EditBookActivity extends AppCompatActivity {
         deletePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DelImage();
+                delImage();
             }
         });
 
@@ -268,7 +266,7 @@ public class EditBookActivity extends AppCompatActivity {
      * Creates the activity for adding an image to the book
      * from the user's phone
      */
-    private void AddImage() {
+    private void addImage() {
         if ((int) bookPhoto.getTag() == R.drawable.ic_book) {
             // Defining Implicit Intent to mobile gallery
             Intent intent = new Intent();
@@ -284,31 +282,13 @@ public class EditBookActivity extends AppCompatActivity {
     /**
      * Removes the previewed image from the book
      */
-    private void DelImage() {
+    private void delImage() {
         if ((int) bookPhoto.getTag() != R.drawable.ic_book) {
             bookPhoto.setImageResource(R.drawable.ic_book);
             bookPhoto.setTag(R.drawable.ic_book);
         }
         else{
             Toast.makeText(EditBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public String BitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, baos);
-        byte[] b = baos.toByteArray();
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
         }
     }
 
