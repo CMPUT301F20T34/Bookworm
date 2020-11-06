@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -122,5 +123,11 @@ public class ViewBookActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG)
                     .show());
         });
+    }
+
+    public void ownerContactInfoButton(View view){
+        Intent intent = new Intent(getApplicationContext(), ViewContactInfoActivity.class);
+        intent.putExtra("username", owner);
+        startActivity(intent);
     }
 }

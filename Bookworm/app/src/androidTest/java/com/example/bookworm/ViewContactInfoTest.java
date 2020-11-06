@@ -35,7 +35,7 @@ public class ViewContactInfoTest {
      * @return User mockUser
      */
     public User getMockUser(){
-        return new User("Mike", "hunter2", "mike@hotmail.com", "592-441-0235");
+        return new User("danieltest", "testpass", "danieltesting@hotmail.com", "587-555-4321");
         //return new User("Daniel", "abc123", "daniel@hotmail.com", "587-999-1234");
     }
 
