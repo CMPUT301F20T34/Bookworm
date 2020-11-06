@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter for the recycler view found on SearchResultsActivity
+ */
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.SRViewHolder>{
 
     private ArrayList<Book> books;

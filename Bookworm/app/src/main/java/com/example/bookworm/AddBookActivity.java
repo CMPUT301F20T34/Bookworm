@@ -33,6 +33,9 @@ import java.util.ArrayList;
 
 import static com.example.bookworm.ViewPhotoFragment.newInstance;
 
+/**
+ * The activity that appears when a user wishes to add a book to the database
+ */
 public class AddBookActivity extends AppCompatActivity {
     private Book book;
     private FirebaseAuth fAuth;
@@ -264,24 +267,4 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(AddBookActivity.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
         }
     }
-                                              }
-
-
-
-
-//    /**
-//     * Runs when the application first begins, ensures that we have permission to access the user's data.
-//     * https://github.com/mitchtabian/Firebase-Save-Images/blob/master/FirebaseUploadImage/app/src/main/java/com/tabian/firebaseuploadimage/AddBookActivity.java
-//     * Accessed October 31, 2020
-//     */
-//    private void checkFilePermissions() {
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-//            int permissionCheck = AddBookActivity.this.checkSelfPermission("Manifest.permission.READ_EXTERNAL_STORAGE");
-//            permissionCheck += AddBookActivity.this.checkSelfPermission("Manifest.permission.WRITE_EXTERNAL_STORAGE");
-//            if (permissionCheck != 0) {
-//                this.requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1001); //Any number
-//            }
-//        } else {
-//            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
-//        }
-//    }
+}

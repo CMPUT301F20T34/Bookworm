@@ -21,6 +21,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+/**
+ * Shows a book's information to the user. This activity allows users to
+ * view the profile of other users, specifically the one that owns the book
+ * they are looking at.
+ */
 public class ViewBookActivity extends AppCompatActivity {
     String title;
     String author;
@@ -125,6 +130,11 @@ public class ViewBookActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Starts the activity for viewing the contact info
+     * of a different user.
+     * @param view the view that was clicked on.
+     */
     public void ownerContactInfoButton(View view){
         Intent intent = new Intent(getApplicationContext(), ViewContactInfoActivity.class);
         intent.putExtra("username", owner);

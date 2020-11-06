@@ -33,6 +33,10 @@ import java.util.ArrayList;
 
 import static com.example.bookworm.ViewPhotoFragment.newInstance;
 
+/**
+ * Handles the actions for editing the contents of a book
+ * in the database
+ */
 public class EditBookActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -321,7 +325,12 @@ public class EditBookActivity extends AppCompatActivity {
         finish();
     }
 
-    // Override onActivityResult method
+    /**
+     * Gets the result from the image selection activity
+     * @param requestCode The success code of the request
+     * @param resultCode the code for the activity
+     * @param data the data returned by the activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 

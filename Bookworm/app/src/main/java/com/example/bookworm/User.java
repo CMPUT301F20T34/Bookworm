@@ -2,6 +2,9 @@ package com.example.bookworm;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a user class
+ */
 public class User {
     private String username;
     private String password;
