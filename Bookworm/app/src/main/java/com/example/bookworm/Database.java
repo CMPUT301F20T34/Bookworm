@@ -333,13 +333,13 @@ public class Database {
     /**
      * Uploads an image on the user's phone to be the
      * image for the book with the listed isbn.
-     * @param userID the ID of the current user
+     * @param username username the username of the book owner
      * @param isbn the isbn of the book which we are creating an image for.
      * @param photoUri the Uri representing the image file
      * @return An asynchronous task that finishes when the upload finishes.
      */
-    static UploadTask writeBookPhoto(String userID, String isbn, Uri photoUri) {
-        String path = getBookImagePath(userID, isbn);
+    static UploadTask writeBookPhoto(String username, String isbn, Uri photoUri) {
+        String path = getBookImagePath(username, isbn);
         StorageReference loc = FirebaseStorage.getInstance().getReference().child(path);
         loc.putFile(photoUri);
         loc.getDownloadUrl();
@@ -348,12 +348,12 @@ public class Database {
 
     /**
      * Gets the image of the book with the specified userID & ISBN
-     * @param userID The id of the currently signed-in user
+     * @param username username the username of the book owner
      * @param isbn the isbn of the book which image we want
      * @return a task containing the URI of the image.
      */
-    static Task<Uri> getBookPhoto(String userID, String isbn) {
-        String path = getBookImagePath(userID, isbn);
+    static Task<Uri> getBookPhoto(String username, String isbn) {
+        String path = getBookImagePath(username, isbn);
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference loc = storageRef.child(path);
         return loc.getDownloadUrl();
@@ -362,12 +362,12 @@ public class Database {
     /**
      * Uploads an image on the user's phone to be the
      * profile image of that user's account
-     * @param userID the id of the currently signed-in user
+     * @param username the username of the profile
      * @param photoUri the Uri of the photo
      * @return an upload task representing the completion of the upload.
      */
-    static UploadTask writeProfilePhoto(String userID, Uri photoUri) {
-        String path = getProfilePhotoPath(userID);
+    static UploadTask writeProfilePhoto(String username, Uri photoUri) {
+        String path = getProfilePhotoPath(username);
         StorageReference loc = FirebaseStorage.getInstance().getReference().child(path);
         loc.putFile(photoUri);
         loc.getDownloadUrl();
@@ -376,11 +376,11 @@ public class Database {
 
     /**
      * Gets the profile photo of the specified user
-     * @param userID the id of the user we are searching for.
+     * @param username the username of the profile
      * @return a task containing the URI of the image
      */
-    static Task<Uri> getProfilePhoto(String userID) {
-        String path = getProfilePhotoPath(userID);
+    static Task<Uri> getProfilePhoto(String username) {
+        String path = getProfilePhotoPath(username);
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference loc = storageRef.child(path);
         return loc.getDownloadUrl();
@@ -510,20 +510,20 @@ public class Database {
 
     /**
      * Returns the path to the user's profile photo in storage
-     * @param userID the userID of the signed-in user
+     * @param username the username of the book owner
      * @return the path to the user's profile photo
      */
-    private static String getProfilePhotoPath(String userID) {
-        return "profiles/users/" + userID + "/profile.jpg";
+    private static String getProfilePhotoPath(String username) {
+        return "profiles/users/" + username + "/profile.jpg";
     }
 
     /**
      * Creates the path to a book's image storage reference
-     * @param userID the current user's ID
+     * @param username the username of the profile
      * @param isbn the isbn of the book which we are targeting
      * @return the string representing the path to the book's image.
      */
-    private static String getBookImagePath(String userID, String isbn) {
-        return "images/users/" + userID + "/books/" + isbn + ".jpg";
+    private static String getBookImagePath(String username, String isbn) {
+        return "images/users/" + username + "/books/" + isbn + ".jpg";
     }
 }

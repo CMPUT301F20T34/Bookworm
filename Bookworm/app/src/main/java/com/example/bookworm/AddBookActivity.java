@@ -140,11 +140,10 @@ public class AddBookActivity extends AppCompatActivity {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
                 } else {
                     // Attempt to upload the image, if the image exists
-                    String userID = FirebaseAuth.getInstance().getUid();
                     if (photoUri == null) {
                         addBookToDB(title, author, isbn, descriptions);
                     } else {
-                        Database.writeBookPhoto(userID, isbn, photoUri)
+                        Database.writeBookPhoto(ownerNameText.getText().toString(), isbn, photoUri)
                             .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {

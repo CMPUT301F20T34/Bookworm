@@ -87,7 +87,7 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         holder.isbn.setText(book.getIsbn());
         holder.status.setText(book.getStatus());
         holder.currentBurrower.setText(book.getBorrower());
-        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), book.getIsbn())
+        Database.getBookPhoto(book.getOwner(), book.getIsbn())
             .addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
