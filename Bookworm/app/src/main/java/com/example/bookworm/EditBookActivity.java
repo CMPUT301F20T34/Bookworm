@@ -316,7 +316,7 @@ public class EditBookActivity extends AppCompatActivity {
      * reverts back to the original activity after finishing
      */
     private void finishEditing() {
-        startActivity(new Intent(this, OwnerBooklistActivity.class));
+        finish();
     }
 
     // Override onActivityResult method
