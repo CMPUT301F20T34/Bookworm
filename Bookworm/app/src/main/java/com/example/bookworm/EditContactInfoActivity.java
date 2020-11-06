@@ -1,6 +1,7 @@
 package com.example.bookworm;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,11 +14,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -36,7 +37,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
     private TextView phoneEditView;
     private TextView emailEditView;
     private ImageView contactImage;
-
+    private Context context = this;
     private final int PICK_IMAGE_REQUEST = 22;
 
     /**
@@ -78,7 +79,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
-                            Picasso.get().load(task.getResult()).into(contactImage);
+                            Glide.with(context).load(task.getResult()).into(contactImage);
                         } else {
                             contactImage.setImageResource(R.drawable.ic_book);
                         }

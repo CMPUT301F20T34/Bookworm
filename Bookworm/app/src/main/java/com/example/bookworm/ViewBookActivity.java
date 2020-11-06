@@ -16,10 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.squareup.picasso.Picasso;
 
 public class ViewBookActivity extends AppCompatActivity {
     String title;
@@ -62,7 +62,7 @@ public class ViewBookActivity extends AppCompatActivity {
         photoView = findViewById(R.id.view_book_image);
         Database.getBookPhoto(owner, isbn)
             .addOnSuccessListener(uri -> {
-                Picasso.get().load(uri).into(photoView);
+                Glide.with(this).load(uri).into(photoView);
             })
             .addOnFailureListener(new OnFailureListener() {
                 @Override

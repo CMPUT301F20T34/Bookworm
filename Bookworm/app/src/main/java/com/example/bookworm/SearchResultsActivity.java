@@ -2,10 +2,8 @@ package com.example.bookworm;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +19,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class SearchResultsActivity extends AppCompatActivity implements SearchResultsAdapter.OnBookListener {
@@ -48,8 +45,7 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
         else{
             searchTask = Database.bookKeywordSearch(new String[]{"available", "requested"}, searchTerm);
         }
-        searchTask
-            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        searchTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -87,31 +83,6 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
         intent.putExtra("status", selectedBook.getStatus());
         intent.putExtra("description", selectedBook.descriptionAsString());
         intent.putExtra("isbn", selectedBook.getIsbn());
-        /* Passing a large bitmap between activities
-         * https://stackoverflow.com/questions/11010386/passing-android-bitmap-data-within-activity-using-intent-in-android
-         * Posted by Zaid Daghestani
-         * Accessed October 31st, 2020
-         */
-        if (selectedBook.getPhotograph() != null) {
-            try {
-                //Write file
-                String filename = "bitmap.png";
-                Bitmap bmp = selectedBook.getDrawablePhotograph();
-                FileOutputStream stream = this.openFileOutput(filename, Context.MODE_PRIVATE);
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-                //Cleanup
-                stream.close();
-                bmp.recycle();
-
-                //Pop intent
-                intent.putExtra("photograph", filename);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            intent.putExtra("photograph", "null");
-        }
         startActivity(intent);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -8,14 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.squareup.picasso.Picasso;
-import java.io.IOException;
 
 /**
  * ViewContactInfoActivity class
@@ -29,6 +29,7 @@ public class ViewContactInfoActivity extends AppCompatActivity {
     private TextView phoneView;
     private TextView emailView;
     private ImageView contactImage;
+    private Context context = this;
 
     /**
      * onCreate initializer.
@@ -69,7 +70,7 @@ public class ViewContactInfoActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Picasso.get().load(uri).into(contactImage);
+                        Glide.with(context).load(uri).into(contactImage);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

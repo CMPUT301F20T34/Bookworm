@@ -359,6 +359,13 @@ public class Database {
         return loc.getDownloadUrl();
     }
 
+    static Task<Void> deleteBookPhoto(String userID, String isbn) {
+        String path = getBookImagePath(userID, isbn);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference loc = storageRef.child(path);
+        return loc.delete();
+    }
+
     /**
      * Uploads an image on the user's phone to be the
      * profile image of that user's account
