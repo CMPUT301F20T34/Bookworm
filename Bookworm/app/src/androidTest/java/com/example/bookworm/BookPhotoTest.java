@@ -112,6 +112,49 @@ public class BookPhotoTest {
         assertEquals(bd,drawable);
     }
 
+    @Test
+    public void ViewPhotoInEditBook(){
+        solo.assertCurrentActivity("Wrong Activity", OwnerBooklistActivity.class);
+        solo.clickInRecyclerView(0);
+        solo.assertCurrentActivity("Wrong Activity", EditBookActivity.class);
+        AddBookActivity activity = (AddBookActivity) solo.getCurrentActivity();
+        ImageView imageView = (ImageView) activity.findViewById(R.id.profile_photo);
+        imageView.setImageResource(R.drawable.avatar_1);
+        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+        solo.clickOnButton("VIEW PHOTO");
+        solo.waitForFragmentByTag("ViewPhotoFragment", 2000);
+        Fragment fragment = solo.getCurrentActivity().getFragmentManager().findFragmentByTag("ViewPhotoFragment");
+        LinearLayout l = (LinearLayout) fragment.getView();
+        ImageView viewphoto = (ImageView) l.getChildAt(0);
+        BitmapDrawable bd = (BitmapDrawable) viewphoto.getDrawable();
+        assertEquals(bd,drawable);
+    }
+
+    @Test
+    public void DeletePhotoInAddBook(){
+        solo.assertCurrentActivity("Wrong Activity", OwnerBooklistActivity.class);
+        solo.clickOnButton("ADD BOOK");
+        solo.assertCurrentActivity("Wrong Activity", AddBookActivity.class);
+        AddBookActivity activity = (AddBookActivity) solo.getCurrentActivity();
+        ImageView imageView = (ImageView) activity.findViewById(R.id.profile_photo);
+        imageView.setImageResource(R.drawable.avatar_1);
+        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+        solo.clickOnButton("DELETE PHOTO");
+        assertEquals(imageView.getTag(),R.drawable.ic_book);
+    }
+
+    @Test
+    public void DeletePhotoInEditBook(){
+        solo.assertCurrentActivity("Wrong Activity", OwnerBooklistActivity.class);
+        solo.clickInRecyclerView(0);
+        solo.assertCurrentActivity("Wrong Activity", EditBookActivity.class);
+        AddBookActivity activity = (AddBookActivity) solo.getCurrentActivity();
+        ImageView imageView = (ImageView) activity.findViewById(R.id.profile_photo);
+        imageView.setImageResource(R.drawable.avatar_1);
+        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+        solo.clickOnButton("DELETE PHOTO");
+        assertEquals(imageView.getTag(),R.drawable.ic_book);
+    }
 
     /**
      * Closes the activity after each test
