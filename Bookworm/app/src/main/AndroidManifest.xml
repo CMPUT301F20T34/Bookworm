@@ -26,6 +26,8 @@
         <activity android:name=".ListBorrowing" />
         <activity android:name=".ListAccepted" />
         <activity android:name=".ListRequested" />
+        <activity android:name=".EditContactInfoActivity" />
+        <activity android:name=".ViewContactInfoActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

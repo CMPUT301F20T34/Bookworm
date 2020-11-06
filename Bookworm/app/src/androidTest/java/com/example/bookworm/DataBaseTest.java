@@ -99,7 +99,7 @@ public class DataBaseTest {
                         assertEquals(docs.get(0).get("title"), "Animal Farm");
                     }
                 });
-        
+
         //Tests for querying for a book that doesn't exist
         Database.queryCollection("books", new String[]{"title"}, new String[]{"1984"})
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
