@@ -3,6 +3,7 @@ package com.example.bookworm;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +14,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
+/**
+ * The adapter for the booklist activity
+ */
 public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyViewHolder> {
     private ArrayList<Book> booklist;
     private Context context;
@@ -56,7 +61,7 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         // create a new view
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.owner_booklist_content, parent, false);
-        ImageView ownerPhoto = view.findViewById(R.id.imageView);
+        ImageView ownerPhoto = view.findViewById(R.id.profile_view_image);
         TextView ownerName = view.findViewById(R.id.textView);
         TextView title = view.findViewById(R.id.textView2);
         TextView author = view.findViewById(R.id.textView3);
@@ -84,9 +89,16 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         holder.isbn.setText(book.getIsbn());
         holder.status.setText(book.getStatus());
         holder.currentBurrower.setText(book.getBorrower());
-        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), book.getIsbn())
-            .addOnSuccessListener(uri -> {
-                Picasso.get().load(uri).into(holder.ownerPhoto);
+        Database.getBookPhoto(book.getOwner(), book.getIsbn())
+            .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Glide.with(context).load(task.getResult()).into(holder.ownerPhoto);
+                    } else {
+                        holder.ownerPhoto.setImageResource(R.drawable.ic_book);
+                    }
+                }
             });
     }
 

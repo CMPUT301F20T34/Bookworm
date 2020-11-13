@@ -39,7 +39,7 @@ public class ViewBookActivityTest {
         fAuth.signOut();
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.username_login), "psaunder@ualberta.ca");
+        solo.enterText((EditText) solo.getView(R.id.username_login), "pahasa");
         solo.enterText((EditText) solo.getView(R.id.password_login), "abcdefg");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);

@@ -16,6 +16,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Lists all the accepted requests that a user has made.
+ */
 public class ListAccepted extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Adapter adapter;

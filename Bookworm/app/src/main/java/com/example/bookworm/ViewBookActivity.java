@@ -6,18 +6,26 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.squareup.picasso.Picasso;
 
+/**
+ * Shows a book's information to the user. This activity allows users to
+ * view the profile of other users, specifically the one that owns the book
+ * they are looking at.
+ */
 public class ViewBookActivity extends AppCompatActivity {
     String title;
     String author;
@@ -51,18 +59,23 @@ public class ViewBookActivity extends AppCompatActivity {
         description = intent.getStringExtra("description");
         isbn = intent.getStringExtra("isbn");
 
-        String filename = getIntent().getStringExtra("photograph");
-
         titleView = findViewById(R.id.view_book_title);
         authorView = findViewById(R.id.view_book_author);
         ownerView = findViewById(R.id.view_book_owner);
         descriptionView = findViewById(R.id.view_book_description);
         statusView = findViewById(R.id.view_book_status);
         photoView = findViewById(R.id.view_book_image);
-        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), isbn)
+        Database.getBookPhoto(owner, isbn)
             .addOnSuccessListener(uri -> {
-                Picasso.get().load(uri).into(photoView);
+                Glide.with(this).load(uri).into(photoView);
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    photoView.setImageResource(R.drawable.ic_book);
+                }
             });
+
 
         titleView.setText("Title: " + title);
         authorView.setText("Author: " + author);
@@ -115,5 +128,16 @@ public class ViewBookActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG)
                     .show());
         });
+    }
+
+    /**
+     * Starts the activity for viewing the contact info
+     * of a different user.
+     * @param view the view that was clicked on.
+     */
+    public void ownerContactInfoButton(View view){
+        Intent intent = new Intent(getApplicationContext(), ViewContactInfoActivity.class);
+        intent.putExtra("username", owner);
+        startActivity(intent);
     }
 }

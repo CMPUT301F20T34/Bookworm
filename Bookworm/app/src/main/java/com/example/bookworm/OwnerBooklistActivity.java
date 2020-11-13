@@ -21,6 +21,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Lists all the books that a user currently owns,
+ * allows for scanning, adding, or editing books.
+ */
 public class OwnerBooklistActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -43,21 +47,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        String[] fields = {"ownerId"};
-        String[] values = {fAuth.getCurrentUser().getUid()};
-        Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
-                booklist = new ArrayList<Book>();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    booklist.add(document.toObject(Book.class));
-                }
-                bookListAdapter = new BooklistAdapter(context, booklist);
-                recyclerView.setAdapter(bookListAdapter);
-            }
-            }
-        });
+        queryBook();
 
         addBookButton = findViewById(R.id.button2);
         addBookButton.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +79,37 @@ public class OwnerBooklistActivity extends AppCompatActivity {
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
+            }
+        });
+    }
+
+    /**
+     * Updates the booklist when activity has returned from elsewhere.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        queryBook();
+    }
+
+    /**
+     * Queries all books with the required information for the currently
+     * signed-in user.
+     */
+    private void queryBook() {
+        String[] fields = {"ownerId"};
+        String[] values = {fAuth.getCurrentUser().getUid()};
+        Database.queryCollection("books", fields, values).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    booklist = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        booklist.add(document.toObject(Book.class));
+                    }
+                    bookListAdapter = new BooklistAdapter(context, booklist);
+                    recyclerView.setAdapter(bookListAdapter);
+                }
             }
         });
     }

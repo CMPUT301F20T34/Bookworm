@@ -16,6 +16,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Lists all books that the user is currently borrowing.
+ */
 public class ListBorrowing extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Adapter adapter;
