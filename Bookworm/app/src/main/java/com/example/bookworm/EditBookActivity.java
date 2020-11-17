@@ -178,7 +178,9 @@ public class EditBookActivity extends AppCompatActivity {
         viewAllRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getApplicationContext(), ViewRequestsActivity.class);
+                intent.putExtra("isbn", isbn);
+                startActivity(intent);
             }
         });
 

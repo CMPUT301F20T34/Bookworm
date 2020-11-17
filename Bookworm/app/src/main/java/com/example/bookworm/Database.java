@@ -511,6 +511,19 @@ public class Database {
     }
 
     /**
+     * Get all requests on a given book (determined by isbn)
+     * @param isbn The isbn of the book to get the requests
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getRequestsForBook(String isbn) {
+        return libraryCollection.document(libraryName)
+            .collection(requestName)
+            .whereEqualTo("book.isbn", isbn)
+            // Possibly filter by status
+            .get();
+    }
+
+    /**
      * Queries a collection for a field matching a value
      * @param collection the collection to be queried
      * @param fields a list of fields to be looked at
