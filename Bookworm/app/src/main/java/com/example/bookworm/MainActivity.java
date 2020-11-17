@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.google.zxing.client.android.Intents;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
 
 /**
  * The main activity of the program which delegates all tasks,
@@ -38,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private Button mySearchButton;
     private Button myBorrowerInfoButton;
     private Button scanBarcodeButton;
-    String currentPhotoPath;
-    static final int REQUEST_TAKE_PHOTO = 1;
     FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -112,49 +116,10 @@ public class MainActivity extends AppCompatActivity {
         scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dispatchTakePictureIntent(v);
+                startActivity(new Intent(getApplicationContext(), ScanBarcodeActivity.class));
             }
 
         });
     }
 
-    private void dispatchTakePictureIntent(View v) {
-        Log.d(TAG, "clicked barcode 1");
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        Log.d(TAG, "clicked barcode 2");
-        // Create the File where the photo should go
-        File photoFile = null;
-        try {
-            photoFile = createImageFile();
-            Log.d(TAG, "clicked barcode 3");
-        } catch (IOException ex) {
-            Log.w(TAG, "Error: cannot access camera");
-        }
-        // Continue only if the File was successfully created
-        if (photoFile != null) {
-            Log.d(TAG, "clicked barcode 4");
-            Uri photoURI = FileProvider.getUriForFile(this,
-                    "com.example.android.fileprovider",
-                    photoFile);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            Log.d(TAG, "clicked barcode 5");
-        }
-    }
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
 }

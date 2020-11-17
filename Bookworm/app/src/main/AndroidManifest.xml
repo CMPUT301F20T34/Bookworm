@@ -21,7 +21,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true">
         <activity android:name=".ViewBookActivity"></activity>
         <activity android:name=".SearchResultsActivity" />
         <activity android:name=".EditBookActivity" />
@@ -36,6 +37,7 @@
         <activity android:name=".ListRequested" />
         <activity android:name=".EditContactInfoActivity" />
         <activity android:name=".ViewContactInfoActivity" />
+        <activity android:name=".ScanBarcodeActivity"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
