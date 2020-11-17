@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Allow realtime updates for database
         Database.createListener();
+        Database.updateUserRegistrationToken();
 
         // If a user is not registered, redirect them
         // to the signup screen.
