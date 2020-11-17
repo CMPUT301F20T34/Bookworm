@@ -3,6 +3,9 @@ package com.example.bookworm;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,11 +46,35 @@ public class ViewRequestsActivity extends AppCompatActivity {
                             requestArrayList.add(doc.toObject(Request.class));
                         }
 
-                        ViewResultAdapter adapter = new ViewResultAdapter(requestArrayList);
+                        ViewRequestsAdapter adapter = new ViewRequestsAdapter(requestArrayList);
                         recyclerView.setAdapter(adapter);
                         recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     }
                 }
             });
+
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                if (view != null){
+                    String username = ((TextView) view.findViewById(R.id.view_request_result_username)).getText().toString();
+                    Intent intent = new Intent(recyclerView.getContext(), AcceptDeclineRequestActivity.class);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
+                }
+                return true;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
     }
 }

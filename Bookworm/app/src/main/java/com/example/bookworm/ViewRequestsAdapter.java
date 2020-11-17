@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ViewResultAdapter extends RecyclerView.Adapter<ViewResultAdapter.MyViewHolder> {
+public class ViewRequestsAdapter extends RecyclerView.Adapter<ViewRequestsAdapter.MyViewHolder> {
     private final ArrayList<Request> requestList;
 
-    public ViewResultAdapter(ArrayList<Request> requestList) {
+    public ViewRequestsAdapter(ArrayList<Request> requestList) {
         this.requestList = requestList;
     }
 
@@ -28,9 +28,9 @@ public class ViewResultAdapter extends RecyclerView.Adapter<ViewResultAdapter.My
         }
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                           int viewType) {
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View view = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.view_request_result, parent, false);

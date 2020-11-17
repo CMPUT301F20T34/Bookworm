@@ -59,7 +59,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
         usernameView = (TextView) findViewById(R.id.usernameView);
         phoneEditView = (TextView) findViewById(R.id.editPhoneNumber);
         emailEditView = (TextView) findViewById(R.id.editEmail);
-        contactImage = (ImageView) findViewById(R.id.contactImage);
+        contactImage = (ImageView) findViewById(R.id.view_contact_info_user_image);
 
         if(username != ""){
             usernameView.setText(username);
@@ -94,7 +94,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
      * @param view
      */
     public void editImageButton(View view){
-        ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
+        ImageView contactImage = (ImageView) findViewById(R.id.view_contact_info_user_image);
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
