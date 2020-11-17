@@ -28,7 +28,7 @@ exports.sendRequestNotification = functions.firestore.document("/Libraries/{libr
         const message = {
             notification: {
               title: `A request has been made for ${title}`,
-              body: `User "${creator}" has requested the book "${title}".`,
+              body: `User "${creator}" has requested your book "${title}".`,
             },
         };
         
