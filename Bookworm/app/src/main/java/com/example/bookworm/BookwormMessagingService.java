@@ -9,9 +9,18 @@ import androidx.core.app.NotificationManagerCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+/**
+ * Handles a notification from the database when the app is in
+ * the foreground. When in the background, the system tray handles the
+ * notification.
+ */
 public class BookwormMessagingService extends FirebaseMessagingService {
     private String TAG = "Bookworm Messaging Service";
 
+    /**
+     * The method which receives and handles the RemoteMesage object containing the notification.
+     * @param remoteMessage the RemoteMessage object which contains all notification information.
+     */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
