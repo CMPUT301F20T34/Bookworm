@@ -54,6 +54,10 @@ public class TestViewResults {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
 
+    /**
+     * Tests that a request appears in the search results, and clicking on the request
+     * in the results displays the information for the user that made the request.
+     */
     @Test
     public void testInSearchResults() {
         makeRequest();

@@ -32,7 +32,7 @@ public class ViewRequestsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.view_requests_recyclerview);
 
         Intent intent = getIntent();
-        String isbn = intent.getStringExtra("isbn");
+        final String isbn = intent.getStringExtra("isbn");
 
         Database.getRequestsForBook(isbn)
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -61,6 +61,7 @@ public class ViewRequestsActivity extends AppCompatActivity {
                     String username = ((TextView) view.findViewById(R.id.view_request_result_username)).getText().toString();
                     Intent intent = new Intent(recyclerView.getContext(), AcceptDeclineRequestActivity.class);
                     intent.putExtra("username", username);
+                    intent.putExtra("isbn", isbn);
                     startActivity(intent);
                 }
                 return true;

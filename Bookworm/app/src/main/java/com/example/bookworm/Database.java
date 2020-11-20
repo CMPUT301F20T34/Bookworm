@@ -523,6 +523,21 @@ public class Database {
             .get();
     }
 
+    static Task<QuerySnapshot> acceptRequest(String username, String isbn) {
+        return libraryCollection.document(libraryName)
+            .collection(requestName)
+            .whereEqualTo("book.isbn", isbn)
+            .get();
+    }
+
+    static Task<QuerySnapshot> declineRequest(String username, String isbn) {
+        return libraryCollection.document(libraryName)
+            .collection(requestName)
+            .whereEqualTo("book.isbn", isbn)
+            .whereEqualTo("creator.username", username)
+            .get();
+    }
+
     /**
      * Queries a collection for a field matching a value
      * @param collection the collection to be queried

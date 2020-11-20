@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,13 +38,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Allow realtime updates for database
         Database.createListener();
-        Database.updateUserRegistrationToken();
 
         // If a user is not registered, redirect them
         // to the signup screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
         }
+
+        // Update the registration token
+        Database.updateUserRegistrationToken();
 
         // Create listeners for the buttons
         myBooklistButton = findViewById(R.id.booklist_button);
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         myProfileButton = findViewById(R.id.profile_button);
         myProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,15 +65,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         mySearchButton = findViewById(R.id.search_button);
         mySearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CheckBox titleCheckbox = findViewById(R.id.titleCheckbox);
                 CheckBox descCheckbox = findViewById(R.id.descCheckbox);
-                TextView keywordView = findViewById(R.id.keywordSearchBar);
                 Intent intent = new Intent(getApplicationContext(), SearchResultsActivity.class);
                 if (titleCheckbox.isChecked()){
                     intent.putExtra("type", "title");
@@ -82,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("type", "description");
                 }
                 if (titleCheckbox.isChecked() ^ descCheckbox.isChecked()){
-                    intent.putExtra("searchTerm", keywordView.getText().toString());
+                    intent.putExtra("searchTerm", mySearchTerm.getText().toString());
                     startActivity(intent);
                 }
             }
