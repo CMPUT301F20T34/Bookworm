@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.bookworm.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -102,11 +104,27 @@ public class EditContactInfoActivity extends AppCompatActivity {
     }
 
     /**
-     * Button functionality for save button
-     * Updates the user specified information to the database and also updates the database profile image
+     * Button functionality for save button.
+     * Validates the new information from the user, and updates the user specified information to the database and also updates the database profile image
      * @param view
      */
     public void saveContactInfo(View view){
+        // Ensure email is non-empty
+        if (TextUtils.isEmpty(emailEditView.getText().toString())) {
+            emailEditView.setError("Email is a required value.");
+            return;
+        }
+
+        if (!Util.validateEmail(emailEditView.getText().toString())) {
+            emailEditView.setError("Email is incorrectly formatted");
+            return;
+        }
+
+        // Validate phone number is correct
+        if (!Util.validatePhoneNumber(phoneEditView.getText().toString())) {
+            phoneEditView.setError("Phone number is incorrectly formatted");
+            return;
+        }
 
         if(username != "") {
             User userUpdate = new User(username, "", emailEditView.getText().toString(), phoneEditView.getText().toString());
