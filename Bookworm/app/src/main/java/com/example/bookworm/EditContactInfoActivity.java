@@ -1,7 +1,6 @@
 package com.example.bookworm;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -141,10 +141,8 @@ public class EditContactInfoActivity extends AppCompatActivity {
             fAuth.getCurrentUser().updateEmail(emailEditView.getText().toString());
         }
 
-        AlertDialog inputAlert = new AlertDialog.Builder(this).create();
-        inputAlert.setTitle("Contact info saved for user:");
-        inputAlert.setMessage(username);
-        inputAlert.show();
+        Toast.makeText(context, "Successfully updated contact information.", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     /**
