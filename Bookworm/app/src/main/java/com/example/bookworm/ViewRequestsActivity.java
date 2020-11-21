@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class ViewRequestsActivity extends AppCompatActivity {
     private Context context = this;
     private RecyclerView recyclerView;
+    private String isbn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,26 +33,9 @@ public class ViewRequestsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.view_requests_recyclerview);
 
         Intent intent = getIntent();
-        final String isbn = intent.getStringExtra("isbn");
+        this.isbn = intent.getStringExtra("isbn");
 
-        Database.getRequestsForBook(isbn)
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(ViewRequestsActivity.this, "Could not get results. Please try again later.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        ArrayList<Request> requestArrayList = new ArrayList<>();
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            requestArrayList.add(doc.toObject(Request.class));
-                        }
-
-                        ViewRequestsAdapter adapter = new ViewRequestsAdapter(requestArrayList);
-                        recyclerView.setAdapter(adapter);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    }
-                }
-            });
+        getRequests();
 
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
@@ -77,5 +61,40 @@ public class ViewRequestsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    /**
+     * Refreshes the list of requests after either accepting or declining
+     * a request
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getRequests();
+    }
+
+    /**
+     * Performs the call to the database to get the list of requests
+     * for the selected book.
+     */
+    private void getRequests() {
+        Database.getRequestsForBook(isbn)
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(ViewRequestsActivity.this, "Could not get results. Please try again later.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        ArrayList<Request> requestArrayList = new ArrayList<>();
+                        for (DocumentSnapshot doc : task.getResult()) {
+                            requestArrayList.add(doc.toObject(Request.class));
+                        }
+
+                        ViewRequestsAdapter adapter = new ViewRequestsAdapter(requestArrayList);
+                        recyclerView.setAdapter(adapter);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    }
+                }
+            });
     }
 }
