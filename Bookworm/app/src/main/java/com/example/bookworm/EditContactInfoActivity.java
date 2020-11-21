@@ -1,5 +1,6 @@
 package com.example.bookworm;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -45,8 +46,9 @@ public class EditContactInfoActivity extends AppCompatActivity {
     /**
      * onCreate initializer.
      * Initializes the EditContactInfo activity and retrieves all relevant data from the database to display it.
-     * @param savedInstanceState
+     * @param savedInstanceState the saved instance from the app, if it exists
      */
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +65,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
         emailEditView = (TextView) findViewById(R.id.editEmail);
         contactImage = (ImageView) findViewById(R.id.view_contact_info_user_image);
 
-        if(username != ""){
+        if(!username.equals("")){
             usernameView.setText(username);
             phoneEditView.setText("Loading phone number...");
             emailEditView.setText("Loading email...");
@@ -93,10 +95,9 @@ public class EditContactInfoActivity extends AppCompatActivity {
     /**
      * Edit image button functionality
      * Starts the galley activity with intent to get an image.
-     * @param view
+     * @param view the view that was clicked on
      */
     public void editImageButton(View view){
-        ImageView contactImage = (ImageView) findViewById(R.id.view_contact_info_user_image);
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -106,7 +107,7 @@ public class EditContactInfoActivity extends AppCompatActivity {
     /**
      * Button functionality for save button.
      * Validates the new information from the user, and updates the user specified information to the database and also updates the database profile image
-     * @param view
+     * @param view the view that was clicked on
      */
     public void saveContactInfo(View view){
         // Ensure email is non-empty

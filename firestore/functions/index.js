@@ -20,6 +20,7 @@ exports.sendRequestNotification = functions.firestore.document("/Libraries/{libr
         // Get registration token for user
         const userSnapshot = await admin.firestore().doc(`/Libraries/${libraryName}/users/${owner}`).get();
         const token = userSnapshot.data().registrationToken;
+        
         if (token === null) {
             return null;
         }
@@ -39,4 +40,43 @@ exports.sendRequestNotification = functions.firestore.document("/Libraries/{libr
               console.error('Failure sending notification to', token, result.error);
             }
         });
+    })
+
+exports.notifyAcceptedRequest = functions.firestore.document("/Libraries/{libraryName}/requests/{requestID}")
+    .onUpdate(async (snap, context) => {
+        const libraryName = context.params.libraryName;
+        const before = snap.before.data();
+        const after = snap.after.data();
+
+        console.log(before['status'] === 'available', after['status'] === 'accepted')
+        // Check that status changed to accepted and 
+        // Other properties are the same
+        if (before['status'] === 'available' && after['status'] === 'accepted') {
+            const creator = after.creator.username;
+            const owner = after.book.owner;
+            const title = after.book.title;
+
+            const userSnapshot = await admin.firestore().doc(`/Libraries/${libraryName}/users/${creator}`).get();
+            const token = userSnapshot.data().registrationToken;
+
+            if (token === null) {
+                return null;
+            }
+            // Create message
+            const message = {
+                notification: {
+                    title: `Your request for '${title}' has been accepted!`,
+                    body: `User "${owner}" has accepted your request for "${title}".`,
+                },
+            };
+            
+            // Send message, wait for errors
+            const response = await admin.messaging().sendToDevice(token, message)
+            response.results.forEach((result, index) => {
+                if (result.error) {
+                console.error('Failure sending notification to', token, result.error);
+                }
+            });
+        }
+
     })
