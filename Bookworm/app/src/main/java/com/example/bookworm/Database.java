@@ -519,14 +519,7 @@ public class Database {
         return libraryCollection.document(libraryName)
             .collection(requestName)
             .whereEqualTo("book.isbn", isbn)
-            // Possibly filter by status
-            .get();
-    }
-
-    static Task<QuerySnapshot> acceptRequest(String username, String isbn) {
-        return libraryCollection.document(libraryName)
-            .collection(requestName)
-            .whereEqualTo("book.isbn", isbn)
+            .whereEqualTo("status", "available")
             .get();
     }
 

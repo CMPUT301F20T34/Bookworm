@@ -166,7 +166,7 @@ public class DataBaseTest {
         }
         assertEquals(Database.getListenerSignal(), 1);
 
-        //Updates a request
+        // Updates a request
         testRequest.setStatus("Accepted"); // uses the same ID, so will overwrite in DB
         Database.createSynchronousRequest(testRequest);
         while (Database.getListenerSignal() == 0){
