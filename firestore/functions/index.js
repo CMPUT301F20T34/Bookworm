@@ -20,7 +20,7 @@ exports.sendRequestNotification = functions.firestore.document("/Libraries/{libr
         // Get registration token for user
         const userSnapshot = await admin.firestore().doc(`/Libraries/${libraryName}/users/${owner}`).get();
         const token = userSnapshot.data().registrationToken;
-        
+
         if (token === null) {
             return null;
         }
@@ -47,10 +47,8 @@ exports.notifyAcceptedRequest = functions.firestore.document("/Libraries/{librar
         const libraryName = context.params.libraryName;
         const before = snap.before.data();
         const after = snap.after.data();
-
-        console.log(before['status'] === 'available', after['status'] === 'accepted')
-        // Check that status changed to accepted and 
-        // Other properties are the same
+        
+        // Check that status changed to accepted
         if (before['status'] === 'available' && after['status'] === 'accepted') {
             const creator = after.creator.username;
             const owner = after.book.owner;

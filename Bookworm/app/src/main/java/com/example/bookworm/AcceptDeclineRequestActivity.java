@@ -130,7 +130,6 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                     if (!task.isSuccessful()) {
                         Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
                     } else {
-                        System.out.println(task.getResult().size());
                         for (DocumentSnapshot doc : task.getResult()) {
                             doc.getReference().delete();
                         }
