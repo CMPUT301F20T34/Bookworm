@@ -20,7 +20,7 @@
         app:layout_constraintWidth_percent="0.25"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/scan_to_search_button"
+        app:layout_constraintBottom_toTopOf="@id/logout_button"
         android:text="available" />
 
     <CheckBox
@@ -29,7 +29,7 @@
         app:layout_constraintWidth_percent="0.25"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/checkBox"
-        app:layout_constraintBottom_toTopOf="@id/scan_to_search_button"
+        app:layout_constraintBottom_toTopOf="@id/logout_button"
         android:text="requested" />
 
     <CheckBox
@@ -51,7 +51,7 @@
         android:text="borrowed" />
 
     <Button
-        android:id="@+id/scan_to_search_button"
+        android:id="@+id/logout_button"
         android:layout_width="0dp"
         app:layout_constraintWidth_percent="0.5"
         android:layout_height="wrap_content"

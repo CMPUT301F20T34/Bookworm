@@ -13,58 +13,34 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class AcceptDeclineRequestTest {
     private Solo solo;
     private FirebaseAuth fAuth;
-    private String title = "hxujc";
-
-    @Rule
-    public ActivityTestRule<LoginActivity> rule =
-        new ActivityTestRule<>(LoginActivity.class, true, true);
+    private String title = "dbdkdl";
 
     /**
-     * Runs before all tests and creates solo instance,
-     * Signs out of firebase and goes to the SignUp activity
+     * Signs in with a provided username and password, assumes that the activity
+     * is already the login activity.
+     * @param username the username credential
+     * @param password the password credential
      */
-    @Before
-    public void setUp() {
-        fAuth = FirebaseAuth.getInstance();
-        fAuth.signOut();
-        solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
-        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.username_login), "pahasa");
-        solo.enterText((EditText) solo.getView(R.id.password_login), "abcdefg");
+    private void login(String username, String password) {
+        solo.enterText((EditText) solo.getView(R.id.username_login), username);
+        solo.enterText((EditText) solo.getView(R.id.password_login), password);
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
 
     /**
-     * Tests that declining the request
+     * Logs out the currently signed-in user. Assumes that user is on the main activity
      */
-    @Test
-    public void testDeclineRequest() {
-        makeRequest();
-        clickOnRequest();
-        int views = solo.getCurrentViews().size();
-        // Click on the decline button, automatically return
-        solo.clickOnView(solo.getView(R.id.accept_decline_request_decline_button));
-        solo.assertCurrentActivity("Wrong Activity", ViewRequestsActivity.class);
-
-        // Ensure the request is no longer there
-        assertNotEquals(views, solo.getCurrentViews().size());
-    }
-
-    /**
-     * Closes the activity after each test.
-     *
-     * @throws Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-        solo.finishOpenedActivities();
+    private void logout() {
+        solo.clickOnView(solo.getView(R.id.profile_button));
+        solo.clickOnView(solo.getView(R.id.logout_button));
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
     }
 
     /**
@@ -84,6 +60,73 @@ public class AcceptDeclineRequestTest {
         solo.goBack();
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
+
+    @Rule
+    public ActivityTestRule<LoginActivity> rule =
+        new ActivityTestRule<>(LoginActivity.class, true, true);
+
+    /**
+     * Runs before all tests and creates solo instance,
+     * Signs out of firebase and goes to the SignUp activity
+     */
+    @Before
+    public void setUp() {
+        fAuth = FirebaseAuth.getInstance();
+        fAuth.signOut();
+        solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
+    }
+
+    /**
+     * Tests that declining the request
+     */
+    @Test
+    public void testDeclineRequest() {
+        login("pahasa1", "abcdefg");
+        makeRequest();
+        logout();
+        login("pahasa", "abcdefg");
+        makeRequest();
+        clickOnRequest();
+        int views = solo.getCurrentViews().size();
+
+        // Click on the decline button, automatically return
+        solo.clickOnView(solo.getView(R.id.accept_decline_request_decline_button));
+        solo.assertCurrentActivity("Wrong Activity", ViewRequestsActivity.class);
+
+        // Ensure the request is no longer there
+        assertEquals(solo.getCurrentViews().size(),  views + 2);
+    }
+
+    @Test
+    public void testAcceptRequest() {
+        login("pahasa1", "abcdefg");
+        makeRequest();
+        logout();
+        login("pahasa", "abcdefg");
+        makeRequest();
+        clickOnRequest();
+        int views = solo.getCurrentViews().size();
+
+        // Click on the decline button, automatically return
+        solo.clickOnView(solo.getView(R.id.accept_decline_request_accept_button));
+        solo.assertCurrentActivity("Wrong Activity", ViewRequestsActivity.class);
+
+        // Ensure all requests are no longer available (accepted or declined
+        assertEquals(views, solo.getCurrentViews().size() - 2);
+    }
+
+    /**
+     * Closes the activity after each test.
+     *
+     * @throws Exception
+     */
+    @After
+    public void tearDown() throws Exception {
+        solo.finishOpenedActivities();
+    }
+
+
 
     /**
      * Handles all actions related to viewing and clicking on
