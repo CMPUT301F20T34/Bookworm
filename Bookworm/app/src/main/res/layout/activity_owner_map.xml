@@ -14,12 +14,12 @@
         android:layout_height="0dp"
         tools:context=".MapsActivity"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/textView"
+        app:layout_constraintBottom_toTopOf="@id/location_info"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="20dp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/location_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -27,10 +27,10 @@
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/button" />
+        app:layout_constraintBottom_toTopOf="@id/location_confirm" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/location_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"

@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), BorrowerMainActivity.class));
             }
         });
+        startActivity(new Intent(getApplicationContext(), OwnerMapActivity.class));
     }
 }
 

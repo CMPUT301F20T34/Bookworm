@@ -3,6 +3,7 @@ package com.example.bookworm;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,7 +19,8 @@ import java.util.Locale;
 public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private TextView textview;
+    private TextView location;
+    private Button confirm;
     public double x;
     public double y;
 
@@ -30,6 +32,9 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        location = findViewById(R.id.location_info);
+        confirm = findViewById(R.id.location_confirm);
     }
 
     /**
@@ -60,7 +65,7 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
                     x = mPos.getPosition().latitude;
                     y = mPos.getPosition().longitude;
                     String info = String.format(Locale.CANADA,"%f, %f", x,y);
-                    textview.setText(info);
+                    location.setText(info);
                 }
             }
         );
