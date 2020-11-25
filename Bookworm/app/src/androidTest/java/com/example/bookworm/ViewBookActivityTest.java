@@ -65,7 +65,7 @@ public class ViewBookActivityTest {
     public void testAvailableBook() throws Exception {
         // Write an arbitrary book to the database
         Book book = mockBook();
-        Database.writeBook(book);
+        Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0) {
             Thread.sleep(100);
         }
@@ -94,7 +94,7 @@ public class ViewBookActivityTest {
         // Write an arbitrary book to the database
         Book book = mockBook();
         book.setStatus("borrowed");
-        Database.writeBook(book);
+        Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0) {
             Thread.sleep(100);
         }

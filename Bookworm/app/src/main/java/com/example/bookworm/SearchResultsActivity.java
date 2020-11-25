@@ -53,8 +53,7 @@ public class SearchResultsActivity extends AppCompatActivity implements SearchRe
                 @Override
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Book book = doc.toObject(Book.class);
-                        books.add(book);
+                        books.add(doc.toObject(Book.class));
                     }
                     SearchResultsAdapter adapter = new SearchResultsAdapter(context, books, onBookListener);
                     searchResults.setAdapter(adapter);

@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -181,25 +180,32 @@ public class AddBookActivity extends AppCompatActivity {
         book.setIsbn(isbn);
         book.setDescription(descriptions);
 
-        // Write the book to the database
-        Database.writeBook(book);
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            if (Database.getListenerSignal() == 1) {
-                Toast.makeText(AddBookActivity.this,
-                    "Your book is successfully saved",
-                    Toast.LENGTH_SHORT).show();
-                finish();
-            } else if (Database.getListenerSignal() == -1){
-                Toast.makeText(AddBookActivity.this,
-                    "Something went wrong while adding your book",
-                    Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(AddBookActivity.this,
-                    "Something went wrong while adding your book, please try again",
-                    Toast.LENGTH_SHORT).show();
-            }
-        }, 1000);
+        // Check that the ISBN is not already taken
+        Database.checkISBN(book.getIsbn())
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful() && !task.getResult().exists()) {
+                    // Write the book to the database
+                    Database.writeBook(book).addOnCompleteListener(task1 -> {
+                        System.out.println(task1.isSuccessful());
+                        if (task1.isSuccessful()) {
+                            Toast.makeText(AddBookActivity.this,
+                                "Your book is successfully saved",
+                                Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(AddBookActivity.this,
+                                "Something went wrong while adding your book, please try again",
+                                Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else if (task.isSuccessful()) {
+                    Toast.makeText(this,
+                        "ISBN is already taken. Please choose another ISBN",
+                        Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     /**
