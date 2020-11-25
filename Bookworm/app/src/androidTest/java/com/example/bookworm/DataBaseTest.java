@@ -63,7 +63,7 @@ public class DataBaseTest {
         //Writes a new book to the database
         Book testBook = mockBook();
         testBook.setIsbn("1621325");
-        Database.writeBook(testBook);
+        Database.writeBookSynchronous(testBook);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
@@ -73,7 +73,7 @@ public class DataBaseTest {
         testBook.setTitle("Animal Farm");
         testBook.setDescription(new ArrayList<String>(List.of("Dystopian", "Political")));
         testBook.setStatus("available");
-        Database.writeBook(testBook);
+        Database.writeBookSynchronous(testBook);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
@@ -121,7 +121,7 @@ public class DataBaseTest {
                 });
 
         //Tests the deletion of books
-        Database.deleteBook(testBook);
+        Database.deleteBookSynchronous(testBook);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
