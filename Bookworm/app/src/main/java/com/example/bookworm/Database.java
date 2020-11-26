@@ -208,7 +208,10 @@ public class Database {
         CollectionReference books = libraryCollection.document(libraryName)
             .collection(bookName);
 
-        return books.whereEqualTo("title", searchTerm).get();
+        return books.
+            whereEqualTo("title", searchTerm)
+            .whereIn("status", Arrays.asList("available", "requested"))
+            .get();
     }
 
     /**
@@ -498,8 +501,18 @@ public class Database {
      * @return a task representing the eventual completion of the database access
      */
     static Task<Void> createRequest(final Request req) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", "requested");
+
+        // Label the book as requested
+        libraryCollection.document(libraryName)
+            .collection(bookName)
+            .document(req.getBook().getIsbn())
+            .set(map, SetOptions.merge());
+
         return libraryCollection.document(libraryName)
-            .collection(requestName).document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
+            .collection(requestName)
+            .document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
             .set(req);
     }
 
@@ -534,7 +547,7 @@ public class Database {
         return libraryCollection.document(libraryName)
                 .collection(requestName)
                 .whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
-                .whereEqualTo("status","Accepted")
+                .whereEqualTo("status","accepted")
                 .get();
     }
 
