@@ -68,7 +68,7 @@ public class OwnerBooklistActivity extends AppCompatActivity {
             }
         });
 
-        addBookButton = findViewById(R.id.scan_button);
+        addBookButton = findViewById(R.id.add_button);
         addBookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -36,10 +36,10 @@
             android:id="@+id/request_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="250dp"
+            android:layout_marginStart="150dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:text="ISBN"
+            android:text="Timestamp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/creator_title"
             app:layout_constraintTop_toTopOf="parent" />

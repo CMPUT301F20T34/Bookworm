@@ -28,9 +28,13 @@ public class AcceptRequestActivity extends AppCompatActivity {
     private RequestAdapter adapter;
     private ArrayList<Request> requestList;
     private Context context = this;
-    int requestsLoaded = 0;
     String TAG = "Sample";
 
+    /**
+     * On create gets all of the requests and adds on click listeners to each of them.
+     *
+     * @param savedInstanceState The bundle containing the isbn scanned
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -51,11 +55,11 @@ public class AcceptRequestActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        // Adds all requests to list and then notifies adapter on change
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
                             Log.d(TAG, "Adding request with user: " + doc.toObject(Request.class).getCreator().getUsername());
                             requestList.add(doc.toObject(Request.class));
                         }
-                        requestsLoaded = 1;
                         adapter.notifyDataSetChanged();
                     }
                 })
@@ -65,14 +69,15 @@ public class AcceptRequestActivity extends AppCompatActivity {
                         Toast.makeText(context,
                                 "Could not load requests. Please try again.",
                                 Toast.LENGTH_LONG).show();
-                        requestsLoaded = 1;
                         finish();
                     }
                 });
 
+        //Adds a click listener on each request so that the user can click which one to accept
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
+                //Accept the clicked request and decline the rest
                 for (int i = 0; i < requestList.size(); i++){
                     Request acceptedRequest = requestList.get(i);
                     if (i == position){
@@ -82,6 +87,7 @@ public class AcceptRequestActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        //Mark the scanned book as accepted
                                         Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
                                         scannedBook.setStatus("accepted");
                                         Database.writeBook(scannedBook);

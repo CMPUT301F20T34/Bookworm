@@ -27,7 +27,7 @@
         app:layout_constraintWidth_percent="0.5" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/add_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="ADD BOOK"

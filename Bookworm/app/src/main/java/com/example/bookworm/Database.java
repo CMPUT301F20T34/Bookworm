@@ -257,29 +257,31 @@ public class Database {
      * Updates the user registration token for the device each time the device is started.
      */
     static public void updateUserRegistrationToken() {
-        Database.getUserFromEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail())
+        Database.getUserFromEmail(fAuth.getCurrentUser().getEmail())
             .addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
                     Log.d(TAG, "Could not update registration token");
                 } else {
                     QuerySnapshot qs = task.getResult();
-                    DocumentSnapshot doc = qs.getDocuments().get(0);
-                    String username = doc.getId();
-                    Map<String, Object> obj = doc.getData();
-                    FirebaseMessaging.getInstance().getToken()
-                        .addOnCompleteListener(task1 -> {
-                            if (!task1.isSuccessful()) {
-                                Log.d(TAG, "Could not update registration token");
-                            } else {
-                                // Move so that multiple device tokens can be kept
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("registrationToken", task1.getResult());
-                                libraryCollection.document(libraryName)
-                                    .collection(userName)
-                                    .document(username).
-                                    set(map, SetOptions.merge());
-                            }
-                        });
+                    if (qs.getDocuments().size() > 0) {
+                        DocumentSnapshot doc = qs.getDocuments().get(0);
+                        String username = doc.getId();
+                        Map<String, Object> obj = doc.getData();
+                        FirebaseMessaging.getInstance().getToken()
+                                .addOnCompleteListener(task1 -> {
+                                    if (!task1.isSuccessful()) {
+                                        Log.d(TAG, "Could not update registration token");
+                                    } else {
+                                        // Move so that multiple device tokens can be kept
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("registrationToken", task1.getResult());
+                                        libraryCollection.document(libraryName)
+                                                .collection(userName)
+                                                .document(username).
+                                                set(map, SetOptions.merge());
+                                    }
+                                });
+                    }
                 }
             });
     }

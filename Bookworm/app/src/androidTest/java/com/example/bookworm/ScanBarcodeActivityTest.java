@@ -64,11 +64,13 @@ public class ScanBarcodeActivityTest {
     @Test
     public void testScanForHandover() {
         String testISBN = "987654321";
+        String testUsername = "danielmerryweather";
 
         Activity activity = rule.getActivity();
         Intent intent = new Intent(activity.getApplicationContext(), ScanBarcodeActivity.class);
         intent.putExtra("test", true);
         intent.putExtra("test_isbn", testISBN);
+        intent.putExtra("test_username", testUsername);
         activity.startActivity(intent);
 
         solo.assertCurrentActivity("Wrong Activity", ScanBarcodeActivity.class);
@@ -93,11 +95,13 @@ public class ScanBarcodeActivityTest {
     @Test
     public void testScanForRetrieve() {
         String testISBN = "987654321";
+        String testUsername = "danielmerryweather";
 
         Activity activity = rule.getActivity();
         Intent intent = new Intent(activity.getApplicationContext(), ScanBarcodeActivity.class);
         intent.putExtra("test", true);
         intent.putExtra("test_isbn", testISBN);
+        intent.putExtra("test_username", testUsername);
         activity.startActivity(intent);
 
         solo.assertCurrentActivity("Wrong Activity", ScanBarcodeActivity.class);
@@ -121,10 +125,12 @@ public class ScanBarcodeActivityTest {
      */
     @Test
     public void testScanForBorrow() {
+        String testUsername = "HarrisonBorrower";
         Activity activity = rule.getActivity();
         Intent intent = new Intent(activity.getApplicationContext(), ScanBarcodeActivity.class);
         intent.putExtra("test", true);
         intent.putExtra("test_isbn", "1234567");
+        intent.putExtra("test_username", testUsername);
         activity.startActivity(intent);
 
         solo.assertCurrentActivity("Wrong Activity", ScanBarcodeActivity.class);
@@ -141,11 +147,12 @@ public class ScanBarcodeActivityTest {
     @Test
     public void testScanForReturn() {
         String testISBN = "987654321";
-
+        String testUsername = "HarrisonBorrower";
         Activity activity = rule.getActivity();
         Intent intent = new Intent(activity.getApplicationContext(), ScanBarcodeActivity.class);
         intent.putExtra("test", true);
         intent.putExtra("test_isbn", testISBN);
+        intent.putExtra("test_username", testUsername);
         activity.startActivity(intent);
 
         solo.assertCurrentActivity("Wrong Activity", ScanBarcodeActivity.class);
