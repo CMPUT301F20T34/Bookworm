@@ -132,7 +132,7 @@ public class BorrowerMainActivityTest {
         //The book name should be found in this page
         assertTrue(solo.waitForText("Title", 0, 1000));
         //remove it from the database
-        Database.deleteBook(book);
+        Database.deleteBookSynchronous(book);
     }
 
     /**
