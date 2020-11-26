@@ -572,6 +572,17 @@ public class Database {
             .get();
     }
 
+    static void setBookStatus(String isbn, String status) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+
+        // Label the book as requested
+        libraryCollection.document(libraryName)
+            .collection(bookName)
+            .document(isbn)
+            .set(map, SetOptions.merge());
+    }
+
     /**
      * Queries a collection for a field matching a value
      * @param collection the collection to be queried

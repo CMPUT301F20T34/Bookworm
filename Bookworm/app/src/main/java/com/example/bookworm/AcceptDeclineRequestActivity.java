@@ -112,6 +112,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                                 doc.getReference().set(dec, SetOptions.merge());
                             }
                         }
+                        Database.setBookStatus(isbn, "accepted");
                         Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
                         finish();
                     }
