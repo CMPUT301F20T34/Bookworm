@@ -198,6 +198,19 @@ public class Database {
     }
 
     /**
+     * Returns books with certain isbn
+     *
+     * @param isbn The keyword that is being searched
+     * @return Task<QuerySnapshot> The result of the query.
+     */
+    public static Task<QuerySnapshot> getBooksByIsbn(final String isbn) {
+        CollectionReference books = libraryCollection.document(libraryName)
+                .collection(bookName);
+
+        return books.whereEqualTo("isbn", isbn).get();
+    }
+
+    /**
      * Returns all books that contain the searchTerm as their exact title.
      * Will rework in the future to return books that contain the searchTerm.
      *

@@ -35,6 +35,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
     private Context context = this;
     private String username;
     private String isbn;
+    private Book book;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,13 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
      * @param view the button that was clicked on.
      */
     public void acceptRequest(View view) {
+        Database.getBooksByIsbn(isbn)
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                    book =  doc.toObject(Book.class);
+                    book.setStatus("accepted");
+                    Database.writeBook(book);
+                });
         Database.getRequestsForBook(isbn)
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
