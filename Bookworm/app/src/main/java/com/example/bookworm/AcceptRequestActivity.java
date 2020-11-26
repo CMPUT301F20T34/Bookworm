@@ -70,14 +70,6 @@ public class AcceptRequestActivity extends AppCompatActivity {
                     }
                 });
 
-        /**while(requestsLoaded == 0){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
-
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -86,6 +78,15 @@ public class AcceptRequestActivity extends AppCompatActivity {
                     if (i == position){
                         acceptedRequest.setStatus("accepted");
                         Database.updateRequest(acceptedRequest);
+                        Database.queryCollection("books", new String[]{"isbn"}, new String[]{isbn})
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
+                                        scannedBook.setStatus("accepted");
+                                        Database.writeBook(scannedBook);
+                                    }
+                                });
                     }
                     else{
                         acceptedRequest.setStatus("declined");
