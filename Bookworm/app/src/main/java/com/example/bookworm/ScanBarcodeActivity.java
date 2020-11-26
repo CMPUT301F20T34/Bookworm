@@ -14,9 +14,14 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.util.List;
 
 public class ScanBarcodeActivity extends AppCompatActivity {
 
@@ -89,16 +94,46 @@ public class ScanBarcodeActivity extends AppCompatActivity {
             } else {
                 if (SCAN_MODE_CODE == 1){
                     //Hand over a book from an owner to the borrower
+                    Toast.makeText(this, "Handing over book with isbn: " + result.getContents(), Toast.LENGTH_LONG).show();
                     Log.d(TAG, "Handing over book.");
+                    //verify that book is owned by user
+                    Intent requestActivity = new Intent(this, AcceptRequestActivity.class);
+                    requestActivity.putExtra("isbn", result.getContents());
+                    startActivity(requestActivity);
                 } else if (SCAN_MODE_CODE == 2){
                     //Retrieve a book from a borrower
                     Log.d(TAG, "Retrieving book.");
+                    Database.queryCollection("books", new String[]{"isbn"}, new String[]{result.getContents()})
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                                    Book tempBook = docs.get(0).toObject(Book.class);
+                                    tempBook.setStatus("available");
+                                    Database.writeBook(tempBook);
+                                    Toast.makeText(ScanBarcodeActivity.this, tempBook.getTitle() + " has been marked as available.", Toast.LENGTH_LONG).show();
+                                }
+                            });
                 } else if (SCAN_MODE_CODE == 3){
                     //Borrow a book from an owner
                     Log.d(TAG, "Borrowing book.");
+                    //check that request has been marked as accepted
+                    //add book to borrowers book list and mark it as borrowed
                 } else if (SCAN_MODE_CODE == 4){
                     //Return a book to an owner
                     Log.d(TAG, "Returning book.");
+                    //remove book from borrowers book list
+                    Database.queryCollection("books", new String[]{"isbn"}, new String[]{result.getContents()})
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                                    Book tempBook = docs.get(0).toObject(Book.class);
+                                    tempBook.setStatus("available");
+                                    Database.writeBook(tempBook);
+                                    Toast.makeText(ScanBarcodeActivity.this, tempBook.getTitle() + " has been marked as available.", Toast.LENGTH_LONG).show();
+                                }
+                            });
                 }
             }
         } else {

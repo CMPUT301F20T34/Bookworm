@@ -442,6 +442,37 @@ public class Database {
     }
 
     /**
+     * Updates a request in the database or writes a new one if it does not exist yet
+     *
+     * @param req the request to be written
+     */
+    static void updateRequest(final Request req) {
+        Database.listenerSignal = 0;
+        final DocumentReference reqDocument = libraryCollection
+                .document(libraryName)
+                .collection(requestName)
+                .document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername());
+        Map<String, Object> reqInfo = new HashMap<>();
+        reqInfo.put("book", req.getBook());
+        reqInfo.put("creator", req.getCreator());
+        reqInfo.put("status", req.getStatus());
+        reqInfo.put("timestamp", req.getTimestamp());
+        reqDocument.set(reqInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot written");
+                Database.listenerSignal = 1;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error adding document", e);
+                Database.listenerSignal = -1;
+            }
+        });
+    }
+
+    /**
      * Get all books that are requested by the currently signed-in user
      *
      * @return a Task representing the result of the query
