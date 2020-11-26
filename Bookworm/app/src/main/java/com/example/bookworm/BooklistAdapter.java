@@ -14,16 +14,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+/**
+ * The adapter for the booklist activity
+ */
 public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyViewHolder> {
-    private ArrayList<Book> booklist;
-    private Context context;
+    private final ArrayList<Book> booklist;
+    private final Context context;
 
     public BooklistAdapter(Context context, ArrayList<Book> booklist) {
         this.context = context;
@@ -87,12 +89,12 @@ public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyView
         holder.isbn.setText(book.getIsbn());
         holder.status.setText(book.getStatus());
         holder.currentBurrower.setText(book.getBorrower());
-        Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), book.getIsbn())
+        Database.getBookPhoto(book.getOwner(), book.getIsbn())
             .addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
-                        Picasso.get().load(task.getResult()).into(holder.ownerPhoto);
+                        Glide.with(context).load(task.getResult()).into(holder.ownerPhoto);
                     } else {
                         holder.ownerPhoto.setImageResource(R.drawable.ic_book);
                     }

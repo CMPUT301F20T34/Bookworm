@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +32,9 @@ import java.util.ArrayList;
 
 import static com.example.bookworm.ViewPhotoFragment.newInstance;
 
+/**
+ * The activity that appears when a user wishes to add a book to the database
+ */
 public class AddBookActivity extends AppCompatActivity {
     private Book book;
     private FirebaseAuth fAuth;
@@ -140,11 +142,10 @@ public class AddBookActivity extends AppCompatActivity {
                     Toast.makeText(AddBookActivity.this, "Title, author, and ISBN are required", Toast.LENGTH_SHORT).show();
                 } else {
                     // Attempt to upload the image, if the image exists
-                    String userID = FirebaseAuth.getInstance().getUid();
                     if (photoUri == null) {
                         addBookToDB(title, author, isbn, descriptions);
                     } else {
-                        Database.writeBookPhoto(userID, isbn, photoUri)
+                        Database.writeBookPhoto(ownerNameText.getText().toString(), isbn, photoUri)
                             .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -179,25 +180,32 @@ public class AddBookActivity extends AppCompatActivity {
         book.setIsbn(isbn);
         book.setDescription(descriptions);
 
-        // Write the book to the database
-        Database.writeBook(book);
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            if (Database.getListenerSignal() == 1) {
-                Toast.makeText(AddBookActivity.this,
-                    "Your book is successfully saved",
-                    Toast.LENGTH_SHORT).show();
-                finish();
-            } else if (Database.getListenerSignal() == -1){
-                Toast.makeText(AddBookActivity.this,
-                    "Something went wrong while adding your book",
-                    Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(AddBookActivity.this,
-                    "Something went wrong while adding your book, please try again",
-                    Toast.LENGTH_SHORT).show();
-            }
-        }, 1000);
+        // Check that the ISBN is not already taken
+        Database.checkISBN(book.getIsbn())
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful() && !task.getResult().exists()) {
+                    // Write the book to the database
+                    Database.writeBook(book).addOnCompleteListener(task1 -> {
+                        System.out.println(task1.isSuccessful());
+                        if (task1.isSuccessful()) {
+                            Toast.makeText(AddBookActivity.this,
+                                "Your book is successfully saved",
+                                Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(AddBookActivity.this,
+                                "Something went wrong while adding your book, please try again",
+                                Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else if (task.isSuccessful()) {
+                    Toast.makeText(this,
+                        "ISBN is already taken. Please choose another ISBN",
+                        Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     /**
@@ -265,24 +273,4 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(AddBookActivity.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
         }
     }
-                                              }
-
-
-
-
-//    /**
-//     * Runs when the application first begins, ensures that we have permission to access the user's data.
-//     * https://github.com/mitchtabian/Firebase-Save-Images/blob/master/FirebaseUploadImage/app/src/main/java/com/tabian/firebaseuploadimage/AddBookActivity.java
-//     * Accessed October 31, 2020
-//     */
-//    private void checkFilePermissions() {
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
-//            int permissionCheck = AddBookActivity.this.checkSelfPermission("Manifest.permission.READ_EXTERNAL_STORAGE");
-//            permissionCheck += AddBookActivity.this.checkSelfPermission("Manifest.permission.WRITE_EXTERNAL_STORAGE");
-//            if (permissionCheck != 0) {
-//                this.requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1001); //Any number
-//            }
-//        } else {
-//            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
-//        }
-//    }
+}

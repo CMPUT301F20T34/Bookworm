@@ -1,14 +1,13 @@
 package com.example.bookworm;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,21 +18,24 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 import static com.example.bookworm.ViewPhotoFragment.newInstance;
 
+/**
+ * Handles the actions for editing the contents of a book
+ * in the database
+ */
 public class EditBookActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
@@ -54,6 +56,8 @@ public class EditBookActivity extends AppCompatActivity {
     private Uri filePath;
     private final int PICK_IMAGE_REQUEST = 22;
     private Uri photoUri;
+    private String isbn;
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +80,14 @@ public class EditBookActivity extends AppCompatActivity {
 
         String[] fields = {"ownerId", "isbn"};
         Intent intent = getIntent();
-        String isbn = intent.getStringExtra("isbn");
+        isbn = intent.getStringExtra("isbn");
 
         Database.getBookPhoto(FirebaseAuth.getInstance().getUid(), isbn)
             .addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
-                        Picasso.get().load(task.getResult()).into(bookPhoto);
+                        Glide.with(context).load(task.getResult()).into(bookPhoto);
                         bookPhoto.setTag(-1);
                     } else {
                         bookPhoto.setImageResource(R.drawable.ic_book);
@@ -103,6 +107,20 @@ public class EditBookActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         selectedBook = document.toObject(Book.class);
                     }
+                    Database.getBookPhoto(selectedBook.getOwner(), isbn)
+                            .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+                                        Glide.with(context).load(task.getResult()).into(bookPhoto);
+                                        bookPhoto.setTag(-1);
+                                    } else {
+                                        bookPhoto.setImageResource(R.drawable.ic_book);
+                                        bookPhoto.setTag(R.drawable.ic_book);
+                                    }
+
+                                }
+                            });
                     titleEditText.setText(selectedBook.getTitle());
                     authorEditText.setText(selectedBook.getAuthor());
                     isbnText.setText(selectedBook.getIsbn());
@@ -135,7 +153,7 @@ public class EditBookActivity extends AppCompatActivity {
         addPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddImage();
+                addImage();
             }
         });
 
@@ -143,7 +161,7 @@ public class EditBookActivity extends AppCompatActivity {
         deletePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DelImage();
+                delImage();
             }
         });
 
@@ -159,27 +177,27 @@ public class EditBookActivity extends AppCompatActivity {
         viewAllRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getApplicationContext(), ViewRequestsActivity.class);
+                intent.putExtra("isbn", isbn);
+                startActivity(intent);
             }
         });
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Database.deleteBook(selectedBook);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        if (Database.getListenerSignal() == 1) {
-                            Toast.makeText(EditBookActivity.this, "Your book is successfully deleted", Toast.LENGTH_SHORT).show();
-                            finishEditing();
-                        } else if (Database.getListenerSignal() == -1){
-                            Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book, please try again", Toast.LENGTH_SHORT).show();
+                Database.deleteBook(selectedBook)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(EditBookActivity.this, "Your book is successfully deleted", Toast.LENGTH_SHORT).show();
+                                finishEditing();
+                            } else {
+                                Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book, please try again", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                }, 1000);
+                    });
             }
         });
 
@@ -208,7 +226,7 @@ public class EditBookActivity extends AppCompatActivity {
                     if (photoUri == null) {
                         addBookToDB(title, author, isbn, descriptions);
                     } else {
-                        Database.writeBookPhoto(userID, isbn, photoUri)
+                        Database.writeBookPhoto(ownerNameText.getText().toString(), isbn, photoUri)
                             .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -244,31 +262,29 @@ public class EditBookActivity extends AppCompatActivity {
         selectedBook.setDescription(descriptions);
 
         // Write the book to the database
-        Database.writeBook(selectedBook);
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            if (Database.getListenerSignal() == 1) {
-                Toast.makeText(EditBookActivity.this,
-                    "Your book is successfully saved",
-                    Toast.LENGTH_SHORT).show();
-                finish();
-            } else if (Database.getListenerSignal() == -1){
-                Toast.makeText(EditBookActivity.this,
-                    "Something went wrong while adding your book",
-                    Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(EditBookActivity.this,
-                    "Something went wrong while adding your book, please try again",
-                    Toast.LENGTH_SHORT).show();
-            }
-        }, 1000);
+        Database.writeBook(selectedBook)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(EditBookActivity.this,
+                            "Your book is successfully saved",
+                            Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(EditBookActivity.this,
+                            "Something went wrong while adding your book, please try again",
+                            Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
     }
 
     /**
      * Creates the activity for adding an image to the book
      * from the user's phone
      */
-    private void AddImage() {
+    private void addImage() {
         if ((int) bookPhoto.getTag() == R.drawable.ic_book) {
             // Defining Implicit Intent to mobile gallery
             Intent intent = new Intent();
@@ -284,31 +300,18 @@ public class EditBookActivity extends AppCompatActivity {
     /**
      * Removes the previewed image from the book
      */
-    private void DelImage() {
+    private void delImage() {
         if ((int) bookPhoto.getTag() != R.drawable.ic_book) {
             bookPhoto.setImageResource(R.drawable.ic_book);
             bookPhoto.setTag(R.drawable.ic_book);
-        }
-        else{
+            Database.deleteBookPhoto(FirebaseAuth.getInstance().getUid(), isbn)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(EditBookActivity.this, "Image successfully deleted.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        } else{
             Toast.makeText(EditBookActivity.this, "Book Photo is empty.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public String BitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, baos);
-        byte[] b = baos.toByteArray();
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
         }
     }
 
@@ -319,7 +322,12 @@ public class EditBookActivity extends AppCompatActivity {
         finish();
     }
 
-    // Override onActivityResult method
+    /**
+     * Gets the result from the image selection activity
+     * @param requestCode The success code of the request
+     * @param resultCode the code for the activity
+     * @param data the data returned by the activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 

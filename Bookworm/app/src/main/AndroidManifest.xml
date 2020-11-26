@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.STORAGE" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -36,6 +37,9 @@
         <activity
             android:name=".OwnerMapActivity"
             android:label="@string/title_activity_owner_map"></activity>
+
+        <activity android:name=".AcceptDeclineRequestActivity"></activity>
+        <activity android:name=".ViewRequestsActivity" />
         <activity android:name=".ViewBookActivity" />
         <activity android:name=".SearchResultsActivity" />
         <activity android:name=".EditBookActivity" />
@@ -57,6 +61,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".BookwormMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -1,23 +1,27 @@
 package com.example.bookworm;
 
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.example.bookworm.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -36,14 +40,15 @@ public class EditContactInfoActivity extends AppCompatActivity {
     private TextView phoneEditView;
     private TextView emailEditView;
     private ImageView contactImage;
-
+    private Context context = this;
     private final int PICK_IMAGE_REQUEST = 22;
 
     /**
      * onCreate initializer.
      * Initializes the EditContactInfo activity and retrieves all relevant data from the database to display it.
-     * @param savedInstanceState
+     * @param savedInstanceState the saved instance from the app, if it exists
      */
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +63,9 @@ public class EditContactInfoActivity extends AppCompatActivity {
         usernameView = (TextView) findViewById(R.id.usernameView);
         phoneEditView = (TextView) findViewById(R.id.editPhoneNumber);
         emailEditView = (TextView) findViewById(R.id.editEmail);
-        contactImage = (ImageView) findViewById(R.id.contactImage);
+        contactImage = (ImageView) findViewById(R.id.view_contact_info_user_image);
 
-        if(username != ""){
+        if(!username.equals("")){
             usernameView.setText(username);
             phoneEditView.setText("Loading phone number...");
             emailEditView.setText("Loading email...");
@@ -73,12 +78,12 @@ public class EditContactInfoActivity extends AppCompatActivity {
                     }
                 }});
 
-            Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
+            Database.getProfilePhoto(username)
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
-                            Picasso.get().load(task.getResult()).into(contactImage);
+                            Glide.with(context).load(task.getResult()).into(contactImage);
                         } else {
                             contactImage.setImageResource(R.drawable.ic_book);
                         }
@@ -90,10 +95,9 @@ public class EditContactInfoActivity extends AppCompatActivity {
     /**
      * Edit image button functionality
      * Starts the galley activity with intent to get an image.
-     * @param view
+     * @param view the view that was clicked on
      */
     public void editImageButton(View view){
-        ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -101,11 +105,27 @@ public class EditContactInfoActivity extends AppCompatActivity {
     }
 
     /**
-     * Button functionality for save button
-     * Updates the user specified information to the database and also updates the database profile image
-     * @param view
+     * Button functionality for save button.
+     * Validates the new information from the user, and updates the user specified information to the database and also updates the database profile image
+     * @param view the view that was clicked on
      */
     public void saveContactInfo(View view){
+        // Ensure email is non-empty
+        if (TextUtils.isEmpty(emailEditView.getText().toString())) {
+            emailEditView.setError("Email is a required value.");
+            return;
+        }
+
+        if (!Util.validateEmail(emailEditView.getText().toString())) {
+            emailEditView.setError("Email is incorrectly formatted");
+            return;
+        }
+
+        // Validate phone number is correct
+        if (!Util.validatePhoneNumber(phoneEditView.getText().toString())) {
+            phoneEditView.setError("Phone number is incorrectly formatted");
+            return;
+        }
 
         if(username != "") {
             User userUpdate = new User(username, "", emailEditView.getText().toString(), phoneEditView.getText().toString());
@@ -114,17 +134,15 @@ public class EditContactInfoActivity extends AppCompatActivity {
 
             String userId = FirebaseAuth.getInstance().getUid();
             if(imageFilePath != null) {
-                Database.writeProfilePhoto(userId, imageFilePath);
+                Database.writeProfilePhoto(username, imageFilePath);
             }
 
             fAuth = FirebaseAuth.getInstance();
             fAuth.getCurrentUser().updateEmail(emailEditView.getText().toString());
         }
 
-        AlertDialog inputAlert = new AlertDialog.Builder(this).create();
-        inputAlert.setTitle("Contact info saved for user:");
-        inputAlert.setMessage(username);
-        inputAlert.show();
+        Toast.makeText(context, "Successfully updated contact information.", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     /**

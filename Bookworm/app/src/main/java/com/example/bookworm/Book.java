@@ -1,11 +1,7 @@
 package com.example.bookworm;
 
 import android.graphics.Bitmap;
-
-import android.graphics.drawable.Drawable;
-
 import android.os.Build;
-
 
 import androidx.annotation.RequiresApi;
 
@@ -16,6 +12,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * The Book class
+ */
 public class Book implements Serializable {
     private static ArrayList<String> validStatuses = new ArrayList<String>(Arrays.asList("available", "requested", "accepted", "borrowed"));
     private String title;
@@ -27,7 +26,6 @@ public class Book implements Serializable {
     private String ownerId;
     private String borrower;
     private String borrowerId;
-//    private ArrayList<Request> requests;
     private String photograph;
     private LatLng location;
 
@@ -202,15 +200,6 @@ public class Book implements Serializable {
         this.borrowerId = borrowerId;
     }
 
-    //
-//    public ArrayList<Request> getRequests() {
-//        return requests;
-//    }
-//
-//    public void setRequests(ArrayList<Request> requests) {
-//        this.requests = requests;
-//    }
-
     /**
      * Returns the photograph of the book
      * @return Image
@@ -238,14 +227,26 @@ public class Book implements Serializable {
 //        Delete photograph
     }
 
+    /**
+     * Sets the title of the book
+     * @param title the new title of the book
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Sets the author of the book
+     * @param author the new author of the book
+     */
     public void setAuthor(String author) {
         this.author = author;
     }
 
+    /**
+     * Sets the ISBN of the book
+     * @param isbn the new ISBN of the book
+     */
     public void setIsbn(String isbn) {
         this.isbn = isbn;
     }

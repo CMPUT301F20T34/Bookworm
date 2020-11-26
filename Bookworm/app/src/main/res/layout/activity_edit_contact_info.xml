@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/contactImage"
+        android:id="@+id/view_contact_info_user_image"
         android:layout_width="128dp"
         android:layout_height="128dp"
         android:layout_marginTop="30dp"
@@ -19,20 +19,20 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/phoneNumberLabel"
+        android:id="@+id/view_contact_info_phone_number_label"
         android:layout_width="136dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:layout_marginRight="0dp"
         android:gravity="right"
-        android:text="Phone Number:"
+        android:text="Phone #:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintRight_toLeftOf="@+id/contactImage"
-        app:layout_constraintTop_toBottomOf="@+id/contactImage" />
+        app:layout_constraintRight_toLeftOf="@+id/view_contact_info_user_image"
+        app:layout_constraintTop_toBottomOf="@+id/view_contact_info_user_image" />
 
     <TextView
-        android:id="@+id/EmailLabel"
+        android:id="@+id/view_contact_info_email_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
@@ -41,8 +41,8 @@
         android:text="Email:"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintRight_toLeftOf="@+id/contactImage"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
+        app:layout_constraintRight_toLeftOf="@+id/view_contact_info_user_image"
+        app:layout_constraintTop_toBottomOf="@+id/view_contact_info_phone_number_label" />
 
     <EditText
         android:id="@+id/editPhoneNumber"
@@ -51,9 +51,9 @@
         android:layout_marginTop="48dp"
         android:ems="10"
         android:inputType="phone"
-        app:layout_constraintLeft_toRightOf="@id/phoneNumberLabel"
+        app:layout_constraintLeft_toRightOf="@id/view_contact_info_phone_number_label"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contactImage" />
+        app:layout_constraintTop_toBottomOf="@+id/view_contact_info_user_image" />
 
     <EditText
         android:id="@+id/editEmail"
@@ -62,7 +62,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textEmailAddress"
-        app:layout_constraintLeft_toRightOf="@id/EmailLabel"
+        app:layout_constraintLeft_toRightOf="@id/view_contact_info_email_label"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editPhoneNumber" />
 
@@ -101,6 +101,6 @@
         android:text="Username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contactImage" />
+        app:layout_constraintTop_toBottomOf="@+id/view_contact_info_user_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

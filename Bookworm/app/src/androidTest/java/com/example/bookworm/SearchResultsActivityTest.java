@@ -65,7 +65,7 @@ public class SearchResultsActivityTest {
 
         // Write an arbitrary book to the database
         Book book = mockBook();
-        Database.writeBook(book);
+        Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }
@@ -96,7 +96,7 @@ public class SearchResultsActivityTest {
         // Write an arbitrary book to the database with description
         Book book = mockBook();
         book.setDescription(new ArrayList<String>(Arrays.asList("Test", "Description")));
-        Database.writeBook(book);
+        Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0){
             Thread.sleep(100);
         }

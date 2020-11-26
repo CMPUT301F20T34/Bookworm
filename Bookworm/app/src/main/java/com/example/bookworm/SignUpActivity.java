@@ -19,6 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Handles all actions relating to registering an account, including validating the form.
+ */
 public class SignUpActivity extends AppCompatActivity {
     public static final String TAG = "TAG";
     EditText usernameField;
@@ -28,7 +31,6 @@ public class SignUpActivity extends AppCompatActivity {
     EditText phoneNumberField;
     FirebaseAuth fAuth;
     Button register;
-    String uid;
     FirebaseFirestore fStore;
 
     @Override

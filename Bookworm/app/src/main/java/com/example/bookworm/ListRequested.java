@@ -16,6 +16,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Lists all books that the user has currently requested.
+ */
 public class ListRequested extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Adapter adapter;
@@ -25,12 +28,14 @@ public class ListRequested extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_borrower_lists);
-        booklist = new ArrayList<Book>();
+        booklist = new ArrayList<>();
+
         //setup the recycler view and its adapter
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this,booklist);
         recyclerView.setAdapter(adapter);
+
         //get requested books of the current user
         Database.getRequestedBooks()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

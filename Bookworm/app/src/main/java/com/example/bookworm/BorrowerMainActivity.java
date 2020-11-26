@@ -6,6 +6,9 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Represents the main activity for all borrower actions
+ */
 public class BorrowerMainActivity extends AppCompatActivity {
 
     @Override

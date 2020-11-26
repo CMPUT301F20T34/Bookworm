@@ -8,6 +8,9 @@ import com.google.type.LatLng;
 
 import java.util.Date;
 
+/**
+ * Contains all information of a request, from the book to the creator and timestamp.
+ */
 public class Request {
     private Book book;
     private Date timestamp;

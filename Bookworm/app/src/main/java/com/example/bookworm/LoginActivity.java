@@ -17,6 +17,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+/**
+ * The activity which prompts the user to sign-in
+ * using their credentials
+ */
 public class LoginActivity extends AppCompatActivity {
     EditText usernameField;
     EditText passwordField;
