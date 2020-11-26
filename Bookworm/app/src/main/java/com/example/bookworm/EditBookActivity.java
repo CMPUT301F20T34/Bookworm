@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -178,27 +177,27 @@ public class EditBookActivity extends AppCompatActivity {
         viewAllRequestsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getApplicationContext(), ViewRequestsActivity.class);
+                intent.putExtra("isbn", isbn);
+                startActivity(intent);
             }
         });
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Database.deleteBook(selectedBook);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        if (Database.getListenerSignal() == 1) {
-                            Toast.makeText(EditBookActivity.this, "Your book is successfully deleted", Toast.LENGTH_SHORT).show();
-                            finishEditing();
-                        } else if (Database.getListenerSignal() == -1){
-                            Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book, please try again", Toast.LENGTH_SHORT).show();
+                Database.deleteBook(selectedBook)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(EditBookActivity.this, "Your book is successfully deleted", Toast.LENGTH_SHORT).show();
+                                finishEditing();
+                            } else {
+                                Toast.makeText(EditBookActivity.this, "Something went wrong while deleting your book, please try again", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                }, 1000);
+                    });
             }
         });
 
@@ -263,24 +262,22 @@ public class EditBookActivity extends AppCompatActivity {
         selectedBook.setDescription(descriptions);
 
         // Write the book to the database
-        Database.writeBook(selectedBook);
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            if (Database.getListenerSignal() == 1) {
-                Toast.makeText(EditBookActivity.this,
-                    "Your book is successfully saved",
-                    Toast.LENGTH_SHORT).show();
-                finish();
-            } else if (Database.getListenerSignal() == -1){
-                Toast.makeText(EditBookActivity.this,
-                    "Something went wrong while adding your book",
-                    Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(EditBookActivity.this,
-                    "Something went wrong while adding your book, please try again",
-                    Toast.LENGTH_SHORT).show();
-            }
-        }, 1000);
+        Database.writeBook(selectedBook)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(EditBookActivity.this,
+                            "Your book is successfully saved",
+                            Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(EditBookActivity.this,
+                            "Something went wrong while adding your book, please try again",
+                            Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
     }
 
     /**

@@ -64,7 +64,7 @@ public class BorrowerMainActivityTest {
     public void testGetMethods() throws InterruptedException{
         Book book = mockBook();
         book.setBorrowerId(fAuth.getCurrentUser().getUid());
-        Database.writeBook(book);
+        Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0) {
             Thread.sleep(100);
         }
@@ -120,7 +120,7 @@ public class BorrowerMainActivityTest {
         //add a book to the database and set its borrowerId to the current user's ID
         Book book = mockBook();
         book.setBorrowerId(fAuth.getCurrentUser().getUid());
-        Database.writeBook(book);
+        Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0) {
             Thread.sleep(100);
         }
@@ -132,7 +132,7 @@ public class BorrowerMainActivityTest {
         //The book name should be found in this page
         assertTrue(solo.waitForText("Title", 0, 1000));
         //remove it from the database
-        Database.deleteBook(book);
+        Database.deleteBookSynchronous(book);
     }
 
     /**

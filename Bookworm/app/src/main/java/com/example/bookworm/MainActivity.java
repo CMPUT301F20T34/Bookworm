@@ -1,35 +1,17 @@
 package com.example.bookworm;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.google.zxing.client.android.Intents;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-import com.journeyapps.barcodescanner.CaptureActivity;
 
 /**
  * The main activity of the program which delegates all tasks,
@@ -64,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
         }
 
+        // Update the registration token
+        Database.updateUserRegistrationToken();
+
         // Create listeners for the buttons
         myBooklistButton = findViewById(R.id.booklist_button);
         myBooklistButton.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         myProfileButton = findViewById(R.id.profile_button);
         myProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,15 +66,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         mySearchButton = findViewById(R.id.search_button);
         mySearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CheckBox titleCheckbox = findViewById(R.id.titleCheckbox);
                 CheckBox descCheckbox = findViewById(R.id.descCheckbox);
-                TextView keywordView = findViewById(R.id.keywordSearchBar);
                 Intent intent = new Intent(getApplicationContext(), SearchResultsActivity.class);
                 if (titleCheckbox.isChecked()){
                     intent.putExtra("type", "title");
@@ -99,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("type", "description");
                 }
                 if (titleCheckbox.isChecked() ^ descCheckbox.isChecked()){
-                    intent.putExtra("searchTerm", keywordView.getText().toString());
+                    intent.putExtra("searchTerm", mySearchTerm.getText().toString());
                     startActivity(intent);
                 }
             }
@@ -121,5 +102,4 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
-
 }

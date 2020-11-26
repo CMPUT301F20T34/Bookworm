@@ -31,7 +31,6 @@ public class SignUpActivity extends AppCompatActivity {
     EditText phoneNumberField;
     FirebaseAuth fAuth;
     Button register;
-    String uid;
     FirebaseFirestore fStore;
 
     @Override

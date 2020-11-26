@@ -31,16 +31,20 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseUser fUser;
     String authEmail;
     Context context = this;
+    TextView phoneNumber;
+    TextView email;
+    TextView username;
+    ImageView profilePhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        final TextView phoneNumber = findViewById(R.id.phone_profile);
-        final TextView email = findViewById(R.id.email_profile);
-        final TextView username = findViewById(R.id.username_profile);
-        final ImageView profilePhoto = findViewById(R.id.profile_view_image);
+        phoneNumber = findViewById(R.id.phone_profile);
+        email = findViewById(R.id.email_profile);
+        username = findViewById(R.id.username_profile);
+        profilePhoto = findViewById(R.id.profile_view_image);
 
         fUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -52,48 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
         }
 
-        Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
-            .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Glide.with(context).load(task.getResult()).into(profilePhoto);
-                    } else {
-                        profilePhoto.setImageResource(R.drawable.ic_book);
-                    }
-                }
-            });
-
-        Database.getUserFromEmail(authEmail)
-            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Map<String, Object> data = doc.getData();
-                        Database.getProfilePhoto(doc.getId())
-                                .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()) {
-                                            Glide.with(context).load(task.getResult()).into(profilePhoto);
-                                        } else {
-                                            profilePhoto.setImageResource(R.drawable.ic_book);
-                                        }
-                                    }
-                                });
-                        phoneNumber.setText(data.get("phoneNumber").toString());
-                        email.setText(data.get("email").toString());
-                        username.setText(doc.getId());
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ProfileActivity.this,
-                    "Can't retrieve user information from database",
-                    Toast.LENGTH_LONG).show();
-            }
-        });
+        getUserInformation();
     }
 
     /**
@@ -116,5 +79,60 @@ public class ProfileActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         finish();
+    }
+
+    /**
+     * Gets the user information from the database, either on activity create
+     * or activity resume
+     */
+    private void getUserInformation() {
+        Database.getProfilePhoto(FirebaseAuth.getInstance().getUid())
+            .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Glide.with(context).load(task.getResult()).into(profilePhoto);
+                    } else {
+                        profilePhoto.setImageResource(R.drawable.ic_book);
+                    }
+                }
+            });
+
+        Database.getUserFromEmail(authEmail)
+            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Map<String, Object> data = doc.getData();
+                        Database.getProfilePhoto(doc.getId())
+                            .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+                                        Glide.with(context).load(task.getResult()).into(profilePhoto);
+                                    } else {
+                                        profilePhoto.setImageResource(R.drawable.ic_book);
+                                    }
+                                }
+                            });
+                        phoneNumber.setText(data.get("phoneNumber").toString());
+                        email.setText(data.get("email").toString());
+                        username.setText(doc.getId());
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ProfileActivity.this,
+                    "Can't retrieve user information from database",
+                    Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserInformation();
     }
 }
