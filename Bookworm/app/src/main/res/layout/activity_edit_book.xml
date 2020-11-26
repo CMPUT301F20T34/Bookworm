@@ -123,6 +123,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:text="CURRENT BORROWER"
+        android:onClick="viewRequests"
         app:layout_constraintBottom_toTopOf="@id/button10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

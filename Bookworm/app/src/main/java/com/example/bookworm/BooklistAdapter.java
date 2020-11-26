@@ -24,8 +24,8 @@ import java.util.ArrayList;
  * The adapter for the booklist activity
  */
 public class BooklistAdapter extends RecyclerView.Adapter<BooklistAdapter.MyViewHolder> {
-    private ArrayList<Book> booklist;
-    private Context context;
+    private final ArrayList<Book> booklist;
+    private final Context context;
 
     public BooklistAdapter(Context context, ArrayList<Book> booklist) {
         this.context = context;

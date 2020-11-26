@@ -48,12 +48,12 @@ public class ViewContactInfoActivity extends AppCompatActivity {
             username = getIntent().getStringExtra("username");
         }
 
-        usernameView = (TextView) findViewById(R.id.usernameView2);
-        phoneView = (TextView) findViewById(R.id.viewPhoneNumber);
-        emailView = (TextView) findViewById(R.id.viewEmail);
-        contactImage = (ImageView) findViewById(R.id.contactImage);
+        usernameView = (TextView) findViewById(R.id.view_contact_info_username);
+        phoneView = (TextView) findViewById(R.id.view_contact_info_phone_number_view);
+        emailView = (TextView) findViewById(R.id.view_contact_info_email_view);
+        contactImage = (ImageView) findViewById(R.id.view_contact_info_user_image);
 
-        if(username != ""){
+        if (!username.equals("")){
             usernameView.setText(username);
             phoneView.setText("Loading phone number...");
             emailView.setText("Loading email...");

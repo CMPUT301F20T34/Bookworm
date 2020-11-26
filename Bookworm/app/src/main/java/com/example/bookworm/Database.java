@@ -19,7 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -102,12 +104,19 @@ public class Database {
             });
     }
 
+    static Task<DocumentSnapshot> checkISBN(String isbn) {
+        return libraryCollection.document(libraryName)
+            .collection(bookName)
+            .document(isbn).get();
+    }
+
     /**
      * Updates a book in the database or writes a new one if it does not exist yet
      *
      * @param book the book to be written
+     * @return a task containing the setting of the document
      */
-    static void writeBook(final Book book) {
+    static Task<Void> writeBook(final Book book) {
         Database.listenerSignal = 0;
         final DocumentReference bookDocument = libraryCollection
             .document(libraryName)
@@ -124,33 +133,54 @@ public class Database {
         bookInfo.put("photograph", book.getPhotograph());
         bookInfo.put("status", book.getStatus());
         bookInfo.put("title", book.getTitle());
-        bookDocument.set(bookInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "DocumentSnapshot written");
-                Database.listenerSignal = 1;
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error adding document", e);
-                Database.listenerSignal = -1;
-            }
-        });
+        return bookDocument.set(bookInfo);
+    }
+
+    /**
+     * Synchronously allows books to be added by checking for the listener signal
+     * @param book the book to add to the database.
+     */
+    static void writeBookSynchronous(final Book book) {
+        Database.listenerSignal = 0;
+        Database.writeBook(book)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Book added!");
+                    Database.listenerSignal = 1;
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Error adding book.", e);
+                    Database.listenerSignal = -1;
+                }
+            });
     }
 
     /**
      * Deletes a book from the database
      *
      * @param book the book to be deleted
+     * @return
      */
-    static void deleteBook(final Book book) {
+    static Task<Void> deleteBook(final Book book) {
         Database.listenerSignal = 0;
-        libraryCollection
+        return libraryCollection
             .document(libraryName)
             .collection(bookName)
             .document(book.getIsbn())
-            .delete()
+            .delete();
+    }
+
+    /**
+     * Synchronously allows books to be deleted by checking for the listener signal
+     * @param book the book to delete from the database.
+     */
+    static void deleteBookSynchronous(final Book book) {
+        Database.listenerSignal = 0;
+        deleteBook(book)
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -201,6 +231,8 @@ public class Database {
         return query.get();
     }
 
+
+
     /**
      * Creates a user in the database with their username,
      * email, and phone number
@@ -219,7 +251,37 @@ public class Database {
         userInfo.put("phoneNumber", phoneNumber);
         userInfo.put("email", email);
         return documentReference.set(userInfo);
+    }
 
+    /**
+     * Updates the user registration token for the device each time the device is started.
+     */
+    static public void updateUserRegistrationToken() {
+        Database.getUserFromEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail())
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.d(TAG, "Could not update registration token");
+                } else {
+                    QuerySnapshot qs = task.getResult();
+                    DocumentSnapshot doc = qs.getDocuments().get(0);
+                    String username = doc.getId();
+                    Map<String, Object> obj = doc.getData();
+                    FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(task1 -> {
+                            if (!task1.isSuccessful()) {
+                                Log.d(TAG, "Could not update registration token");
+                            } else {
+                                // Move so that multiple device tokens can be kept
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("registrationToken", task1.getResult());
+                                libraryCollection.document(libraryName)
+                                    .collection(userName)
+                                    .document(username).
+                                    set(map, SetOptions.merge());
+                            }
+                        });
+                }
+            });
     }
 
     /**
@@ -505,6 +567,27 @@ public class Database {
                 .whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
                 .whereEqualTo("status","Accepted")
                 .get();
+    }
+
+    /**
+     * Get all requests on a given book (determined by isbn)
+     * @param isbn The isbn of the book to get the requests
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getRequestsForBook(String isbn) {
+        return libraryCollection.document(libraryName)
+            .collection(requestName)
+            .whereEqualTo("book.isbn", isbn)
+            .whereEqualTo("status", "available")
+            .get();
+    }
+
+    static Task<QuerySnapshot> declineRequest(String username, String isbn) {
+        return libraryCollection.document(libraryName)
+            .collection(requestName)
+            .whereEqualTo("book.isbn", isbn)
+            .whereEqualTo("creator.username", username)
+            .get();
     }
 
     /**
