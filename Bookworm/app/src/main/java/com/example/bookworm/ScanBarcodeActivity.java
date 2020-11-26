@@ -209,34 +209,20 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                             Request userRequest = queryDocumentSnapshots.getDocuments().get(0).toObject(Request.class);
                             if (userRequest.getStatus().equals("accepted")) {
 
-                                Database.getUser(currentUsername)
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                Database.queryCollection("books", new String[]{"isbn"}, new String[]{isbn})
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                User currentUser = documentSnapshot.toObject(User.class);
-
-                                                Database.queryCollection("books", new String[]{"isbn"}, new String[]{isbn})
-                                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                            @Override
-                                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                                if (queryDocumentSnapshots.getDocuments().size() == 0){
-                                                                    Toast.makeText(ScanBarcodeActivity.this, "Error: Book is not in the system.", Toast.LENGTH_LONG).show();
-                                                                }
-                                                                else {
-                                                                    Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
-                                                                    scannedBook.setStatus("borrowed");
-                                                                    scannedBook.setBorrower(currentUsername);
-                                                                    Database.writeBook(scannedBook);
-                                                                    Toast.makeText(ScanBarcodeActivity.this, scannedBook.getTitle() + " has been added to your collection.", Toast.LENGTH_LONG).show();
-                                                                }
-                                                            }
-                                                        })
-                                                        .addOnFailureListener(new OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(@NonNull Exception e) {
-                                                                Toast.makeText(ScanBarcodeActivity.this, "Error: Issue with database query, try again.", Toast.LENGTH_LONG).show();
-                                                            }
-                                                        });
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                if (queryDocumentSnapshots.getDocuments().size() == 0){
+                                                    Toast.makeText(ScanBarcodeActivity.this, "Error: Book is not in the system.", Toast.LENGTH_LONG).show();
+                                                }
+                                                else {
+                                                    Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
+                                                    scannedBook.setStatus("borrowed");
+                                                    scannedBook.setBorrower(currentUsername);
+                                                    Database.writeBook(scannedBook);
+                                                    Toast.makeText(ScanBarcodeActivity.this, scannedBook.getTitle() + " has been added to your collection.", Toast.LENGTH_LONG).show();
+                                                }
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -245,6 +231,7 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                                                 Toast.makeText(ScanBarcodeActivity.this, "Error: Issue with database query, try again.", Toast.LENGTH_LONG).show();
                                             }
                                         });
+
                             } else {
                                 Toast.makeText(ScanBarcodeActivity.this, "Error: Request has not been accepted", Toast.LENGTH_LONG).show();
                             }
@@ -267,39 +254,26 @@ public class ScanBarcodeActivity extends AppCompatActivity {
         //Return a book to an owner
         Log.d(TAG, "Returning book.");
         //remove book from borrowers book list
-        Database.getUser(currentUsername)
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
+        Database.queryCollection("books", new String[]{"isbn"}, new String[]{isbn})
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        User currentUser = documentSnapshot.toObject(User.class);
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.getDocuments().size() == 0){
+                            Toast.makeText(ScanBarcodeActivity.this, "Error: Book is not in the system", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
+                            if (scannedBook.getBorrower() == null || scannedBook.getBorrower().equals(currentUsername)){
+                                Toast.makeText(ScanBarcodeActivity.this, "Error: " + scannedBook.getTitle() + " is not currently borrowed by you.", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                scannedBook.setBorrower(null);
+                                Database.writeBook(scannedBook);
+                                Toast.makeText(ScanBarcodeActivity.this, scannedBook.getTitle() + " has been returned.", Toast.LENGTH_LONG).show();
+                            }
 
-                        Database.queryCollection("books", new String[]{"isbn"}, new String[]{isbn})
-                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                        if (queryDocumentSnapshots.getDocuments().size() == 0){
-                                            Toast.makeText(ScanBarcodeActivity.this, "Error: Book is not in the system", Toast.LENGTH_LONG).show();
-                                        }
-                                        else {
-                                            Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
-                                            if (scannedBook.getBorrower() == null || scannedBook.getBorrower().equals(currentUsername)){
-                                                Toast.makeText(ScanBarcodeActivity.this, "Error: " + scannedBook.getTitle() + " is not currently borrowed by you.", Toast.LENGTH_LONG).show();
-                                            }
-                                            else{
-                                                scannedBook.setBorrower(null);
-                                                Database.writeBook(scannedBook);
-                                                Toast.makeText(ScanBarcodeActivity.this, scannedBook.getTitle() + " has been returned.", Toast.LENGTH_LONG).show();
-                                            }
-
-                                        }
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(ScanBarcodeActivity.this, "Error: Issue with database query, try again.", Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -308,6 +282,7 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                         Toast.makeText(ScanBarcodeActivity.this, "Error: Issue with database query, try again.", Toast.LENGTH_LONG).show();
                     }
                 });
+
     }
 
 
