@@ -4,6 +4,8 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.type.LatLng;
+
 import java.util.Date;
 
 public class Request {
@@ -11,6 +13,7 @@ public class Request {
     private Date timestamp;
     private User creator;
     private String status;
+    private LatLng location;
 
     public Request(){ }
 
@@ -38,6 +41,8 @@ public class Request {
         return status;
     }
 
+    public LatLng getLocation() { return location; }
+
     public void setStatus(String status){
         this.status = status;
     }
@@ -53,4 +58,6 @@ public class Request {
     public void setCreator(User creator) {
         this.creator = creator;
     }
+
+    public void setLocation(LatLng location) { this.location = location; }
 }

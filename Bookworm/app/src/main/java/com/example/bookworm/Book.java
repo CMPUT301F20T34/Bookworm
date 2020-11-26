@@ -10,6 +10,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.example.bookworm.util.Util;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class Book implements Serializable {
     private String borrowerId;
 //    private ArrayList<Request> requests;
     private String photograph;
+    private LatLng location;
 
     public Book() { }
 
@@ -246,5 +248,13 @@ public class Book implements Serializable {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
+    }
+
+    public LatLng getLocation() {
+        return location;
+    }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
     }
 }

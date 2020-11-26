@@ -1,10 +1,18 @@
 package com.example.bookworm;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,14 +21,23 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Locale;
 
 public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final String EXTRA_LOCATION = "";
     private GoogleMap mMap;
     private TextView location;
     private Button confirm;
+    private LatLng handover;
+    private Book book;
+    private Context context = this;
     public double x;
     public double y;
 
@@ -35,6 +52,27 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
 
         location = findViewById(R.id.location_info);
         confirm = findViewById(R.id.location_confirm);
+        Intent intent = getIntent();
+        String bookTitle = intent.getStringExtra("title");
+        Task<QuerySnapshot> searchTask;
+        searchTask = Database.searchBooks(bookTitle);
+        searchTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    book = doc.toObject(Book.class);
+                }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context,
+                                "Error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     /**
@@ -53,21 +91,36 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
 
         // Add a marker in Sydney and move the camera
         LatLng edmonton = new LatLng(53.52, -113.52);
+        handover = edmonton;
         MarkerOptions marker = new MarkerOptions().position(edmonton).title("Book Handover Location");
         Marker mPos = mMap.addMarker(marker);
         marker.draggable(true);
+        x = mPos.getPosition().latitude;
+        y = mPos.getPosition().longitude;
+        String info = String.format(Locale.CANADA,"%f, %f", x,y);
+        location.setText(info);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(edmonton));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(edmonton, 15));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener(){
                 @Override
                 public void onMapClick(LatLng latLng) {
+                    handover = latLng;
                     mPos.setPosition(latLng);
                     x = mPos.getPosition().latitude;
                     y = mPos.getPosition().longitude;
-                    String info = String.format(Locale.CANADA,"%f, %f", x,y);
-                    location.setText(info);
+                    String newLoc = String.format(Locale.CANADA,"%f, %f", x,y);
+                    location.setText(newLoc);
                 }
             }
         );
+    }
+
+    /**
+     * Confirm the handover location
+     * @param view          the Confirm button
+     */
+    public void ConfirmLoc(View view) {
+        book.setLocation(handover);
+        finish();
     }
 }
