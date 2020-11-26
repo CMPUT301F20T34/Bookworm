@@ -52,27 +52,27 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
 
         location = findViewById(R.id.location_info);
         confirm = findViewById(R.id.location_confirm);
-        Intent intent = getIntent();
-        String bookTitle = intent.getStringExtra("title");
-        Task<QuerySnapshot> searchTask;
-        searchTask = Database.searchBooks(bookTitle);
-        searchTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    book = doc.toObject(Book.class);
-                }
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context,
-                                "Error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+//        Intent intent = getIntent();
+//        String bookTitle = intent.getStringExtra("title");
+//        Task<QuerySnapshot> searchTask;
+//        searchTask = Database.searchBooks(bookTitle);
+//        searchTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @RequiresApi(api = Build.VERSION_CODES.O)
+//            @Override
+//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+//                    book = doc.toObject(Book.class);
+//                }
+//            }
+//        })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(context,
+//                                "Error: " + e.getMessage(),
+//                                Toast.LENGTH_LONG).show();
+//                    }
+//                });
     }
 
     /**
@@ -120,7 +120,9 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
      * @param view          the Confirm button
      */
     public void ConfirmLoc(View view) {
-        book.setLocation(handover);
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_LOCATION, handover);
+        setResult(1, intent);
         finish();
     }
 }
