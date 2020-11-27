@@ -1,6 +1,7 @@
 package com.example.bookworm;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -90,33 +91,10 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
      * @param view the button that was clicked on.
      */
     public void acceptRequest(View view) {
-        Database.getRequestsForBook(isbn)
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        String id = isbn + "-" + username;
-                        Map<String, Object> acc = new HashMap<>();
-                        Map<String, Object> dec = new HashMap<>();
-                        acc.put("status", "accepted");
-                        dec.put("status", "declined");
-                        /* Iterate over the documents, accepting if the
-                         * username is correct and deleting the request
-                         * is not correct */
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            if (doc.getId().equals(id)) {
-                                doc.getReference().set(acc, SetOptions.merge());
-                            } else {
-                                doc.getReference().set(dec, SetOptions.merge());
-                            }
-                        }
-                        Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                }
-            });
+        Intent intent = new Intent(context, OwnerMapActivity.class);
+        intent.putExtra("isbn", isbn);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 
     /**

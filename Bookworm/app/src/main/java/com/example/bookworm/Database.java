@@ -534,7 +534,7 @@ public class Database {
         return libraryCollection.document(libraryName)
                 .collection(requestName)
                 .whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
-                .whereEqualTo("status","Accepted")
+                .whereEqualTo("status","accepted")
                 .get();
     }
 
