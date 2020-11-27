@@ -597,6 +597,12 @@ public class Database {
             .get();
     }
 
+    /**
+     * Returns a specific request given username and ISBN
+     * @param username the username of the request
+     * @param isbn the isbn of the book for the request
+     * @return a task containing the query result
+     */
     static Task<QuerySnapshot> declineRequest(String username, String isbn) {
         return libraryCollection.document(libraryName)
             .collection(requestName)
@@ -605,7 +611,15 @@ public class Database {
             .get();
     }
 
+    /**
+     * Sets the status of a a book.
+     * @param isbn the isbn of the book
+     * @param status the new status of the book
+     */
     static void setBookStatus(String isbn, String status) {
+        if (!Arrays.asList("available", "requested", "borrowed", "accepted").contains(status)) {
+            throw new IllegalArgumentException();
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);
 

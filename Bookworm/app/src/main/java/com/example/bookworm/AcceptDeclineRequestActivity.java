@@ -102,6 +102,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                         Map<String, Object> dec = new HashMap<>();
                         acc.put("status", "accepted");
                         dec.put("status", "declined");
+
                         /* Iterate over the documents, accepting if the
                          * username is correct and deleting the request
                          * is not correct */
@@ -112,6 +113,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                                 doc.getReference().set(dec, SetOptions.merge());
                             }
                         }
+
                         Database.setBookStatus(isbn, "accepted");
                         Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
                         finish();
@@ -134,7 +136,6 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                     } else {
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("status", "declined");
-
                         for (DocumentSnapshot doc : task.getResult()) {
                             doc.getReference().set(map, SetOptions.merge());
                         }
