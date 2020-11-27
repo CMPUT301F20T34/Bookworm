@@ -47,8 +47,9 @@ public class BorrowerMapActivity extends FragmentActivity implements OnMapReadyC
                             Request request = doc.toObject(Request.class);
                             if (request.getBook().getIsbn().equals(selectedBookIsbn)) {
                                 selectedRequest = request;
-                                mMap.addMarker(new MarkerOptions().position(selectedRequest.getLocation()).title("Marker in Sydney"));
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(selectedRequest.getLocation()));
+                                LatLng location = new LatLng(selectedRequest.getLat(), selectedRequest.getLng());
+                                mMap.addMarker(new MarkerOptions().position(location).title("Meeting location"));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
                                 break;
                             }
                         }

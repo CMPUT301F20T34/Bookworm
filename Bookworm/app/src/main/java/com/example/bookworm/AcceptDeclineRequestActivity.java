@@ -91,21 +91,10 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
      * @param view the button that was clicked on.
      */
     public void acceptRequest(View view) {
-        Database.getRequestsForBook(isbn)
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
-                    } else {
-
-                        Intent intent = new Intent(context, OwnerMapActivity.class);
-                        intent.putExtra("isbn", isbn);
-                        intent.putExtra("username", username);
-                        startActivity(intent);
-                    }
-                }
-            });
+        Intent intent = new Intent(context, OwnerMapActivity.class);
+        intent.putExtra("isbn", isbn);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 
     /**

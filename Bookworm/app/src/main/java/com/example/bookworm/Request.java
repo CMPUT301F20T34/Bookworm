@@ -16,7 +16,8 @@ public class Request {
     private Date timestamp;
     private User creator;
     private String status;
-    private LatLng location;
+    private double lat;
+    private double lng;
 
     public Request(){ }
 
@@ -44,7 +45,9 @@ public class Request {
         return status;
     }
 
-    public LatLng getLocation() { return location; }
+    public double getLat() { return lat; }
+
+    public double getLng() { return lng; }
 
     public void setStatus(String status){
         this.status = status;
@@ -62,5 +65,7 @@ public class Request {
         this.creator = creator;
     }
 
-    public void setLocation(LatLng location) { this.location = location; }
+    public void setLat(double lat) { this.lat = lat; }
+
+    public void setLng(double lng) { this.lng = lng; }
 }

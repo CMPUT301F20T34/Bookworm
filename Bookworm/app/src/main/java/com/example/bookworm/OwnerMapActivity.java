@@ -120,8 +120,10 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
                             Map<String, Object> acc = new HashMap<>();
                             Map<String, Object> dec = new HashMap<>();
                             Map<String, Object> acc2 = new HashMap<>();
+                            Map<String, Object> acc3 = new HashMap<>();
                             acc.put("status", "accepted");
-                            acc2.put("location", handover);
+                            acc2.put("lat", handover.latitude);
+                            acc3.put("lng", handover.longitude);
                             dec.put("status", "declined");
                             /* Iterate over the documents, accepting if the
                              * username is correct and deleting the request
@@ -130,6 +132,7 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
                                 if (doc.getId().equals(id)) {
                                     doc.getReference().set(acc, SetOptions.merge());
                                     doc.getReference().set(acc2, SetOptions.merge());
+                                    doc.getReference().set(acc3, SetOptions.merge());
                                 } else {
                                     doc.getReference().set(dec, SetOptions.merge());
                                 }
