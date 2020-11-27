@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -54,7 +55,7 @@ public class AcceptDeclineRequestTest {
         solo.assertCurrentActivity("Wrong Activity", ViewRequestsActivity.class);
 
         // Ensure the request is no longer there
-        assertNotEquals(views, solo.getCurrentViews().size());
+        assertEquals(views, solo.getCurrentViews().size());
     }
 
     /**

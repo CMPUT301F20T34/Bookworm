@@ -539,6 +539,18 @@ public class Database {
     }
 
     /**
+     * Get all requests that are accepted by the currently signed-in user
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getAcceptedRequest() {
+        return libraryCollection.document(libraryName)
+                .collection(requestName)
+                .whereEqualTo("book.ownerId", fAuth.getCurrentUser().getUid())
+                .whereEqualTo("status","accepted")
+                .get();
+    }
+
+    /**
      * Get all requests on a given book (determined by isbn)
      * @param isbn The isbn of the book to get the requests
      * @return a Task representing the result of the query
