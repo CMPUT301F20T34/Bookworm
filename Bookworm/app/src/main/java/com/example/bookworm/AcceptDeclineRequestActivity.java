@@ -35,7 +35,6 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
     private Context context = this;
     private String username;
     private String isbn;
-    private Book book;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,40 +90,33 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
      * @param view the button that was clicked on.
      */
     public void acceptRequest(View view) {
-//        Database.getBooksByIsbn(isbn)
-//                .addOnSuccessListener(queryDocumentSnapshots -> {
-//                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-//                    book =  doc.toObject(Book.class);
-//                    book.setStatus("accepted");
-//                    Database.writeBook(book);
-//                });
         Database.getRequestsForBook(isbn)
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        String id = isbn + "-" + username;
-                        Map<String, Object> acc = new HashMap<>();
-                        Map<String, Object> dec = new HashMap<>();
-                        acc.put("status", "accepted");
-                        dec.put("status", "declined");
-                        /* Iterate over the documents, accepting if the
-                         * username is correct and deleting the request
-                         * is not correct */
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            if (doc.getId().equals(id)) {
-                                doc.getReference().set(acc, SetOptions.merge());
-                            } else {
-                                doc.getReference().set(dec, SetOptions.merge());
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String id = isbn + "-" + username;
+                            Map<String, Object> acc = new HashMap<>();
+                            Map<String, Object> dec = new HashMap<>();
+                            acc.put("status", "accepted");
+                            dec.put("status", "declined");
+                            /* Iterate over the documents, accepting if the
+                             * username is correct and deleting the request
+                             * is not correct */
+                            for (DocumentSnapshot doc : task.getResult()) {
+                                if (doc.getId().equals(id)) {
+                                    doc.getReference().set(acc, SetOptions.merge());
+                                } else {
+                                    doc.getReference().set(dec, SetOptions.merge());
+                                }
                             }
+                            Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
-                        Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
-                        finish();
                     }
-                }
-            });
+                });
     }
 
     /**
@@ -133,23 +125,23 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
      */
     public void declineRequest(View view) {
         Database.declineRequest(username, isbn)
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put("status", "declined");
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            HashMap<String, Object> map = new HashMap<>();
+                            map.put("status", "declined");
 
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            doc.getReference().set(map, SetOptions.merge());
+                            for (DocumentSnapshot doc : task.getResult()) {
+                                doc.getReference().set(map, SetOptions.merge());
+                            }
+
+                            Toast.makeText(context, "Successfully declined request.", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
-
-                        Toast.makeText(context, "Successfully declined request.", Toast.LENGTH_SHORT).show();
-                        finish();
                     }
-                }
-            });
+                });
     }
 }

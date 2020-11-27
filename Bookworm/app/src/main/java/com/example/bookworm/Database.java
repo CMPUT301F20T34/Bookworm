@@ -88,26 +88,26 @@ public class Database {
         }
 
         batch.commit()
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    // These are a method which gets executed when the task is succeeded
-                    Log.d(TAG, "Data has been added successfully!");
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    // These are a method which gets executed if there’s any problem
-                    Log.d(TAG, "Data could not be added!" + e.toString());
-                }
-            });
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // These are a method which gets executed when the task is succeeded
+                        Log.d(TAG, "Data has been added successfully!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // These are a method which gets executed if there’s any problem
+                        Log.d(TAG, "Data could not be added!" + e.toString());
+                    }
+                });
     }
 
     static Task<DocumentSnapshot> checkISBN(String isbn) {
         return libraryCollection.document(libraryName)
-            .collection(bookName)
-            .document(isbn).get();
+                .collection(bookName)
+                .document(isbn).get();
     }
 
     /**
@@ -119,9 +119,9 @@ public class Database {
     static Task<Void> writeBook(final Book book) {
         Database.listenerSignal = 0;
         final DocumentReference bookDocument = libraryCollection
-            .document(libraryName)
-            .collection(bookName)
-            .document(book.getIsbn());
+                .document(libraryName)
+                .collection(bookName)
+                .document(book.getIsbn());
         Map<String, Object> bookInfo = new HashMap<>();
         bookInfo.put("author", book.getAuthor());
         bookInfo.put("borrower", book.getBorrower());
@@ -143,20 +143,20 @@ public class Database {
     static void writeBookSynchronous(final Book book) {
         Database.listenerSignal = 0;
         Database.writeBook(book)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "Book added!");
-                    Database.listenerSignal = 1;
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error adding book.", e);
-                    Database.listenerSignal = -1;
-                }
-            });
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Book added!");
+                        Database.listenerSignal = 1;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding book.", e);
+                        Database.listenerSignal = -1;
+                    }
+                });
     }
 
     /**
@@ -168,10 +168,10 @@ public class Database {
     static Task<Void> deleteBook(final Book book) {
         Database.listenerSignal = 0;
         return libraryCollection
-            .document(libraryName)
-            .collection(bookName)
-            .document(book.getIsbn())
-            .delete();
+                .document(libraryName)
+                .collection(bookName)
+                .document(book.getIsbn())
+                .delete();
     }
 
     /**
@@ -181,33 +181,20 @@ public class Database {
     static void deleteBookSynchronous(final Book book) {
         Database.listenerSignal = 0;
         deleteBook(book)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "Book deleted!");
-                    Database.listenerSignal = 1;
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error deleting book.", e);
-                    Database.listenerSignal = -1;
-                }
-            });
-    }
-
-    /**
-     * Returns books with certain isbn
-     *
-     * @param isbn The keyword that is being searched
-     * @return Task<QuerySnapshot> The result of the query.
-     */
-    public static Task<QuerySnapshot> getBooksByIsbn(final String isbn) {
-        CollectionReference books = libraryCollection.document(libraryName)
-                .collection(bookName);
-
-        return books.whereEqualTo("isbn", isbn).get();
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Book deleted!");
+                        Database.listenerSignal = 1;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting book.", e);
+                        Database.listenerSignal = -1;
+                    }
+                });
     }
 
     /**
@@ -219,7 +206,7 @@ public class Database {
      */
     public static Task<QuerySnapshot> searchBooks(final String searchTerm) {
         CollectionReference books = libraryCollection.document(libraryName)
-            .collection(bookName);
+                .collection(bookName);
 
         return books.whereEqualTo("title", searchTerm).get();
     }
@@ -238,8 +225,8 @@ public class Database {
         }
 
         Query query = libraryCollection.document(libraryName).collection("books")
-            .whereIn("status", Arrays.asList(statuses))
-            .whereArrayContains("description", keyword);
+                .whereIn("status", Arrays.asList(statuses))
+                .whereArrayContains("description", keyword);
 
         return query.get();
     }
@@ -257,9 +244,9 @@ public class Database {
      */
     static Task<Void> createUser(final String username, String phoneNumber, String email) {
         DocumentReference documentReference = libraryCollection
-            .document(libraryName)
-            .collection(userName)
-            .document(username);
+                .document(libraryName)
+                .collection(userName)
+                .document(username);
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", phoneNumber);
         userInfo.put("email", email);
@@ -271,30 +258,30 @@ public class Database {
      */
     static public void updateUserRegistrationToken() {
         Database.getUserFromEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail())
-            .addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.d(TAG, "Could not update registration token");
-                } else {
-                    QuerySnapshot qs = task.getResult();
-                    DocumentSnapshot doc = qs.getDocuments().get(0);
-                    String username = doc.getId();
-                    Map<String, Object> obj = doc.getData();
-                    FirebaseMessaging.getInstance().getToken()
-                        .addOnCompleteListener(task1 -> {
-                            if (!task1.isSuccessful()) {
-                                Log.d(TAG, "Could not update registration token");
-                            } else {
-                                // Move so that multiple device tokens can be kept
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("registrationToken", task1.getResult());
-                                libraryCollection.document(libraryName)
-                                    .collection(userName)
-                                    .document(username).
-                                    set(map, SetOptions.merge());
-                            }
-                        });
-                }
-            });
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.d(TAG, "Could not update registration token");
+                    } else {
+                        QuerySnapshot qs = task.getResult();
+                        DocumentSnapshot doc = qs.getDocuments().get(0);
+                        String username = doc.getId();
+                        Map<String, Object> obj = doc.getData();
+                        FirebaseMessaging.getInstance().getToken()
+                                .addOnCompleteListener(task1 -> {
+                                    if (!task1.isSuccessful()) {
+                                        Log.d(TAG, "Could not update registration token");
+                                    } else {
+                                        // Move so that multiple device tokens can be kept
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("registrationToken", task1.getResult());
+                                        libraryCollection.document(libraryName)
+                                                .collection(userName)
+                                                .document(username).
+                                                set(map, SetOptions.merge());
+                                    }
+                                });
+                    }
+                });
     }
 
     /**
@@ -305,29 +292,29 @@ public class Database {
     static void updateUser(final User user) {
         Database.listenerSignal = 0;
         DocumentReference documentReference = libraryCollection
-            .document(libraryName)
-            .collection(userName)
-            .document(user.getUsername());
+                .document(libraryName)
+                .collection(userName)
+                .document(user.getUsername());
         Map<String, Object> userInfo = new HashMap<String, Object>();
         userInfo.put("phoneNumber", user.getPhone());
         userInfo.put("email", user.getEmail());
         userInfo.put("borrower", user.getBorrower());
         userInfo.put("owner", user.getOwner());
         documentReference.set(userInfo)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "User profile updated");
-                    Database.listenerSignal = 1;
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Failed to update user profile");
-                    Database.listenerSignal = -1;
-                }
-            });
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "User profile updated");
+                        Database.listenerSignal = 1;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Failed to update user profile");
+                        Database.listenerSignal = -1;
+                    }
+                });
     }
 
     /**
@@ -338,22 +325,22 @@ public class Database {
     static void deleteUser(final User user) {
         Database.listenerSignal = 0;
         libraryCollection.document(libraryName).collection(userName)
-            .document(user.getUsername())
-            .delete()
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "Book does not exist in database");
-                    Database.listenerSignal = 1;
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error updating document", e);
-                    Database.listenerSignal = -1;
-                }
-            });
+                .document(user.getUsername())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Book does not exist in database");
+                        Database.listenerSignal = 1;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                        Database.listenerSignal = -1;
+                    }
+                });
     }
 
     /**
@@ -364,13 +351,13 @@ public class Database {
     static void createSynchronousRequest(final Request request) {
         Database.listenerSignal = 0;
         Database.createRequest(request)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "DocumentSnapshot written");
-                    Database.listenerSignal = 1;
-                }
-            }).addOnFailureListener(new OnFailureListener() {
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot written");
+                        Database.listenerSignal = 1;
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "Error adding document", e);
@@ -387,22 +374,22 @@ public class Database {
     static void deleteRequest(final Request request) {
         Database.listenerSignal = 0;
         libraryCollection.document(libraryName).collection(requestName)
-            .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername())
-            .delete()
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "Request does not exist in database");
-                    Database.listenerSignal = 1;
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error updating document", e);
-                    Database.listenerSignal = -1;
-                }
-            });
+                .document(request.getBook().getIsbn() + "-" + request.getCreator().getUsername())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Request does not exist in database");
+                        Database.listenerSignal = 1;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                        Database.listenerSignal = -1;
+                    }
+                });
     }
 
     /**
@@ -512,8 +499,8 @@ public class Database {
      */
     static Task<Void> createRequest(final Request req) {
         return libraryCollection.document(libraryName)
-            .collection(requestName).document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
-            .set(req);
+                .collection(requestName).document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
+                .set(req);
     }
 
     /**
@@ -523,8 +510,8 @@ public class Database {
      */
     static Task<QuerySnapshot> getRequestedBooks() {
         return libraryCollection.document(libraryName)
-            .collection(requestName).whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
-            .get();
+                .collection(requestName).whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
+                .get();
     }
 
     /**
@@ -558,19 +545,18 @@ public class Database {
      */
     static Task<QuerySnapshot> getRequestsForBook(String isbn) {
         return libraryCollection.document(libraryName)
-            .collection(requestName)
-            .whereEqualTo("book.isbn", isbn)
-            .whereEqualTo("status", "available")
-            .get();
+                .collection(requestName)
+                .whereEqualTo("book.isbn", isbn)
+                .whereEqualTo("status", "available")
+                .get();
     }
-
 
     static Task<QuerySnapshot> declineRequest(String username, String isbn) {
         return libraryCollection.document(libraryName)
-            .collection(requestName)
-            .whereEqualTo("book.isbn", isbn)
-            .whereEqualTo("creator.username", username)
-            .get();
+                .collection(requestName)
+                .whereEqualTo("book.isbn", isbn)
+                .whereEqualTo("creator.username", username)
+                .get();
     }
 
     /**

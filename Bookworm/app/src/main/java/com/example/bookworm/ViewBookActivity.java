@@ -17,9 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -68,15 +66,15 @@ public class ViewBookActivity extends AppCompatActivity {
         statusView = findViewById(R.id.view_book_status);
         photoView = findViewById(R.id.view_book_image);
         Database.getBookPhoto(owner, isbn)
-            .addOnSuccessListener(uri -> {
-                Glide.with(this).load(uri).into(photoView);
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    photoView.setImageResource(R.drawable.ic_book);
-                }
-            });
+                .addOnSuccessListener(uri -> {
+                    Glide.with(this).load(uri).into(photoView);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        photoView.setImageResource(R.drawable.ic_book);
+                    }
+                });
 
 
         titleView.setText("Title: " + title);
@@ -97,40 +95,38 @@ public class ViewBookActivity extends AppCompatActivity {
             // Attempt to create a request from the book and the current
             // signed in user.
             Book book = new Book(title, author, description, isbn, status);
-            book.setStatus("requested");
             book.setOwner(owner);
-            Database.writeBook(book);
             String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             Database.getUserFromEmail(email)
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    // Successfully got username from the email of the user.
-                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                    Request request = new Request(book, doc.toObject(User.class), "available");
-                    request.getCreator().setUsername(doc.getId()); // Not set automatically
-                    Database.createRequest(request)
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        // Successfully got username from the email of the user.
+                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                        Request request = new Request(book, doc.toObject(User.class), "available");
+                        request.getCreator().setUsername(doc.getId()); // Not set automatically
+                        Database.createRequest(request)
 
-                        .addOnSuccessListener(aVoid -> {
-                            // Successfully created the request in the database.
-                            Toast.makeText(context,
-                                "Request has successfully been made.",
-                                Toast.LENGTH_LONG)
-                                .show();
-                            finish();
-                        })
+                                .addOnSuccessListener(aVoid -> {
+                                    // Successfully created the request in the database.
+                                    Toast.makeText(context,
+                                            "Request has successfully been made.",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                    finish();
+                                })
 
-                        .addOnFailureListener(e -> {
-                            // Request was not made.
-                            Toast.makeText(context,
-                                "Error: " + e.getMessage(),
-                                Toast.LENGTH_LONG)
-                                .show();
-                        });
-                })
-                .addOnFailureListener(e -> Toast.makeText(context,
-                    // Could not get username from current signed in user.
-                    "Error: " + e.getMessage(),
-                    Toast.LENGTH_LONG)
-                    .show());
+                                .addOnFailureListener(e -> {
+                                    // Request was not made.
+                                    Toast.makeText(context,
+                                            "Error: " + e.getMessage(),
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                });
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(context,
+                            // Could not get username from current signed in user.
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG)
+                            .show());
         });
     }
 
