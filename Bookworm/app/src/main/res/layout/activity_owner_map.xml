@@ -37,6 +37,7 @@
         android:text="CONFIRM"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:onClick="confirmLoc" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
