@@ -564,6 +564,7 @@ public class Database {
             .get();
     }
 
+
     static Task<QuerySnapshot> declineRequest(String username, String isbn) {
         return libraryCollection.document(libraryName)
             .collection(requestName)

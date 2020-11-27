@@ -35,11 +35,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.5" />
 
-    <RadioGroup
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/radio_group"
         android:layout_width="410dp"
         android:layout_height="46dp"
-        android:orientation='horizontal'
         app:layout_constraintBottom_toTopOf="@+id/scan_to_search_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -48,39 +47,49 @@
         <RadioButton
             android:id="@+id/radio_default"
             android:layout_width="81dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:text="default"
-            android:textSize="8sp" />
+            android:layout_height="46dp"
+            android:text="Default"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <RadioButton
             android:id="@+id/radio_available"
             android:layout_width="79dp"
-            android:layout_height="match_parent"
-            android:text="available"
-            android:textSize="8sp" />
-
-        <RadioButton
-            android:id="@+id/radio_requested"
-            android:layout_width="87dp"
-            android:layout_height="match_parent"
-            android:text="requested"
-            android:textSize="8sp" />
+            android:layout_height="46dp"
+            android:text="Available"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/radio_requested" />
 
         <RadioButton
             android:id="@+id/radio_accepted"
-            android:layout_width="83dp"
-            android:layout_height="match_parent"
-            android:text="accepted"
-            android:textSize="8sp" />
+            android:layout_width="81dp"
+            android:layout_height="45dp"
+            android:text="Accepted"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/radio_default" />
+
+        <RadioButton
+            android:id="@+id/radio_requested"
+            android:layout_width="84dp"
+            android:layout_height="46dp"
+            android:text="Requested"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/radio_accepted" />
 
         <RadioButton
             android:id="@+id/radio_borrowed"
-            android:layout_width="84dp"
-            android:layout_height="match_parent"
-            android:text="borrowed"
-            android:textSize="8sp" />
-    </RadioGroup>
+            android:layout_width="85dp"
+            android:layout_height="46dp"
+            android:text="Borrowed"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/radio_available" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
