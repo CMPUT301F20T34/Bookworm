@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button myProfileButton;
     private Button mySearchButton;
     private Button myBorrowerInfoButton;
+    private Button scanBarcodeButton;
     FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -90,6 +91,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), BorrowerMainActivity.class));
             }
+        });
+
+        scanBarcodeButton = findViewById(R.id.scan_button);
+        scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), ScanBarcodeActivity.class));
+            }
+
         });
     }
 }

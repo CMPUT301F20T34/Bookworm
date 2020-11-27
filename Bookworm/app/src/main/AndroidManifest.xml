@@ -31,6 +31,8 @@
         <activity android:name=".ListRequested" />
         <activity android:name=".EditContactInfoActivity" />
         <activity android:name=".ViewContactInfoActivity" />
+        <activity android:name=".ScanBarcodeActivity"/>
+        <activity android:name=".AcceptRequestActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
