@@ -133,11 +133,11 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
                                     doc.getReference().set(acc, SetOptions.merge());
                                     doc.getReference().set(acc2, SetOptions.merge());
                                     doc.getReference().set(acc3, SetOptions.merge());
+                                    Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     doc.getReference().set(dec, SetOptions.merge());
                                 }
                             }
-                            Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }
