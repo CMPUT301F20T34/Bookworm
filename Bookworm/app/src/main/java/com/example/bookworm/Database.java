@@ -551,19 +551,6 @@ public class Database {
             .get();
     }
 
-    /**
-     * Get all requests on a given book (determined by isbn)
-     * @param isbn The isbn of the book to get the requests
-     * @return a Task representing the result of the query
-     */
-    static Task<QuerySnapshot> getAcceptedRequestsForBook(String isbn) {
-        return libraryCollection.document(libraryName)
-                .collection(requestName)
-                .whereEqualTo("book.isbn", isbn)
-                .whereEqualTo("status", "accepted")
-                .get();
-    }
-
     static Task<QuerySnapshot> declineRequest(String username, String isbn) {
         return libraryCollection.document(libraryName)
             .collection(requestName)
