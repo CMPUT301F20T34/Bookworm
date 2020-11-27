@@ -21,13 +21,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -36,7 +41,9 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
     private TextView location;
     private Button confirm;
     private LatLng handover;
-    private Book book;
+    private String username;
+    private String isbn;
+    private Request selectedRequest;
     private Context context = this;
     public double x;
     public double y;
@@ -52,27 +59,9 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
 
         location = findViewById(R.id.location_info);
         confirm = findViewById(R.id.location_confirm);
-//        Intent intent = getIntent();
-//        String bookTitle = intent.getStringExtra("title");
-//        Task<QuerySnapshot> searchTask;
-//        searchTask = Database.searchBooks(bookTitle);
-//        searchTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @RequiresApi(api = Build.VERSION_CODES.O)
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-//                    book = doc.toObject(Book.class);
-//                }
-//            }
-//        })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(context,
-//                                "Error: " + e.getMessage(),
-//                                Toast.LENGTH_LONG).show();
-//                    }
-//                });
+        Intent intent = getIntent();
+        username = intent.getStringExtra("username");
+        isbn = intent.getStringExtra("isbn");
     }
 
     /**
@@ -119,10 +108,36 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
      * Confirm the handover location
      * @param view          the Confirm button
      */
-    public void ConfirmLoc(View view) {
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_LOCATION, handover);
-        setResult(1, intent);
-        finish();
+    public void confirmLoc(View view) {
+        Database.getRequestsForBook(isbn)
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String id = isbn + "-" + username;
+                            Map<String, Object> acc = new HashMap<>();
+                            Map<String, Object> dec = new HashMap<>();
+                            Map<String, Object> acc2 = new HashMap<>();
+                            acc.put("status", "accepted");
+                            acc2.put("location", handover);
+                            dec.put("status", "declined");
+                            /* Iterate over the documents, accepting if the
+                             * username is correct and deleting the request
+                             * is not correct */
+                            for (DocumentSnapshot doc : task.getResult()) {
+                                if (doc.getId().equals(id)) {
+                                    doc.getReference().set(acc, SetOptions.merge());
+                                    doc.getReference().set(acc2, SetOptions.merge());
+                                } else {
+                                    doc.getReference().set(dec, SetOptions.merge());
+                                }
+                            }
+                            Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                });
     }
 }
