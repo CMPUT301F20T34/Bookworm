@@ -35,10 +35,12 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".BorrowerMapActivity"
+            android:label="@string/title_activity_borrower_map"></activity>
+        <activity
             android:name=".OwnerMapActivity"
-            android:label="@string/title_activity_owner_map"></activity>
-
-        <activity android:name=".AcceptDeclineRequestActivity"></activity>
+            android:label="@string/title_activity_owner_map" />
+        <activity android:name=".AcceptDeclineRequestActivity" />
         <activity android:name=".ViewRequestsActivity" />
         <activity android:name=".ViewBookActivity" />
         <activity android:name=".SearchResultsActivity" />

@@ -4,7 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.google.type.LatLng;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
