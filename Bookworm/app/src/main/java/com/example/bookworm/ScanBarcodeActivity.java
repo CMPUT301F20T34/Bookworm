@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.zxing.client.android.Intents;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -28,6 +29,23 @@ import java.util.List;
 
 /**
  * Handles the barcode scanning for owners and borrowers that want to handover/retrieve books.
+ *
+ * Scanning is done using https://github.com/journeyapps/zxing-android-embedded
+ * Used under the following license:
+ *
+ * Copyright (C) 2012-2018 ZXing authors, Journey Mobile
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 public class ScanBarcodeActivity extends AppCompatActivity {
 
@@ -36,6 +54,7 @@ public class ScanBarcodeActivity extends AppCompatActivity {
     private Button retrieveButton;
     private Button borrowButton;
     private Button returnButton;
+    private Button viewButton;
     private static int SCAN_MODE_CODE;
     private static boolean TEST_MODE;
     private static String TEST_ISBN;
@@ -115,6 +134,20 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                     processReturn(TEST_ISBN, TEST_USERNAME);
                 }else {
                     SCAN_MODE_CODE = 4;
+                    new IntentIntegrator(ScanBarcodeActivity.this).initiateScan();
+                }
+            }
+        });
+
+        //Starts the scan for viewing the info of a book
+        viewButton = findViewById(R.id.view_button);
+        viewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(TEST_MODE){
+                    processView(TEST_ISBN);
+                }else {
+                    SCAN_MODE_CODE = 5;
                     new IntentIntegrator(ScanBarcodeActivity.this).initiateScan();
                 }
             }
@@ -295,6 +328,44 @@ public class ScanBarcodeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Gets the book scanned and shows the information on that book
+     * @param isbn the isbn of the scanned book
+     */
+    protected void processView(String isbn){
+        Log.d(TAG, "Viewing book.");
+        Database.queryCollection("books", new String[]{"isbn"}, new String[]{isbn})
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.getDocuments().size() == 0){
+                            //If no book is found with the scanned isbn
+                            Toast.makeText(ScanBarcodeActivity.this, "Error: Book is not in the system", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            //If the book is found
+                            Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
+                            Intent intent = new Intent(ScanBarcodeActivity.this, ViewBookActivity.class);
+                            intent.putExtra("title", scannedBook.getTitle());
+                            intent.putExtra("author", scannedBook.getAuthor());
+                            intent.putExtra("owner", scannedBook.getOwner());
+                            intent.putExtra("status", scannedBook.getStatus());
+                            intent.putExtra("description", scannedBook.descriptionAsString());
+                            intent.putExtra("isbn", scannedBook.getIsbn());
+                            startActivity(intent);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(ScanBarcodeActivity.this, "Error: Issue with database query, try again.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+    }
+
 
     /**
      * Gets the results of a scan and uses the data depending on what mode has been chosen
@@ -323,13 +394,13 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                                     processHandOver(isbn, currentUsername);
                                 } else if (SCAN_MODE_CODE == 2){
                                     processRetrieve(isbn, currentUsername);
-
                                 } else if (SCAN_MODE_CODE == 3){
                                     processBorrow(isbn, currentUsername);
                                 } else if (SCAN_MODE_CODE == 4){
                                     processReturn(isbn, currentUsername);
-                                }
-                                else{
+                                } else if (SCAN_MODE_CODE == 5){
+                                    processView(isbn);
+                                } else {
                                     Log.d(TAG, "No matching code");
                                 }
                                 SCAN_MODE_CODE = -1;    //Set the scan code back to default
