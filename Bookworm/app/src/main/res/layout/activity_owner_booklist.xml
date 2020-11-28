@@ -8,11 +8,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="410dp"
-        android:layout_height="505dp"
-        app:layout_constraintBottom_toTopOf="@+id/radio_group"
+        android:layout_width="411dp"
+        android:layout_height="481dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -35,50 +35,96 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.5" />
 
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="65dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="1dp"
+        android:text="Default"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/radio_group"
+        app:layout_constraintStart_toStartOf="@+id/radio_group" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="65dp"
+        android:layout_height="20dp"
+        android:text="Available"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="65dp"
+        android:layout_height="20dp"
+        android:text="Requested"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="65dp"
+        android:layout_height="20dp"
+        android:text="Accepted"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView10"
+        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintTop_toTopOf="@+id/textView10" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="65dp"
+        android:layout_height="20dp"
+        android:text="Borrowed"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView11"
+        app:layout_constraintEnd_toEndOf="@+id/radio_group"
+        app:layout_constraintStart_toEndOf="@+id/textView11"
+        app:layout_constraintTop_toTopOf="@+id/textView11" />
+
     <RadioGroup
         android:id="@+id/radio_group"
-        android:layout_width="410dp"
-        android:layout_height="46dp"
+        android:layout_width="320dp"
+        android:layout_height="45dp"
         android:orientation='horizontal'
         app:layout_constraintBottom_toTopOf="@+id/scan_to_search_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent">
 
 
         <RadioButton
             android:id="@+id/radio_default"
-            android:layout_width="81dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:text="default"
+            android:layout_width="65dp"
+            android:layout_height="match_parent"
             android:textSize="8sp" />
 
         <RadioButton
             android:id="@+id/radio_available"
-            android:layout_width="79dp"
+            android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:text="available"
             android:textSize="8sp" />
 
         <RadioButton
             android:id="@+id/radio_requested"
-            android:layout_width="87dp"
+            android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:text="requested"
             android:textSize="8sp" />
 
         <RadioButton
             android:id="@+id/radio_accepted"
-            android:layout_width="83dp"
+            android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:text="accepted"
             android:textSize="8sp" />
 
         <RadioButton
             android:id="@+id/radio_borrowed"
-            android:layout_width="84dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="borrowed"
             android:textSize="8sp" />
     </RadioGroup>
 

@@ -113,4 +113,12 @@ public class OwnerBookListTest {
         // The booklist should now be empty
         solo.assertCurrentActivity("Wrong Activity", OwnerBooklistActivity.class);
     }
+
+    /*
+      The tests related to the book photo is not addressed.
+      In order to add photo to the book, the app needs to jump to gallery to select photo,
+      where Robotium is not able to select the photo outside the program.
+      Besides, inserting photo manually does not work since photo URI is untraceable.
+      Therefore the tests for book photo is not able to be generated and executed.
+     */
 }

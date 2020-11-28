@@ -1,6 +1,7 @@
 package com.example.bookworm;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -120,6 +121,10 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                     }
                 }
             });
+        Intent intent = new Intent(context, OwnerMapActivity.class);
+        intent.putExtra("isbn", isbn);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 
     /**

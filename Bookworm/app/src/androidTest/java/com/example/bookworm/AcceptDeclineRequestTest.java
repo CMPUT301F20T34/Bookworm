@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class AcceptDeclineRequestTest {
@@ -114,6 +115,7 @@ public class AcceptDeclineRequestTest {
 
         // Ensure all requests are no longer available (accepted or declined
         assertEquals(views, solo.getCurrentViews().size() - 2);
+        assertEquals(views, solo.getCurrentViews().size());
     }
 
     /**
