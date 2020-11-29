@@ -125,20 +125,13 @@ public class ScanBarcodeActivityTest {
      */
     @Test
     public void testScanForBorrow() {
-<<<<<<< HEAD
-        String testUsername = "HarrisonBorrower";
-        Activity activity = rule.getActivity();
-        Intent intent = new Intent(activity.getApplicationContext(), ScanBarcodeActivity.class);
-        intent.putExtra("test", true);
-        intent.putExtra("test_isbn", "1234567");
-=======
+
         String testISBN = "987654321";
         String testUsername = "danielscantest";
         Activity activity = rule.getActivity();
         Intent intent = new Intent(activity.getApplicationContext(), ScanBarcodeActivity.class);
         intent.putExtra("test", true);
         intent.putExtra("test_isbn", testISBN);
->>>>>>> c24f87139f1519d3a01788cbd499182809fe2332
         intent.putExtra("test_username", testUsername);
         activity.startActivity(intent);
 
@@ -146,9 +139,7 @@ public class ScanBarcodeActivityTest {
 
         solo.clickOnView(solo.getView(R.id.borrow_button));
 
-<<<<<<< HEAD
         // Check database for correctness
-=======
         Database.queryCollection("requests", new String[]{"book.isbn", "creator.username"}, new String[]{testISBN, testUsername})
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -156,7 +147,6 @@ public class ScanBarcodeActivityTest {
                         assertTrue(queryDocumentSnapshots.getDocuments().size() > 0);
                     }
                 });
->>>>>>> c24f87139f1519d3a01788cbd499182809fe2332
     }
 
     /**
