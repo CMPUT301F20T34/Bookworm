@@ -58,7 +58,6 @@ public class OwnerMapTest {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
 
-
     /**
      * Tests the functionality of the owner map
      * @throws InterruptedException Sleeping thread is interrupted

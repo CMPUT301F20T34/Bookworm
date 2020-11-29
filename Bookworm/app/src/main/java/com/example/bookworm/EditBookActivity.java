@@ -169,8 +169,12 @@ public class EditBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ViewContactInfoActivity.class);
-                intent.putExtra("username", selectedBook.getBorrower());
-                startActivity(intent);
+                if (selectedBook.getBorrower() != null) {
+                    intent.putExtra("username", selectedBook.getBorrower());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(EditBookActivity.this, "This book is not currently borrowed by anyone.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
