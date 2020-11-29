@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,6 +20,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import static java.lang.Math.round;
+
 /**
  * Display the meeting location for an accepted request
  */
@@ -27,6 +30,7 @@ public class BorrowerMapActivity extends FragmentActivity implements OnMapReadyC
     private GoogleMap mMap;
     private String selectedBookIsbn;
     private Request selectedRequest;
+    private TextView locationInfoText;
     private Context context = this;
 
     @Override
@@ -37,7 +41,7 @@ public class BorrowerMapActivity extends FragmentActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        locationInfoText = findViewById(R.id.location_info);
         Intent intent = getIntent();
         selectedBookIsbn = intent.getStringExtra("isbn");
 
@@ -52,11 +56,16 @@ public class BorrowerMapActivity extends FragmentActivity implements OnMapReadyC
                             Request request = doc.toObject(Request.class);
                             if (request.getBook().getIsbn().equals(selectedBookIsbn)) {
                                 selectedRequest = request;
-                                LatLng location = new LatLng(selectedRequest.getLat(),
-                                        selectedRequest.getLng());
+                                double lat = selectedRequest.getLat();
+                                double lng = selectedRequest.getLng();
+                                LatLng location = new LatLng(lat, lng);
                                 mMap.addMarker(new MarkerOptions()
                                         .position(location).title("Meeting location"));
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                                String displayLat = (new Double(round(lat*100)/100.0).toString());
+                                String displayLng = (new Double(round(lng*100)/100.0).toString());
+                                locationInfoText.setText("Latitude: " + displayLat
+                                        + " | longitude: " + displayLng);
                                 Toast.makeText(context,
                                         "Here is the meeting location.",
                                         Toast.LENGTH_LONG).show();

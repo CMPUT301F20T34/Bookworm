@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         // to the signup screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
+        }else{
+            // Update the registration token
+            Database.updateUserRegistrationToken();
         }
-
-        // Update the registration token
-        Database.updateUserRegistrationToken();
 
         // Create listeners for the buttons
         myBooklistButton = findViewById(R.id.booklist_button);
