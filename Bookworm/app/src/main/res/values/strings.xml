@@ -29,4 +29,6 @@
     <string name="list_of_requested_books">List of requested books</string>
     <string name="list_of_accepted_books">list of accepted books</string>
     <string name="add_new_book">Add new book</string>
+    <string name="title_activity_owner_map">Map</string>
+    <string name="title_activity_borrower_map">Map</string>
 </resources>

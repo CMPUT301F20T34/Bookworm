@@ -24,15 +24,14 @@ public class BorrowerMainActivityTest {
         return new Book("Title", "author", "description", "isbn", "available");
     }
     private User mockUser() {
-        //the mockUser use the same email address with the user used for tests
-        return new User("peisong", "12345678", "peisong@ualberta.ca", "88888888");
+        return new User("somebody@ualberta.ca");
     }
     private Request mockRequest() {
         return new Request(mockBook(), mockUser(), "Status");
     }
     private Request mockAcceptedRequest() {
-        //return a request with status "Accepted"
-        return new Request(mockBook(), mockUser(), "Accepted");
+        //return a request with status "accepted"
+        return new Request(mockBook(), mockUser(), "accepted");
     }
 
     @Rule
@@ -63,6 +62,7 @@ public class BorrowerMainActivityTest {
     @Test
     public void testGetMethods() throws InterruptedException{
         Book book = mockBook();
+        mockUser().setUsername(fAuth.getCurrentUser().getDisplayName());
         book.setBorrowerId(fAuth.getCurrentUser().getUid());
         Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0) {
@@ -105,7 +105,7 @@ public class BorrowerMainActivityTest {
                             //convert the QuerySnapshot to the book object
                             Request request = doc.toObject(Request.class);
                             //check if the status of the book is "Accepted"
-                            assertEquals(request.getStatus(),"Accepted");
+                            assertEquals(request.getStatus(),"accepted");
                         }
                     }
                 });
@@ -119,6 +119,7 @@ public class BorrowerMainActivityTest {
     public void testBorrowing() throws InterruptedException {
         //add a book to the database and set its borrowerId to the current user's ID
         Book book = mockBook();
+        mockUser().setUsername(fAuth.getCurrentUser().getDisplayName());
         book.setBorrowerId(fAuth.getCurrentUser().getUid());
         Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0) {
@@ -141,6 +142,7 @@ public class BorrowerMainActivityTest {
      */
     @Test
     public void testRequested() throws InterruptedException {
+        mockUser().setUsername(fAuth.getCurrentUser().getDisplayName());
         //create a request, and its creator-email is equal to the current user's email
         Request request = mockRequest();
         //add it to the database
@@ -163,7 +165,8 @@ public class BorrowerMainActivityTest {
      */
     @Test
     public void testAccepted() throws InterruptedException {
-        //create a request with status "Accepted"
+        mockUser().setUsername(fAuth.getCurrentUser().getDisplayName());
+        //create a request with status "accepted"
         Request request = mockAcceptedRequest();
         Database.createSynchronousRequest(request);
         while (Database.getListenerSignal() == 0) {

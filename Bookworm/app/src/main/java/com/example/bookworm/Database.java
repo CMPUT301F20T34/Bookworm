@@ -567,7 +567,19 @@ public class Database {
         return libraryCollection.document(libraryName)
                 .collection(requestName)
                 .whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
-                .whereEqualTo("status","Accepted")
+                .whereEqualTo("status","accepted")
+                .get();
+    }
+
+    /**
+     * Get all requests that are accepted by the currently signed-in user
+     * @return a Task representing the result of the query
+     */
+    static Task<QuerySnapshot> getAcceptedRequest() {
+        return libraryCollection.document(libraryName)
+                .collection(requestName)
+                .whereEqualTo("book.ownerId", fAuth.getCurrentUser().getUid())
+                .whereEqualTo("status","accepted")
                 .get();
     }
 

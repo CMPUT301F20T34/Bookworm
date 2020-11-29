@@ -1,7 +1,11 @@
 package com.example.bookworm;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -57,5 +61,29 @@ public class ListAccepted extends AppCompatActivity {
                         finish();
                     }
                 });
+
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                if (view != null){
+                    String isbn = ((TextView) view.findViewById(R.id.book_isbn)).getText().toString();
+                    Intent intent = new Intent(recyclerView.getContext(), BorrowerMapActivity.class);
+                    intent.putExtra("isbn", isbn);
+                    startActivity(intent);
+                }
+                return true;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
     }
 }
