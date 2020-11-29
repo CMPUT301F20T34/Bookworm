@@ -51,7 +51,7 @@ public class AcceptRequestActivity extends AppCompatActivity {
         Log.d(TAG, "Entered AcceptRequestActivity for isbn: " + isbn);
 
         //get requests on current book
-        Database.queryCollection("requests", new String[]{"book.isbn"}, new String[]{isbn})
+        Database.queryCollection("requests", new String[]{"book.isbn", "status"}, new String[]{isbn, "available"})
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
