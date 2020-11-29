@@ -18,21 +18,14 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
-        android:id="@+id/scan_to_search_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="SCAN TO SEARCH"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.5" />
-
-    <Button
-        android:id="@+id/button2"
+        android:id="@+id/add_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="ADD BOOK"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.5" />
 
     <TextView
@@ -91,7 +84,7 @@
         android:layout_width="320dp"
         android:layout_height="45dp"
         android:orientation='horizontal'
-        app:layout_constraintBottom_toTopOf="@+id/scan_to_search_button"
+        app:layout_constraintBottom_toTopOf="@+id/add_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent">

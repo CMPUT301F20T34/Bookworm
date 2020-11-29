@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button myProfileButton;
     private Button mySearchButton;
     private Button myBorrowerInfoButton;
+    private Button scanBarcodeButton;
     FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -43,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         // to the signup screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
+        }else{
+            // Update the registration token
+            Database.updateUserRegistrationToken();
         }
-
-        // Update the registration token
-        Database.updateUserRegistrationToken();
 
         // Create listeners for the buttons
         myBooklistButton = findViewById(R.id.booklist_button);
@@ -91,6 +92,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), BorrowerMainActivity.class));
             }
         });
-//        startActivity(new Intent(getApplicationContext(), BorrowerMapActivity.class));
+
+        scanBarcodeButton = findViewById(R.id.scan_button);
+        scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), ScanBarcodeActivity.class));
+            }
+
+        });
     }
 }

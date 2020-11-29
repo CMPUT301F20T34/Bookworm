@@ -41,23 +41,10 @@
         android:width="@dimen/main_action_button_width"
         android:height="@dimen/main_action_button_height"
         android:text="@string/my_booklist"
-        app:layout_constraintEnd_toStartOf="@+id/notification_button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/keywordSearchBar" />
-
-    <Button
-        android:id="@+id/notification_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:width="@dimen/main_action_button_width"
-        android:height="@dimen/main_action_button_height"
-        android:text="@string/notifications"
-        app:layout_constraintBaseline_toBaselineOf="@+id/booklist_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/booklist_button" />
 
     <Button
         android:id="@+id/borrow_info_button"
@@ -87,7 +74,7 @@
         app:layout_constraintStart_toEndOf="@+id/borrow_info_button" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/scan_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
