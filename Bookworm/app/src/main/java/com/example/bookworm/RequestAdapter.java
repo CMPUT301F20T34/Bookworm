@@ -49,8 +49,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     public class RequestViewHolder extends RecyclerView.ViewHolder{
 
         //TextView bookTitle,bookName;
-        TextView creatorName;
-        TextView timestamp;
+        private TextView creatorName;
+        private TextView timestamp;
 
         public RequestViewHolder(@NonNull View itemView) {
             super(itemView);
