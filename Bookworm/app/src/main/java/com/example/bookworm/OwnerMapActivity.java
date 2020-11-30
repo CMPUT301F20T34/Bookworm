@@ -63,7 +63,7 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
 //        Intent intent = new Intent();
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
+        // Add a marker in Edmonton and move the camera
         LatLng edmonton = new LatLng(53.52, -113.52);
         handover = edmonton;
         MarkerOptions marker = new MarkerOptions().position(edmonton).title("Book Handover Location");

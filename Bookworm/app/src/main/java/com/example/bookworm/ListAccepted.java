@@ -39,6 +39,7 @@ public class ListAccepted extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this,booklist);
         recyclerView.setAdapter(adapter);
+
         //get books with accepted requests of the current users
         Database.getAcceptedBooks()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
