@@ -19,14 +19,12 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class MainActivity extends AppCompatActivity {
 
-    Library exampleLibrary;
-    String TAG = "Sample";
     private Button myBooklistButton;
     private Button myProfileButton;
     private Button mySearchButton;
     private Button myBorrowerInfoButton;
     private Button scanBarcodeButton;
-    FirebaseAuth fAuth;
+    private FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override

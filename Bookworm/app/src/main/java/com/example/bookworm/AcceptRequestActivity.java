@@ -28,7 +28,7 @@ public class AcceptRequestActivity extends AppCompatActivity {
     private RequestAdapter adapter;
     private ArrayList<Request> requestList;
     private Context context = this;
-    String TAG = "Sample";
+    private String TAG = "Sample";
 
     /**
      * On create gets all of the requests and adds on click listeners to each of them.
