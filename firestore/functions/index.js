@@ -49,7 +49,7 @@ exports.notifyAcceptedRequest = functions.firestore.document("/Libraries/{librar
         const after = snap.after.data();
         
         // Check that status changed to accepted
-        if (before['status'] === 'available' && after['status'] === 'accepted') {
+        if (before['status'] !== 'accepted' && after['status'] === 'accepted') {
             const creator = after.creator.username;
             const owner = after.book.owner;
             const title = after.book.title;

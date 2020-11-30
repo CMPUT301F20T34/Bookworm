@@ -137,6 +137,20 @@ public class Database {
     }
 
     /**
+     * Updates the borrower of a specific book
+     * @param isbn the isbn of the book to be updated
+     * @param username the username of the new borrower
+     * @return a task containing the result of the updating.
+     */
+    static Task<Void> updateBookBorrower(final String isbn, String username) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("borrower", username);
+        return libraryCollection.document(libraryName)
+            .collection(bookName).document(isbn)
+            .set(map, SetOptions.merge());
+    }
+
+    /**
      * Synchronously allows books to be added by checking for the listener signal
      * @param book the book to add to the database.
      */
@@ -208,7 +222,10 @@ public class Database {
         CollectionReference books = libraryCollection.document(libraryName)
             .collection(bookName);
 
-        return books.whereEqualTo("title", searchTerm).get();
+        return books.
+            whereEqualTo("title", searchTerm)
+            .whereIn("status", Arrays.asList("available", "requested"))
+            .get();
     }
 
     /**
@@ -500,8 +517,18 @@ public class Database {
      * @return a task representing the eventual completion of the database access
      */
     static Task<Void> createRequest(final Request req) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", "requested");
+
+        // Label the book as requested
+        libraryCollection.document(libraryName)
+            .collection(bookName)
+            .document(req.getBook().getIsbn())
+            .set(map, SetOptions.merge());
+
         return libraryCollection.document(libraryName)
-            .collection(requestName).document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
+            .collection(requestName)
+            .document(req.getBook().getIsbn() + "-" + req.getCreator().getUsername())
             .set(req);
     }
 
@@ -596,12 +623,37 @@ public class Database {
             .get();
     }
 
+    /**
+     * Returns a specific request given username and ISBN
+     * @param username the username of the request
+     * @param isbn the isbn of the book for the request
+     * @return a task containing the query result
+     */
     static Task<QuerySnapshot> declineRequest(String username, String isbn) {
         return libraryCollection.document(libraryName)
             .collection(requestName)
             .whereEqualTo("book.isbn", isbn)
             .whereEqualTo("creator.username", username)
             .get();
+    }
+
+    /**
+     * Sets the status of a a book.
+     * @param isbn the isbn of the book
+     * @param status the new status of the book
+     */
+    static void setBookStatus(String isbn, String status) {
+        if (!Arrays.asList("available", "requested", "borrowed", "accepted").contains(status)) {
+            throw new IllegalArgumentException();
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+
+        // Label the book as requested
+        libraryCollection.document(libraryName)
+            .collection(bookName)
+            .document(isbn)
+            .set(map, SetOptions.merge());
     }
 
     /**
