@@ -108,40 +108,7 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
      * Confirm the handover location
      * @param view          the Confirm button
      */
-    public void confirmLoc(View view) {
-        Database.getRequestsForBook(isbn)
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            String id = isbn + "-" + username;
-                            Map<String, Object> acc = new HashMap<>();
-                            Map<String, Object> dec = new HashMap<>();
-                            Map<String, Object> acc2 = new HashMap<>();
-                            Map<String, Object> acc3 = new HashMap<>();
-                            acc.put("status", "accepted");
-                            acc2.put("lat", handover.latitude);
-                            acc3.put("lng", handover.longitude);
-                            dec.put("status", "declined");
-                            /* Iterate over the documents, accepting if the
-                             * username is correct and deleting the request
-                             * is not correct */
-                            for (DocumentSnapshot doc : task.getResult()) {
-                                if (doc.getId().equals(id)) {
-                                    doc.getReference().set(acc, SetOptions.merge());
-                                    doc.getReference().set(acc2, SetOptions.merge());
-                                    doc.getReference().set(acc3, SetOptions.merge());
-                                    Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    doc.getReference().set(dec, SetOptions.merge());
-                                }
-                            }
-                            Database.setBookStatus(isbn, "accepted");
-                            finish();
-                        }
-                    }
-                });
+    public void goBack(View view) {
+        finish();
     }
 }

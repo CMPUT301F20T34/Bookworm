@@ -137,6 +137,20 @@ public class Database {
     }
 
     /**
+     * Updates the borrower of a specific book
+     * @param isbn the isbn of the book to be updated
+     * @param username the username of the new borrower
+     * @return a task containing the result of the updating.
+     */
+    static Task<Void> updateBookBorrower(final String isbn, String username) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("borrower", username);
+        return libraryCollection.document(libraryName)
+            .collection(bookName).document(isbn)
+            .set(map, SetOptions.merge());
+    }
+
+    /**
      * Synchronously allows books to be added by checking for the listener signal
      * @param book the book to add to the database.
      */

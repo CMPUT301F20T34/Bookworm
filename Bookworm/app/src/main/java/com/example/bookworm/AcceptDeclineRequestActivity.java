@@ -24,6 +24,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AcceptDeclineRequestActivity extends AppCompatActivity {
 
@@ -43,7 +44,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_accept_decline_request);
 
         fAuth = FirebaseAuth.getInstance();
-
+        System.out.println("Here");
         if (getIntent().getExtras() != null) {
             username = getIntent().getStringExtra("username");
             isbn = getIntent().getStringExtra("isbn");
@@ -75,7 +76,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
             Database.getProfilePhoto(username).addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
-                    Glide.with(context).load(uri).into(userImage);
+                    Glide.with(getApplicationContext()).load(uri).into(userImage);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -91,36 +92,45 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
      * @param view the button that was clicked on.
      */
     public void acceptRequest(View view) {
+        AtomicBoolean success = new AtomicBoolean(false);
         Database.getRequestsForBook(isbn)
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        String id = isbn + "-" + username;
-                        Map<String, Object> acc = new HashMap<>();
-                        Map<String, Object> dec = new HashMap<>();
-                        acc.put("status", "accepted");
-                        dec.put("status", "declined");
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
+                } else {
+                    String id = isbn + "-" + username;
+                    Map<String, Object> acc = new HashMap<>();
+                    Map<String, Object> dec = new HashMap<>();
+                    acc.put("status", "accepted");
+                    dec.put("status", "declined");
 
-                        /* Iterate over the documents, accepting if the
-                         * username is correct and deleting the request
-                         * is not correct */
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            if (doc.getId().equals(id)) {
-                                doc.getReference().set(acc, SetOptions.merge());
-                            } else {
-                                doc.getReference().set(dec, SetOptions.merge());
-                            }
+                    /* Iterate over the documents, accepting if the
+                     * username is correct and deleting the request
+                     * is not correct */
+                    for (DocumentSnapshot doc : task.getResult()) {
+                        if (doc.getId().equals(id)) {
+
+                            // Attempt to update the borrower of the book
+                            Database.updateBookBorrower(isbn, username).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    doc.getReference().set(acc, SetOptions.merge());
+                                    success.set(true);
+                                    Toast.makeText(AcceptDeclineRequestActivity.this,
+                                        "Successfully accepted request",
+                                        Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            doc.getReference().set(dec, SetOptions.merge());
                         }
                     }
                 }
             });
-        Intent intent = new Intent(context, OwnerMapActivity.class);
-        intent.putExtra("isbn", isbn);
-        intent.putExtra("username", username);
-        startActivity(intent);
+
+        // If we successfully accepted the request, finish the activity
+        if (success.get()) {
+            finish();
+        }
     }
 
     /**
@@ -149,11 +159,13 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
     }
 
     /**
-     * Runs when the program flow returns from a child activity.
+     * Goes to the activity which displays the location of the user.
+     * @param view the view that was clicked on.
      */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        finish();
+    public void viewRequestLocation(View view) {
+        Intent intent = new Intent(context, OwnerMapActivity.class);
+        intent.putExtra("isbn", isbn);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 }
