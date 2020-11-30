@@ -132,7 +132,7 @@ public class AcceptDeclineRequestTest {
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();
     }
-    
+
     /**
      * Handles all actions related to viewing and clicking on
      * the request previously made.

@@ -186,7 +186,7 @@ public class Book implements Serializable {
 
     /**
      * Gets the current borrower's user ID on the book
-     * @return
+     * @return the borrower's id
      */
     public String getBorrowerId() {
         return borrowerId;
