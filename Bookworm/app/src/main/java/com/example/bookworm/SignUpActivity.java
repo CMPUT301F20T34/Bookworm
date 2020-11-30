@@ -24,14 +24,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 public class SignUpActivity extends AppCompatActivity {
     public static final String TAG = "TAG";
-    EditText usernameField;
-    EditText password1Field;
-    EditText password2Field;
-    EditText emailField;
-    EditText phoneNumberField;
-    FirebaseAuth fAuth;
-    Button register;
-    FirebaseFirestore fStore;
+    private EditText usernameField;
+    private EditText password1Field;
+    private EditText password2Field;
+    private EditText emailField;
+    private EditText phoneNumberField;
+    private FirebaseAuth fAuth;
+    private Button register;
+    private FirebaseFirestore fStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -49,7 +49,7 @@ import java.util.List;
  */
 public class ScanBarcodeActivity extends AppCompatActivity {
 
-    String TAG = "Sample";
+    private String TAG = "Sample";
     private Button handoverButton;
     private Button retrieveButton;
     private Button borrowButton;
@@ -59,7 +59,7 @@ public class ScanBarcodeActivity extends AppCompatActivity {
     private static boolean TEST_MODE;
     private static String TEST_ISBN;
     private static String TEST_USERNAME;
-    FirebaseAuth fAuth;
+    private FirebaseAuth fAuth;
 
     /**
      * On creation of activity all buttons are linked to their actions and codes

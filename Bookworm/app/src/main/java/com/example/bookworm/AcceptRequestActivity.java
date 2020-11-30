@@ -3,9 +3,7 @@ package com.example.bookworm;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,7 +26,7 @@ public class AcceptRequestActivity extends AppCompatActivity {
     private RequestAdapter adapter;
     private ArrayList<Request> requestList;
     private Context context = this;
-    String TAG = "Sample";
+    private String TAG = "Sample";
 
     /**
      * On create gets all of the requests and adds on click listeners to each of them.

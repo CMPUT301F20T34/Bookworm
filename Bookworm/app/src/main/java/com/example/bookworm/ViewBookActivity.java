@@ -27,21 +27,21 @@ import com.google.firebase.firestore.DocumentSnapshot;
  * they are looking at.
  */
 public class ViewBookActivity extends AppCompatActivity {
-    String title;
-    String author;
-    String owner;
-    String status;
-    String description;
-    String isbn;
-    Bitmap photograph;
-    TextView titleView;
-    TextView authorView;
-    TextView ownerView;
-    TextView descriptionView;
-    TextView statusView;
-    ImageView photoView;
-    Button requestButton;
-    final Context context = this;
+    private String title;
+    private String author;
+    private String owner;
+    private String status;
+    private String description;
+    private String isbn;
+    private Bitmap photograph;
+    private TextView titleView;
+    private TextView authorView;
+    private TextView ownerView;
+    private TextView descriptionView;
+    private TextView statusView;
+    private ImageView photoView;
+    private Button requestButton;
+    final private Context context = this;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")

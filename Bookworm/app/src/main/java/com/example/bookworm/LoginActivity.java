@@ -22,10 +22,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
  * using their credentials
  */
 public class LoginActivity extends AppCompatActivity {
-    EditText usernameField;
-    EditText passwordField;
-    FirebaseAuth fAuth;
-    Button login;
+    private EditText usernameField;
+    private EditText passwordField;
+    private FirebaseAuth fAuth;
+    private Button login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

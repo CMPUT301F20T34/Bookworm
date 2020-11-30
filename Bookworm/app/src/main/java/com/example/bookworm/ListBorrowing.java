@@ -24,6 +24,7 @@ public class ListBorrowing extends AppCompatActivity {
     private Adapter adapter;
     private ArrayList<Book> booklist;
     private Context context = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

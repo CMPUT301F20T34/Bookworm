@@ -18,7 +18,6 @@ import com.google.firebase.auth.FirebaseAuth;
  * other than signing-in or registering an account.
  */
 public class MainActivity extends AppCompatActivity {
-
     private String TAG = "Sample";
     private Button myBooklistButton;
     private Button myProfileButton;
