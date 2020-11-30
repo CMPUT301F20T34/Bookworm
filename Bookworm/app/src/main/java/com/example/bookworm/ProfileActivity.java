@@ -28,13 +28,13 @@ import java.util.Map;
  * Shows the profile of the current user in a static form.
  */
 public class ProfileActivity extends AppCompatActivity {
-    FirebaseUser fUser;
-    String authEmail;
-    Context context = this;
-    TextView phoneNumber;
-    TextView email;
-    TextView username;
-    ImageView profilePhoto;
+    private FirebaseUser fUser;
+    private String authEmail;
+    private Context context = this;
+    private TextView phoneNumber;
+    private TextView email;
+    private TextView username;
+    private ImageView profilePhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -22,9 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
  * Handles all functionality of activity_view_contact_info
  */
 public class ViewContactInfoActivity extends AppCompatActivity {
-
     private FirebaseAuth fAuth;
-
     private TextView usernameView;
     private TextView phoneView;
     private TextView emailView;

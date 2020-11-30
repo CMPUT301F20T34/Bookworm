@@ -35,9 +35,13 @@ public class OwnerBooklistActivity extends AppCompatActivity {
     private BooklistAdapter bookListAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private Context context = this;
-    Button addBookButton;
-    RadioGroup radioGroup;
-    RadioButton availableBtn, requestedBtn, acceptedBtn, borrowedBtn, defaultBtn;
+    private Button addBookButton;
+    private RadioGroup radioGroup;
+    private RadioButton availableBtn;
+    private RadioButton requestedBtn;
+    private RadioButton acceptedBtn;
+    private RadioButton borrowedBtn;
+    private RadioButton defaultBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

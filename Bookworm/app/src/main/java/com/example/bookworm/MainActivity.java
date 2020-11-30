@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * other than signing-in or registering an account.
  */
 public class MainActivity extends AppCompatActivity {
-
+    private String TAG = "Sample";
     private Button myBooklistButton;
     private Button myProfileButton;
     private Button mySearchButton;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         // to the signup screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
-        }else{
+        } else {
             // Update the registration token
             Database.updateUserRegistrationToken();
         }
