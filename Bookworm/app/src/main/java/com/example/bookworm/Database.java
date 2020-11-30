@@ -570,7 +570,7 @@ public class Database {
      */
     static Task<QuerySnapshot> getRequestedBooks() {
         return libraryCollection.document(libraryName)
-            .collection(requestName).whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail())
+            .collection(requestName).whereEqualTo("creator.email", fAuth.getCurrentUser().getEmail()).whereEqualTo("status", "available")
             .get();
     }
 

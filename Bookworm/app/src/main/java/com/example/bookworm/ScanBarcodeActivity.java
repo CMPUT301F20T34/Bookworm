@@ -259,6 +259,8 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                                                     //If a book is found then mark it as borrowed and set the current user as the borrower
                                                     Book scannedBook = queryDocumentSnapshots.getDocuments().get(0).toObject(Book.class);
                                                     scannedBook.setStatus("borrowed");
+                                                    Log.d(TAG, "currentID: " + fAuth.getCurrentUser().getUid());
+                                                    scannedBook.setBorrowerId(fAuth.getCurrentUser().getUid());
                                                     scannedBook.setBorrower(currentUsername);
                                                     Database.writeBook(scannedBook);
                                                     Toast.makeText(ScanBarcodeActivity.this, scannedBook.getTitle() + " has been added to your collection.", Toast.LENGTH_LONG).show();
@@ -312,6 +314,7 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                             else{
                                 //If the current user is borrowing the book then remove them as the borrower
                                 scannedBook.setBorrower(null);
+                                scannedBook.setBorrowerId(null);
                                 Database.writeBook(scannedBook);
                                 Toast.makeText(ScanBarcodeActivity.this, scannedBook.getTitle() + " has been returned.", Toast.LENGTH_LONG).show();
                             }
