@@ -52,6 +52,8 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-storage'
 
+    implementation 'com.google.android.gms:play-services-maps:6.5.87'
+
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'

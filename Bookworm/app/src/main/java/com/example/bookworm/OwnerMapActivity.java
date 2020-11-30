@@ -45,8 +45,8 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
     private String isbn;
     private Request selectedRequest;
     private Context context = this;
-    public double x;
-    public double y;
+    private double x;
+    private double y;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
