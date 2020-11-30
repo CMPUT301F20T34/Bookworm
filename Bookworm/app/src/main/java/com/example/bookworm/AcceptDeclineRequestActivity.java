@@ -24,7 +24,6 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AcceptDeclineRequestActivity extends AppCompatActivity {
 
@@ -88,49 +87,14 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
     }
 
     /**
-     * Accepts the request when correct button is clicked
+     * Redirects to OwnerMapActivity in order to select a location
      * @param view the button that was clicked on.
      */
-    public void acceptRequest(View view) {
-        AtomicBoolean success = new AtomicBoolean(false);
-        Database.getRequestsForBook(isbn)
-            .addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT).show();
-                } else {
-                    String id = isbn + "-" + username;
-                    Map<String, Object> acc = new HashMap<>();
-                    Map<String, Object> dec = new HashMap<>();
-                    acc.put("status", "accepted");
-                    dec.put("status", "declined");
-
-                    /* Iterate over the documents, accepting if the
-                     * username is correct and deleting the request
-                     * is not correct */
-                    for (DocumentSnapshot doc : task.getResult()) {
-                        if (doc.getId().equals(id)) {
-
-                            // Attempt to update the borrower of the book
-                            Database.updateBookBorrower(isbn, username).addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    doc.getReference().set(acc, SetOptions.merge());
-                                    success.set(true);
-                                    Toast.makeText(AcceptDeclineRequestActivity.this,
-                                        "Successfully accepted request",
-                                        Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            doc.getReference().set(dec, SetOptions.merge());
-                        }
-                    }
-                }
-            });
-
-        // If we successfully accepted the request, finish the activity
-        if (success.get()) {
-            finish();
-        }
+    public void selectLocation(View view) {
+        Intent intent = new Intent(context, OwnerMapActivity.class);
+        intent.putExtra("isbn", isbn);
+        intent.putExtra("username", username);
+        startActivityForResult(intent, 1);
     }
 
     /**
@@ -159,13 +123,59 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
     }
 
     /**
-     * Goes to the activity which displays the location of the user.
-     * @param view the view that was clicked on.
+     * Runs when we return from OwnerMapActivity. If the user selected a location, then
+     * we write the request to the database. Otherwise, we do nothing.
+     * @param requestCode the request code for the intent.
+     * @param resultCode the result of the intent
+     * @param data any data that has been passed back through the result.
      */
-    public void viewRequestLocation(View view) {
-        Intent intent = new Intent(context, OwnerMapActivity.class);
-        intent.putExtra("isbn", isbn);
-        intent.putExtra("username", username);
-        startActivity(intent);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        Toast t = Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT);
+
+        if (!(requestCode == 1 && resultCode == RESULT_OK)) {
+            t.show();
+        } else {
+            Database.getRequestsForBook(isbn)
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        t.show();
+                    } else {
+                        String id = isbn + "-" + username;
+                        Map<String, Object> acc = new HashMap<>();
+                        Map<String, Object> dec = new HashMap<>();
+                        Map<String, Object> acc2 = new HashMap<>();
+                        Map<String, Object> acc3 = new HashMap<>();
+                        acc.put("status", "accepted");
+                        acc2.put("lat", data.getDoubleExtra("latitude", -1));
+                        acc3.put("lng", data.getDoubleExtra("longitude", -1));
+                        dec.put("status", "declined");
+
+                        /* Iterate over the documents, accepting if the
+                         * username is correct and deleting the request
+                         * is not correct */
+                        for (DocumentSnapshot doc : task.getResult()) {
+                            if (doc.getId().equals(id)) {
+
+                                // Attempt to update the borrower of the book
+                                Database.updateBookBorrower(isbn, username).addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        doc.getReference().set(acc, SetOptions.merge());
+                                        doc.getReference().set(acc2, SetOptions.merge());
+                                        doc.getReference().set(acc3, SetOptions.merge());
+                                        Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                doc.getReference().set(dec, SetOptions.merge());
+                            }
+                        }
+                        Database.setBookStatus(isbn, "accepted");
+                        finish();
+                    }
+                });
+        }
     }
 }

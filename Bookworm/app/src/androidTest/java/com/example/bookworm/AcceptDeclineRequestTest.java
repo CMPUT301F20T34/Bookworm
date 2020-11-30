@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -79,7 +78,7 @@ public class AcceptDeclineRequestTest {
     }
 
     /**
-     * Tests that declining the request
+     * Tests that declining the request removes it from the database
      */
     @Test
     public void testDeclineRequest() {
@@ -96,9 +95,13 @@ public class AcceptDeclineRequestTest {
         solo.assertCurrentActivity("Wrong Activity", ViewRequestsActivity.class);
 
         // Ensure the request is no longer there
-        assertEquals(solo.getCurrentViews().size(),  views + 2);
+        assertNotEquals(solo.getCurrentViews().size(),  views);
+        Database.setBookStatus("12315649864", "available");
     }
 
+    /**
+     * Tests that accepting a request causes all other requests to be declined
+     */
     @Test
     public void testAcceptRequest() {
         login("pahasa1", "abcdefg");
@@ -111,11 +114,13 @@ public class AcceptDeclineRequestTest {
 
         // Click on the decline button, automatically return
         solo.clickOnView(solo.getView(R.id.accept_decline_request_accept_button));
+        solo.assertCurrentActivity("Wrong Activity", OwnerMapActivity.class);
+        solo.clickOnView(solo.getView(R.id.location_confirm));
         solo.assertCurrentActivity("Wrong Activity", ViewRequestsActivity.class);
 
-        // Ensure all requests are no longer available (accepted or declined
-        assertEquals(views, solo.getCurrentViews().size() - 2);
-        assertEquals(views, solo.getCurrentViews().size());
+        // Ensure all requests are no longer available (accepted or declined)
+        assertNotEquals(views, solo.getCurrentViews().size());
+        Database.setBookStatus("12315649864", "available");
     }
 
     /**
@@ -127,9 +132,7 @@ public class AcceptDeclineRequestTest {
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();
     }
-
-
-
+    
     /**
      * Handles all actions related to viewing and clicking on
      * the request previously made.

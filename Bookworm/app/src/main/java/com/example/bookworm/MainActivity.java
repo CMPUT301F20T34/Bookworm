@@ -19,14 +19,13 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class MainActivity extends AppCompatActivity {
 
-    Library exampleLibrary;
-    String TAG = "Sample";
+    private String TAG = "Sample";
     private Button myBooklistButton;
     private Button myProfileButton;
     private Button mySearchButton;
     private Button myBorrowerInfoButton;
     private Button scanBarcodeButton;
-    FirebaseAuth fAuth;
+    private FirebaseAuth fAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         // to the signup screen.
         if (fAuth.getCurrentUser() == null) {
             startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
-        }else{
+        } else {
             // Update the registration token
             Database.updateUserRegistrationToken();
         }

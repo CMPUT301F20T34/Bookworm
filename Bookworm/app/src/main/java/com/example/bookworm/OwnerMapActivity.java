@@ -1,18 +1,13 @@
 package com.example.bookworm;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,18 +16,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -108,7 +93,11 @@ public class OwnerMapActivity extends FragmentActivity implements OnMapReadyCall
      * Confirm the handover location
      * @param view          the Confirm button
      */
-    public void goBack(View view) {
+    public void confirmLoc(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("latitude", handover.latitude);
+        intent.putExtra("longitude", handover.longitude);
+        setResult(RESULT_OK, intent);
         finish();
     }
 }

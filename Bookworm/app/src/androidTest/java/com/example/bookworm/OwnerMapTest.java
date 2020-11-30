@@ -67,22 +67,25 @@ public class OwnerMapTest {
         //LatLng edmonton = new LatLng(53.52, -113.52);
         Book book = MockBook();
         book.setOwnerId(fAuth.getCurrentUser().getUid());
+
         Database.writeBookSynchronous(book);
         while (Database.getListenerSignal() == 0) {
             Thread.sleep(100);
         }
+
         Request request = MockRequest();
         Database.createSynchronousRequest(request);
         while (Database.getListenerSignal() == 0) {
             Thread.sleep(100);
         }
+
         clickOnRequest();
         //int views = solo.getCurrentViews().size();
         solo.clickOnView(solo.getView(R.id.accept_decline_request_accept_button));
         solo.assertCurrentActivity("Wrong Activity", OwnerMapActivity.class);
         TextView info = (TextView) solo.getView(R.id.location_info);
         String LocInfo = info.getText().toString();
-        solo.clickOnButton("CONFIRM");
+        solo.clickOnView(solo.getView(R.id.location_confirm));
         solo.goBack();
 
         Database.getAcceptedRequest()
@@ -111,6 +114,7 @@ public class OwnerMapTest {
         // Go to the book where the requests were made
         solo.clickOnView(solo.getView(R.id.booklist_button));
         solo.assertCurrentActivity("Wrong Activity", OwnerBooklistActivity.class);
+        solo.clickOnView(solo.getView(R.id.radio_requested));
         solo.clickOnText(MockBook().getTitle());
 
         // Go to the list of requests for the book
