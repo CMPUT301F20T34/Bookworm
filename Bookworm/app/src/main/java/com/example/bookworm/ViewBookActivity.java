@@ -86,10 +86,6 @@ public class ViewBookActivity extends AppCompatActivity {
 
         requestButton = findViewById(R.id.view_book_request);
 
-        if (!status.equals("available")) {
-            requestButton.setEnabled(false);
-        }
-
         requestButton.setOnClickListener(v -> {
 
             // Attempt to create a request from the book and the current

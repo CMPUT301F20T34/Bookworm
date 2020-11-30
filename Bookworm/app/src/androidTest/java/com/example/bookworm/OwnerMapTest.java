@@ -1,21 +1,11 @@
 package com.example.bookworm;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -28,8 +18,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class OwnerMapTest {
@@ -69,7 +57,6 @@ public class OwnerMapTest {
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
-
 
     /**
      * Tests the functionality of the owner map
