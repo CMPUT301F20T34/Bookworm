@@ -524,7 +524,7 @@ public class Database {
         libraryCollection.document(libraryName)
             .collection(bookName)
             .document(req.getBook().getIsbn())
-            .set(map, SetOptions.merge());
+            .update(map);
 
         return libraryCollection.document(libraryName)
             .collection(requestName)

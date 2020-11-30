@@ -135,9 +135,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Toast t = Toast.makeText(context, "Could not decline request. Please try again later.", Toast.LENGTH_SHORT);
 
-        if (!(requestCode == 1 && resultCode == RESULT_OK)) {
-            t.show();
-        } else {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             Database.getRequestsForBook(isbn)
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
@@ -146,11 +144,10 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                         String id = isbn + "-" + username;
                         Map<String, Object> acc = new HashMap<>();
                         Map<String, Object> dec = new HashMap<>();
-                        Map<String, Object> acc2 = new HashMap<>();
-                        Map<String, Object> acc3 = new HashMap<>();
                         acc.put("status", "accepted");
-                        acc2.put("lat", data.getDoubleExtra("latitude", -1));
-                        acc3.put("lng", data.getDoubleExtra("longitude", -1));
+                        acc.put("lat", data.getDoubleExtra("latitude", -1));
+                        acc.put("lng", data.getDoubleExtra("longitude", -1));
+                        acc.put("book.status", "accepted");
                         dec.put("status", "declined");
 
                         /* Iterate over the documents, accepting if the
@@ -162,9 +159,7 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                                 // Attempt to update the borrower of the book
                                 Database.updateBookBorrower(isbn, username).addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
-                                        doc.getReference().set(acc, SetOptions.merge());
-                                        doc.getReference().set(acc2, SetOptions.merge());
-                                        doc.getReference().set(acc3, SetOptions.merge());
+                                        doc.getReference().update(acc);
                                         Toast.makeText(context, "Successfully accepted request.", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -176,6 +171,8 @@ public class AcceptDeclineRequestActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+        } else if (resultCode != RESULT_CANCELED) {
+            t.show();
         }
     }
 }

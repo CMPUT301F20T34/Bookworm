@@ -34,7 +34,7 @@ public class DataBaseTest {
     }
 
     private Book mockBook() {
-        return new Book("1984", "George Orwell", mockUser().getUsername(), "available");
+        return new Book("1984", "George Orwell", mockUser().getUsername(), "123123", "available");
     }
 
     private Request mockRequest() {

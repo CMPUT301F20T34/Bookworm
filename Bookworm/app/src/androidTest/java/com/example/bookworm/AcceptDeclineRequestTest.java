@@ -96,7 +96,7 @@ public class AcceptDeclineRequestTest {
 
         // Ensure the request is no longer there
         assertNotEquals(solo.getCurrentViews().size(),  views);
-        Database.setBookStatus("12315649864", "available");
+        Database.setBookStatus("123456789", "available");
     }
 
     /**
@@ -120,7 +120,7 @@ public class AcceptDeclineRequestTest {
 
         // Ensure all requests are no longer available (accepted or declined)
         assertNotEquals(views, solo.getCurrentViews().size());
-        Database.setBookStatus("12315649864", "available");
+        Database.setBookStatus("123456789", "available");
     }
 
     /**
